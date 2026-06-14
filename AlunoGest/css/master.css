@@ -1,0 +1,123 @@
+﻿/* ---------------------- Reset e fonte ---------------------- */
+html, body {
+    height: 100%; /* altura total da tela */
+    margin: 0;
+    padding: 0;
+    background-color: #f5f6fa; /* fundo do site */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container principal como flex (IMPORTANTE para o footer ficar no fundo) */
+form#form2 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* ocupa toda a altura da tela */
+    margin: 0;
+    padding: 0;
+}
+
+/* ---------------------- Header ---------------------- */
+header {
+    background-color: #123570;
+    height: 100px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+    header h1 {
+        font-size: 30px;
+        color: white;
+        font-family: 'Arial Rounded MT';
+        font-style: italic;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        margin: 0;
+    }
+
+/* Avatar à direita (imagem + texto) */
+.avatar-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar-text {
+    color: #ffffff;
+    font-size: 14px;
+    opacity: 0.95;
+}
+
+/* ---------------------- Navbar ---------------------- */
+nav {
+    /* usa classes do Bootstrap, sem alterações necessárias */
+}
+
+/* ---------------------- Main ---------------------- */
+main {
+    flex: 1; /* ocupa o espaço restante */
+    min-height: 0;
+    display: block;
+    text-align: center;
+    padding: 20px 0;
+    background: linear-gradient(135deg, #e8ecf3 0%, #d7e0ef 100%);
+}
+
+/* Conteúdo principal dentro do main */
+.principal {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 0 auto; /* centraliza horizontalmente */
+}
+
+    .principal h2 {
+        color: #232c4c;
+        font-weight: bold;
+    }
+
+    .principal p {
+        color: #555;
+        margin-top: 10px;
+    }
+
+/* ---------------------- Footer ---------------------- */
+footer {
+    flex-shrink: 0; /* não encolhe */
+    margin-top: auto; /* empurra para o final do container flex */
+    padding: 2rem 1rem; /* espaçamento vertical e horizontal */
+    width: 100%;
+    background-color: #123570;
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+    /* Links do footer */
+    footer a {
+        color: #9fc0ff;
+        text-decoration: none;
+        margin: 0 0.5rem; /* espaço entre links */
+    }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+/* ---------------------- Responsividade do footer ---------------------- */
+@media (max-width: 480px) {
+    footer a {
+        display: block;
+        margin: 0.2rem 0;
+    }
+}
+
+/* ---------------------- Dropdown Bootstrap alinhado à direita ---------------------- */
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
