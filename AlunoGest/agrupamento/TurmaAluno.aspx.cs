@@ -82,9 +82,11 @@ namespace AlunoGest.agrupamento
             bool TemPortugues = ChkTemPortugues.Checked;
             bool TemEMRC = ChkTemEMRC.Checked;
 
-            if (AlunoJaActivoNaTurma(IdAluno, IdTurma))
+            // Um aluno só pode estar activo numa turma de cada vez,
+            // independentemente da escola/ano.
+            if (AlunoJaActivoNoutraTurma(IdAluno))
             {
-                MostrarMensagem("Este aluno já está activo nesta turma.");
+                MostrarMensagem("Este aluno já está activo noutra turma.");
                 return;
             }
 
@@ -145,6 +147,8 @@ namespace AlunoGest.agrupamento
 
             try
             {
+                // Não apagamos — apenas preenchemos a data de saída
+                // para manter o histórico.
                 string Sql = @"
                     UPDATE dbo.AlunoTurma
                     SET Ate = @Hoje
@@ -221,6 +225,8 @@ namespace AlunoGest.agrupamento
 
         private void CarregarAlunosDisponiveis(int IdTurma)
         {
+            // Mostra apenas alunos do mesmo agrupamento que NÃO estão
+            // activos em NENHUMA turma neste momento.
             string Sql = @"
                 SELECT
                     a.Id,
@@ -236,8 +242,7 @@ namespace AlunoGest.agrupamento
                   (
                       SELECT AlunoId
                       FROM dbo.AlunoTurma
-                      WHERE TurmaId = @TurmaId
-                        AND Ate IS NULL
+                      WHERE Ate IS NULL
                   )
                 ORDER BY a.NomeCompleto;";
 
@@ -320,23 +325,22 @@ namespace AlunoGest.agrupamento
         }
 
         #endregion
-
+            
         #region Auxiliares
 
-        private bool AlunoJaActivoNaTurma(int IdAluno, int IdTurma)
+        private bool AlunoJaActivoNoutraTurma(int IdAluno)
         {
+            // Verifica se o aluno está activo em QUALQUER turma neste momento.
             string Sql = @"
                 SELECT COUNT(1)
                 FROM dbo.AlunoTurma
                 WHERE AlunoId = @AlunoId
-                  AND TurmaId = @TurmaId
                   AND Ate IS NULL;";
 
             using (SqlConnection Conn = new SqlConnection(_Ligacao))
             using (SqlCommand Cmd = new SqlCommand(Sql, Conn))
             {
                 Cmd.Parameters.AddWithValue("@AlunoId", IdAluno);
-                Cmd.Parameters.AddWithValue("@TurmaId", IdTurma);
                 Conn.Open();
                 return Convert.ToInt32(Cmd.ExecuteScalar()) > 0;
             }

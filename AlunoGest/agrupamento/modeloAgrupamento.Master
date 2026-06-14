@@ -78,9 +78,9 @@
 
                     <li>
                         <asp:HyperLink
-                            NavigateUrl="~/agrupamento/agrupamento.aspx"
+                            NavigateUrl="~/agrupamento/dashboard.aspx"
                             runat="server"
-                            Text="Agrupamento"
+                            Text="Dashboard"
                             CssClass="dropdown-item" />
                     </li>
 

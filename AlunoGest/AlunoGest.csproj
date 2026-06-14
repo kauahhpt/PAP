@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="agrupamento\Alunos.aspx" />
     <Content Include="agrupamento\dashboard.aspx" />
     <Content Include="agrupamento\escolas.aspx" />
     <Content Include="agrupamento\professores.aspx" />
@@ -86,6 +87,7 @@
     <Content Include="agrupamento\turma_basico.aspx" />
     <Content Include="agrupamento\turma_professores.aspx" />
     <Content Include="agrupamento\turma_secundario.aspx" />
+    <Content Include="aluno\HomeAluno.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -146,6 +148,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="agrupamento\Alunos.aspx.cs">
+      <DependentUpon>Alunos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="agrupamento\Alunos.aspx.designer.cs">
+      <DependentUpon>Alunos.aspx</DependentUpon>
+    </Compile>
     <Compile Include="agrupamento\dashboard.aspx.cs">
       <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -223,6 +232,13 @@
     <Compile Include="agrupamento\turma_secundario.aspx.designer.cs">
       <DependentUpon>turma_secundario.aspx</DependentUpon>
     </Compile>
+    <Compile Include="aluno\HomeAluno.aspx.cs">
+      <DependentUpon>HomeAluno.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="aluno\HomeAluno.aspx.designer.cs">
+      <DependentUpon>HomeAluno.aspx</DependentUpon>
+    </Compile>
     <Compile Include="criarconta.aspx.cs">
       <DependentUpon>criarconta.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -269,7 +285,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="aluno\" />
+    <Folder Include="agrupamento\uploads\eventos\" />
     <Folder Include="professor\" />
   </ItemGroup>
   <PropertyGroup>

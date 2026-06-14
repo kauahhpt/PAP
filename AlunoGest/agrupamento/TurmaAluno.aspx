@@ -69,9 +69,9 @@
                 EmptyDataText="A turma ainda não tem alunos."
                 OnRowCommand="GridAlunos_RowCommand">
                 <Columns>
-                    <asp:BoundField DataField="NomeCompleto"   HeaderText="Nome" />
+                    <asp:BoundField DataField="NomeCompleto" HeaderText="Nome" />
                     <asp:BoundField DataField="NumeroProcesso" HeaderText="N.º Processo" />
-                    <asp:BoundField DataField="Desde"          HeaderText="Desde"
+                    <asp:BoundField DataField="Desde" HeaderText="Desde"
                         DataFormatString="{0:dd/MM/yyyy}" />
 
                     <asp:TemplateField HeaderText="Português">
@@ -90,10 +90,15 @@
                         </ItemTemplate>
                     </asp:TemplateField>
 
-                    <asp:ButtonField Text="Remover"
-                        CommandName="RemoverAluno"
-                        ButtonType="Button"
-                        ControlStyle-CssClass="btn btn-outline-danger btn-sm" />
+                    <asp:TemplateField HeaderText="Ação">
+                        <ItemTemplate>
+                            <asp:Button ID="ButtonRemover" runat="server"
+                                Text="Remover"
+                                CommandName="RemoverAluno"
+                                CommandArgument='<%# Eval("Id") %>'
+                                CssClass="btn btn-outline-danger btn-sm" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
         </div>
@@ -106,11 +111,11 @@
                 AutoGenerateColumns="False"
                 EmptyDataText="Sem histórico para esta turma.">
                 <Columns>
-                    <asp:BoundField DataField="NomeCompleto"   HeaderText="Nome" />
+                    <asp:BoundField DataField="NomeCompleto" HeaderText="Nome" />
                     <asp:BoundField DataField="NumeroProcesso" HeaderText="N.º Processo" />
-                    <asp:BoundField DataField="Desde"          HeaderText="Desde"
+                    <asp:BoundField DataField="Desde" HeaderText="Desde"
                         DataFormatString="{0:dd/MM/yyyy}" />
-                    <asp:BoundField DataField="Ate"            HeaderText="Até"
+                    <asp:BoundField DataField="Ate" HeaderText="Até"
                         DataFormatString="{0:dd/MM/yyyy}" />
 
                     <asp:TemplateField HeaderText="Português">
