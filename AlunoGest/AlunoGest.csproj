@@ -108,6 +108,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="criarconta.aspx" />
     <Content Include="css\master.css" />
+    <Content Include="Foto.jpg" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -141,7 +142,6 @@
     <Content Include="agrupamento\modeloAgrupamento.Master" />
     <Content Include="agrupamento\Web.config" />
     <Content Include="lixo.Master" />
-    <Content Include="WebForm1.aspx" />
     <Content Include="aluno\MasterAluno1.Master" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
@@ -289,13 +289,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\CriarConta.cs" />
-    <Compile Include="WebForm1.aspx.cs">
-      <DependentUpon>WebForm1.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebForm1.aspx.designer.cs">
-      <DependentUpon>WebForm1.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
