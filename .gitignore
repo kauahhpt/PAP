@@ -1,0 +1,22 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Compilação
+bin/
+obj/
+
+# ASP.NET
+packages/
+
+# Uploads
+AlunoGest/uploads/
+
+# Logs
+*.log
+
+# Cache
+*.cache
