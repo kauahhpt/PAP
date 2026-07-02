@@ -4,77 +4,311 @@
 
 <html lang="pt-PT">
 <head runat="server">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- Meta Tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Inovar Inovado - Gestão de Alunos e Agrupamentos Escolares" />
+    <a href="DAL/">DAL/</a>
+    <meta name="theme-color" content="#343a40" />
     <title>Inovar Inovado</title>
 
-    <asp:ContentPlaceHolder ID="headContent" runat="server"></asp:ContentPlaceHolder>
-
-    <!-- Bootstrap -->
-    <link runat="server" href="~/content/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- CSS -->
+    <link runat="server" href="~/content/bootstrap.min.css" rel="stylesheet" />
     <link runat="server" href="~/css/master.css" rel="stylesheet" />
 
+    <!-- ContentPlaceHolder para estilos adicionais -->
+    <asp:ContentPlaceHolder ID="headContent" runat="server"></asp:ContentPlaceHolder>
+
     <style>
-        header {
-            height: 45px;
-            background-color: #343a40;
+        /* ========== VARIÁVEIS E RESET ========== */
+        :root {
+            --primary-dark: #343a40;
+            --secondary-gray: #808080;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --header-height: 75px;
+            --footer-height: auto;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #212529;
+            background-color: #fff;
+        }
+
+        /* ========== CONTAINER PRINCIPAL ========== */
+        form.page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== HEADER ========== */
+        header.header-layout {
+            height: auto;
+            min-height: var(--header-height);
+            background-color: var(--primary-dark);
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding:30px;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-            header h1 {
-                margin: 10px;
-                font-style: italic;
-                font-size: 22px;
+        header h1.site-title {
+            margin: 0;
+            font-style: italic;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        header .dropdown {
+            margin-left: auto;
+        }
+
+        header .btn-dark {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            header .btn-dark:hover,
+            header .btn-dark:focus {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.3);
+                outline: 2px solid rgba(255, 255, 255, 0.4);
+                outline-offset: 2px;
             }
 
-        form.page-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* ocupa toda a altura da tela */
+        header .dropdown-menu {
+            min-width: 200px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        main {
-            flex: 1; /* ocupa o espaço restante, empurrando o footer para baixo */
+        header .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+            header .dropdown-item:hover,
+            header .dropdown-item:focus {
+                background-color: var(--light-bg);
+                color: var(--primary-dark);
+            }
+
+        /* ========== MAIN CONTENT ========== */
+        main.main-content {
+            flex: 1;
             display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 1rem;
+            min-height: calc(100vh - var(--header-height) - 100px);
+            background-color: var(--light-bg);
+        }
+
+        main .container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background-color: var(--secondary-gray);
+            color: white;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
+            padding: 1.5rem 2rem;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-top: auto;
         }
 
-        footer {
-            background-color: #808080;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center; 
-            text-align: center; 
-            height: 30px;
-            font-size: 14px;
-            line-height: 1.4em;
+            footer p {
+                margin: 0;
+            }
+
+            footer a {
+                color: #fff;
+                text-decoration: none;
+                transition: opacity 0.3s ease;
+                font-weight: 500;
+            }
+
+                footer a:hover,
+                footer a:focus {
+                    opacity: 0.8;
+                    text-decoration: underline;
+                    outline: 2px solid rgba(255, 255, 255, 0.4);
+                    outline-offset: 2px;
+                }
+
+            footer .footer-links {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            footer .footer-divider {
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+        /* ========== RESPONSIVIDADE ========== */
+        @media (max-width: 768px) {
+            :root {
+                --header-height: auto;
+            }
+
+            header.header-layout {
+                padding: 1rem;
+                justify-content: center;
+                min-height: auto;
+            }
+
+            header h1.site-title {
+                font-size: 1.25rem;
+                order: 1;
+                width: 100%;
+                text-align: center;
+            }
+
+            header .dropdown {
+                margin-left: 0;
+                order: 2;
+            }
+
+            main.main-content {
+                padding: 1.5rem 1rem;
+                min-height: auto;
+            }
+
+            footer {
+                padding: 1rem;
+            }
+
+                footer .footer-links {
+                    gap: 0.25rem;
+                }
+
+                footer .footer-divider {
+                    display: inline;
+                    margin: 0 0.25rem;
+                }
+        }
+
+        @media (max-width: 480px) {
+            header h1.site-title {
+                font-size: 1.1rem;
+            }
+
+            header .btn-dark {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+
+            footer {
+                font-size: 0.75rem;
+                padding: 0.75rem;
+            }
+
+                footer .footer-links {
+                    flex-direction: column;
+                    gap: 0.25rem;
+                }
+
+                footer .footer-divider {
+                    display: none;
+                }
+
+                footer a {
+                    display: inline-block;
+                }
+        }
+
+        /* ========== ACESSIBILIDADE ========== */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #e0e0e0;
+            }
+
+            main.main-content {
+                background-color: #2a2a2a;
+            }
+
+            footer {
+                background-color: #222;
+            }
+        }
+
+        /* ========== IMPRESSÃO ========== */
+        @media print {
+            header,
+            footer {
+                display: none;
+            }
+
+            main.main-content {
+                min-height: auto;
+                background: white;
+            }
         }
     </style>
-
 </head>
 
 <body>
     <form id="form2" runat="server" class="page-container">
 
-        <!-- Header -->
-        <header class="header-layout">
+        <!-- Header Navigation -->
+        <header class="header-layout" role="banner">
 
             <h1 class="site-title">Inovar Inovado</h1>
 
-            <div class="dropdown">
-                <button class="btn btn-dark dropdown-toggle" type="button" id="menu" data-bs-toggle="dropdown">
+            <!-- Menu Principal -->
+            <nav class="dropdown">
+                <button
+                    class="btn btn-dark dropdown-toggle"
+                    type="button"
+                    id="menuButton"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    aria-label="Menu de navegação">
                     Menu
                 </button>
 
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuButton">
 
                     <li>
                         <asp:HyperLink
@@ -116,9 +350,9 @@
                             CssClass="dropdown-item" />
                     </li>
 
-                    <%-- <li>
-                        <hr class="dropdown-divider">
-                    </li--%>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
 
                     <li>
                         <asp:LoginStatus
@@ -130,28 +364,34 @@
                             ID="logout"
                             OnLoggedOut="logout_LoggedOut" />
                     </li>
+
                 </ul>
-            </div>
+            </nav>
+
         </header>
 
-
-        <!-- Main -->
-        <main class="main-content">
-            <asp:ContentPlaceHolder ID="mainContent" runat="server"></asp:ContentPlaceHolder>
+        <!-- Main Content Area -->
+        <main class="main-content" role="main">
+            <div class="container">
+                <asp:ContentPlaceHolder ID="mainContent" runat="server"></asp:ContentPlaceHolder>
+            </div>
         </main>
 
         <!-- Footer -->
-        <footer>
-            <p style="margin:0">&copy; 2026 Inovar Inovado — Todos os direitos reservados</p>
-            <p>
-                <a href="#">Política de Privacidade</a> |       
-       
-                <a href="#">Termos de Uso</a> |    
-       
-                <a href="#">Contactos</a>
-            </p>
+        <footer role="contentinfo">
+            <p>&copy; 2026 Inovar Inovado — Todos os direitos reservados</p>
+            <div class="footer-links">
+                <a href="~/privacidade.aspx" runat="server">Política de Privacidade</a>
+                <span class="footer-divider">|</span>
+                <a href="~/termos.aspx" runat="server">Termos de Uso</a>
+                <span class="footer-divider">|</span>
+                <a href="~/contactos.aspx" runat="server">Contactos</a>
+            </div>
         </footer>
 
     </form>
+
+    <!-- Bootstrap JS (Bundle includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>

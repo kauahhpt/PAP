@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Security;
 using System.Web.UI;
+using AlunoGest.Util;
 
 namespace AlunoGest.agrupamento
 {
@@ -418,13 +419,24 @@ namespace AlunoGest.agrupamento
 
         private Guid CriarContaProfessor()
         {
-            string username = GerarUsernameProfessor(txtNome.Text);
-            string password = "123123";
+            // Reutiliza as funções utilitárias para gerar username e password
+            string usernameBase = CriarConta.GerarUsername(txtNome.Text);
+            string username = CriarConta.GarantirUsernameUnico(usernameBase);
+            string password = CriarConta.GerarPassword();
 
             Membership.CreateUser(username, password, txtEmail.Text);
             Roles.AddUserToRole(username, "Professor");
 
             MembershipUser user = Membership.GetUser(username);
+
+            // Envia email com as credenciais, se o email for fornecido
+            CriarConta.EnviarEmailCredenciais(
+                txtEmail.Text,
+                txtNome.Text,
+                username,
+                password,
+                "http://localhost/login.aspx");
+
             return (Guid)user.ProviderUserKey;
         }
 

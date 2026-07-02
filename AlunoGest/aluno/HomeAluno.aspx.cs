@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Web.Script.Serialization;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace AlunoGest.aluno
@@ -28,6 +29,13 @@ namespace AlunoGest.aluno
                 PainelAnexos.Visible = false;
                 CarregarEventos();
             }
+        }
+
+        protected override void Render(HtmlTextWriter writer)
+        {
+
+            Page.ClientScript.RegisterForEventValidation(ButtonAtualizar.UniqueID, "mostrarAnexos");
+            base.Render(writer);
         }
 
         #endregion
@@ -58,6 +66,12 @@ namespace AlunoGest.aluno
                 return;
             }
 
+            if (FileAnexo.HasFile && FileAnexo.PostedFile.ContentLength > 50 * 1024 * 1024)
+            {
+                MostrarMensagem("O ficheiro não pode ter mais de 50 MB.");
+                return;
+            }
+
             int IdAluno = GetIdAluno();
 
             try
@@ -80,6 +94,11 @@ namespace AlunoGest.aluno
         protected void ButtonAtualizar_Click(object sender, EventArgs e)
         {
             LimparMensagem();
+            if (FileAnexo.HasFile && FileAnexo.PostedFile.ContentLength > 50 * 1024 * 1024)
+            {
+                MostrarMensagem("O ficheiro não pode ter mais de 50 MB.");
+                return;
+            }
 
             if (HdnEventoId.Value == "")
             {
@@ -483,8 +502,7 @@ namespace AlunoGest.aluno
 
         private int GetIdAluno()
         {
-            // Segue o mesmo padrão de TryGetAgrupamentoId usado em escolas.aspx,
-            // mas para o lado do aluno.
+
             if (Session["AlunoID"] != null &&
                 int.TryParse(Session["AlunoID"].ToString(), out int IdAlunoSessao))
             {
