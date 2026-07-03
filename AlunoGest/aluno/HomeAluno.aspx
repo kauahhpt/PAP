@@ -12,44 +12,25 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
     <style>
-        body {
-            font-family: Arial;
-        }
-
-        h2 {
-            color: #55CCCC;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px auto;
-            border-radius: 8px;
-            max-width: 900px;
-        }
-
-        #calendar {
-            margin-top: 20px;
-        }
-
-        .form-linha {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: end;
-            margin-bottom: 10px;
-        }
+        #calendar { margin-top: 20px; background:#fff; border-radius:16px; min-height:560px; }
+        .form-linha { display:flex; flex-wrap:wrap; gap:10px; align-items:end; margin-bottom:10px; }
     </style>
 
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="mainContent" runat="server">
 
-    <div class="container">
-        <h2>A Minha Agenda</h2>
+    <div class="app-page-header">
+        <div>
+            <h1 class="app-page-title">Agenda pessoal</h1>
+            <p class="app-page-subtitle">Eventos pessoais do aluno e eventos publicados pela turma.</p>
+        </div>
+    </div>
 
         <asp:Label ID="LblMensagem" runat="server" Visible="false"></asp:Label>
 
+    <div class="card app-card mb-4">
+        <div class="card-body">
         <div class="form-linha">
 
             <div>
@@ -85,10 +66,13 @@
             <asp:Button ID="ButtonApagar" runat="server" Text="Apagar" CssClass="btn btn-outline-danger" OnClick="ButtonApagar_Click" CausesValidation="false" />
             <asp:Button ID="ButtonLimpar" runat="server" Text="Limpar" CssClass="btn btn-outline-secondary" OnClick="ButtonLimpar_Click" CausesValidation="false" />
         </div>
+        </div>
+    </div>
 
         <!-- Anexos do evento seleccionado -->
-        <div id="PainelAnexos" runat="server" visible="false" class="mb-3">
-            <h5>Anexos</h5>
+        <div id="PainelAnexos" runat="server" visible="false" class="card app-card mb-4">
+            <div class="card-body">
+            <h5 class="app-card-title">Anexos</h5>
             <asp:Repeater ID="RepeaterAnexos" runat="server">
                 <ItemTemplate>
                     <div>
@@ -102,11 +86,15 @@
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
+            </div>
         </div>
 
-        <div id="calendar"></div>
+        <div class="card app-card">
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
         <asp:HiddenField ID="HdnEvents" runat="server" />
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

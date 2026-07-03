@@ -1,0 +1,148 @@
+html, body {
+    min-height: 100%;
+    margin: 0;
+    font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, .18), transparent 32rem),
+        linear-gradient(135deg, #eaf2ff 0%, #f8fbff 55%, #ffffff 100%);
+    color: #123570;
+}
+
+*, button, input, textarea, select {
+    font-family: inherit;
+}
+
+.auth-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.auth-card {
+    width: min(100%, 430px);
+    background: #fff;
+    border: 1px solid #dbeafe;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(18, 53, 112, .16);
+    overflow: hidden;
+}
+
+.auth-card-wide {
+    width: min(100%, 920px);
+}
+
+.auth-header {
+    padding: 1.6rem;
+    color: #fff;
+    background: linear-gradient(135deg, #123570, #2563eb);
+}
+
+.auth-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Arial Rounded MT Bold', 'Segoe UI Rounded', 'Nunito', 'Segoe UI', sans-serif;
+    letter-spacing: -.02em;
+}
+
+.auth-header p {
+    margin: .35rem 0 0;
+    color: #dbeafe;
+}
+
+.auth-body {
+    padding: 1.6rem;
+}
+
+.auth-body table {
+    width: 100%;
+}
+
+.auth-body td {
+    padding: .35rem;
+}
+
+.auth-body input[type="text"],
+.auth-body input[type="password"],
+.auth-body input[type="email"],
+.auth-body textarea,
+.auth-body select,
+.auth-input {
+    width: 100%;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 12px;
+    padding: .65rem .8rem;
+    outline: none;
+}
+
+.auth-body input:focus,
+.auth-body textarea:focus,
+.auth-input:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 .2rem rgba(37, 99, 235, .14);
+}
+
+.auth-body input[type="submit"],
+.auth-button,
+.auth-body .btn-primary {
+    border: 0;
+    border-radius: 999px;
+    background: #123570;
+    color: #fff;
+    font-weight: 700;
+    padding: .65rem 1.25rem;
+}
+
+.auth-body input[type="submit"]:hover,
+.auth-button:hover,
+.auth-body .btn-primary:hover {
+    background: #2563eb;
+    color: #fff;
+}
+
+.auth-body a {
+    color: #123570;
+    font-weight: 700;
+}
+
+.panel-form {
+    width: min(100%, 900px);
+}
+
+.form-row-custom {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.form-label-custom {
+    width: 220px;
+    color: #123570;
+    font-weight: 700;
+}
+
+.form-input-area {
+    width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-600 { width: 100%; }
+.input-300 { width: 300px; }
+.input-200 { width: 200px; }
+
+@media (max-width: 768px) {
+    .form-row-custom {
+        display: block;
+    }
+
+    .form-label-custom,
+    .form-input-area,
+    .input-300,
+    .input-200 {
+        width: 100%;
+    }
+}

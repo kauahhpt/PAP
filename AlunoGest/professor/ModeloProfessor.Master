@@ -1,0 +1,50 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="ModeloProfessor.Master.cs" Inherits="AlunoGest.professor.ModeloProfessor" %>
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><asp:ContentPlaceHolder ID="titleContent" runat="server">Área do professor</asp:ContentPlaceHolder></title>
+    <link runat="server" href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { background: #f3f6fb; color: #1f2937; font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        *, button, input, textarea, select { font-family: inherit; }
+        .topbar { background: #123570; min-height: 68px; }
+        .brand { color: #fff; font-size: 1.25rem; font-weight: 800; text-decoration: none; font-family: 'Arial Rounded MT Bold', 'Segoe UI Rounded', 'Nunito', 'Segoe UI', sans-serif; letter-spacing: -.02em; }
+        .teacher-name { color: #dbeafe; }
+        main { min-height: calc(100vh - 122px); }
+        .page-card { border: 0; border-radius: 14px; box-shadow: 0 4px 18px rgba(15, 23, 42, .08); }
+        .stat-card { border: 0; border-left: 4px solid #2563eb; border-radius: 12px; }
+        .table thead th { background: #eef3fb; color: #334155; border: 0; }
+        footer { min-height: 54px; background: #fff; color: #64748b; }
+    </style>
+    <asp:ContentPlaceHolder ID="headContent" runat="server" />
+</head>
+<body>
+    <form id="formProfessor" runat="server">
+        <nav class="navbar navbar-expand-lg navbar-dark topbar px-3 px-lg-4">
+            <a class="brand" href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">Inovar Inovado</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuProfessor">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuProfessor">
+                <div class="navbar-nav ms-lg-4">
+                    <a class="nav-link" href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">As minhas turmas</a>
+                    <a class="nav-link" href="<%= ResolveUrl("~/professor/calendario.aspx") %>">Calendário</a>
+                    <a class="nav-link" href="<%= ResolveUrl("~/professor/conta.aspx") %>">A minha conta</a>
+                </div>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <asp:Label ID="LblProfessor" runat="server" CssClass="teacher-name" />
+                    <asp:LoginStatus ID="LoginStatus1" runat="server" CssClass="btn btn-outline-light btn-sm"
+                        LogoutText="Terminar sessão" LogoutAction="RedirectToLoginPage" OnLoggedOut="LoginStatus1_LoggedOut" />
+                </div>
+            </div>
+        </nav>
+        <main class="container py-4">
+            <asp:ContentPlaceHolder ID="mainContent" runat="server" />
+        </main>
+        <footer class="d-flex align-items-center justify-content-center">&copy; 2026 Inovar Inovado</footer>
+    </form>
+    <script src="<%= ResolveUrl("~/Scripts/bootstrap.bundle.min.js") %>"></script>
+</body>
+</html>

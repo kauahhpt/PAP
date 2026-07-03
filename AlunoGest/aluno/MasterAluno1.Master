@@ -1,36 +1,48 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterAluno1.master.cs" Inherits="AlunoGest.aluno.MasterAluno1" %>
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterAluno1.Master.cs" Inherits="AlunoGest.aluno.MasterAluno1" %>
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head runat="server">
     <meta charset="utf-8" />
-    <title>Área do Aluno</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <asp:ContentPlaceHolder ID="headContent" runat="server">
-    </asp:ContentPlaceHolder>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Area do aluno</title>
+    <link runat="server" href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { background:#f3f6fb; color:#1f2937; font-family:'Nunito','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
+        *, button, input, textarea, select { font-family:inherit; }
+        .topbar { background:#123570; min-height:68px; }
+        .brand { color:#fff; font-size:1.25rem; font-weight:800; text-decoration:none; font-family:'Arial Rounded MT Bold','Segoe UI Rounded','Nunito','Segoe UI',sans-serif; letter-spacing:-.02em; }
+        .student-name { color:#dbeafe; }
+        main { min-height:calc(100vh - 122px); }
+        .page-card { border:0; border-radius:14px; box-shadow:0 4px 18px rgba(15,23,42,.08); }
+        .table thead th { background:#eef3fb; color:#334155; border:0; }
+        footer { min-height:54px; background:#fff; color:#64748b; }
+    </style>
+    <asp:ContentPlaceHolder ID="headContent" runat="server" />
 </head>
 <body>
-    <form id="form1" runat="server">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="~/aluno/HomeAluno.aspx" runat="server">AlunoGest</a>
-
-                <div class="navbar-nav">
-                    <a class="nav-link" href="~/aluno/HomeAluno.aspx" runat="server">Dashboard</a>
-                    <a class="nav-link" href="~/aluno/InformacoesAluno.aspx" runat="server">As Minhas Informações</a>
-                    <a class="nav-link" href="~/aluno/NotasAluno.aspx" runat="server">Notas</a>
+    <form id="formAluno" runat="server">
+        <nav class="navbar navbar-expand-lg navbar-dark topbar px-3 px-lg-4">
+            <a class="brand" href="<%= ResolveUrl("~/aluno/dashboard.aspx") %>">Inovar Inovado</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuAluno">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuAluno">
+                <div class="navbar-nav ms-lg-4">
+                    <a class="nav-link" href="<%= ResolveUrl("~/aluno/dashboard.aspx") %>">O meu dashboard</a>
+                    <a class="nav-link" href="<%= ResolveUrl("~/aluno/HomeAluno.aspx") %>">Agenda pessoal</a>
                 </div>
-
-                <div class="ms-auto">
-                    <asp:LinkButton ID="LinkButtonSair" runat="server" CssClass="btn btn-outline-light btn-sm"
-                        OnClick="LinkButtonSair_Click">Sair</asp:LinkButton>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <asp:Label ID="LblAluno" runat="server" CssClass="student-name" />
+                    <asp:LoginStatus ID="LoginStatus1" runat="server" CssClass="btn btn-outline-light btn-sm"
+                        LogoutText="Terminar sessao" LogoutAction="RedirectToLoginPage" OnLoggedOut="LoginStatus1_LoggedOut" />
                 </div>
             </div>
         </nav>
-
-        <div class="container mt-4">
-            <asp:ContentPlaceHolder ID="mainContent" runat="server">
-            </asp:ContentPlaceHolder>
-        </div>
+        <main class="container py-4">
+            <asp:ContentPlaceHolder ID="mainContent" runat="server" />
+        </main>
+        <footer class="d-flex align-items-center justify-content-center">&copy; 2026 Inovar Inovado</footer>
     </form>
+    <script src="<%= ResolveUrl("~/Scripts/bootstrap.bundle.min.js") %>"></script>
 </body>
 </html>
