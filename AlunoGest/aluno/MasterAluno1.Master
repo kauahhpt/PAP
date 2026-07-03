@@ -1,48 +1,165 @@
 <%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterAluno1.Master.cs" Inherits="AlunoGest.aluno.MasterAluno1" %>
+
 <!DOCTYPE html>
+
 <html lang="pt-PT">
 <head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Area do aluno</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Inovar Inovado</title>
+
+    <asp:ContentPlaceHolder ID="headContent" runat="server"></asp:ContentPlaceHolder>
+
+    <!-- Bootstrap -->
     <link runat="server" href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CSS -->
+    <link runat="server" href="~/css/master.css" rel="stylesheet" />
+
     <style>
-        body { background:#f3f6fb; color:#1f2937; font-family:'Nunito','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
-        *, button, input, textarea, select { font-family:inherit; }
-        .topbar { background:#123570; min-height:68px; }
-        .brand { color:#fff; font-size:1.25rem; font-weight:800; text-decoration:none; font-family:'Arial Rounded MT Bold','Segoe UI Rounded','Nunito','Segoe UI',sans-serif; letter-spacing:-.02em; }
-        .student-name { color:#dbeafe; }
-        main { min-height:calc(100vh - 122px); }
-        .page-card { border:0; border-radius:14px; box-shadow:0 4px 18px rgba(15,23,42,.08); }
-        .table thead th { background:#eef3fb; color:#334155; border:0; }
-        footer { min-height:54px; background:#fff; color:#64748b; }
+        header {
+            height: 45px;
+            background-color: #343a40;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px;
+        }
+
+        header h1 {
+            margin: 10px;
+            font-style: italic;
+            font-size: 22px;
+        }
+
+        .student-name {
+            color: #d1d5db;
+            margin-right: 15px;
+            font-weight: 600;
+        }
+
+        form.page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 25px;
+        }
+
+        footer {
+            background-color: #808080;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 45px;
+            font-size: 14px;
+            line-height: 1.4em;
+        }
     </style>
-    <asp:ContentPlaceHolder ID="headContent" runat="server" />
+
 </head>
+
 <body>
-    <form id="formAluno" runat="server">
-        <nav class="navbar navbar-expand-lg navbar-dark topbar px-3 px-lg-4">
-            <a class="brand" href="<%= ResolveUrl("~/aluno/dashboard.aspx") %>">Inovar Inovado</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuAluno">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuAluno">
-                <div class="navbar-nav ms-lg-4">
-                    <a class="nav-link" href="<%= ResolveUrl("~/aluno/dashboard.aspx") %>">O meu dashboard</a>
-                    <a class="nav-link" href="<%= ResolveUrl("~/aluno/HomeAluno.aspx") %>">Agenda pessoal</a>
-                </div>
-                <div class="ms-auto d-flex align-items-center gap-3">
-                    <asp:Label ID="LblAluno" runat="server" CssClass="student-name" />
-                    <asp:LoginStatus ID="LoginStatus1" runat="server" CssClass="btn btn-outline-light btn-sm"
-                        LogoutText="Terminar sessao" LogoutAction="RedirectToLoginPage" OnLoggedOut="LoginStatus1_LoggedOut" />
-                </div>
+
+<form id="formAluno" runat="server" class="page-container">
+
+    <!-- Header -->
+    <header>
+
+        <h1>Inovar Inovado</h1>
+
+        <div class="d-flex align-items-center">
+
+            <asp:Label
+                ID="LblAluno"
+                runat="server"
+                CssClass="student-name" />
+
+            <div class="dropdown">
+
+                <button class="btn btn-dark dropdown-toggle"
+                    type="button"
+                    id="menuAluno"
+                    data-bs-toggle="dropdown">
+
+                    Menu
+
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+
+                    <li>
+                        <asp:HyperLink
+                            runat="server"
+                            NavigateUrl="~/aluno/dashboard.aspx"
+                            Text="Dashboard"
+                            CssClass="dropdown-item" />
+                    </li>
+
+                    <li>
+                        <asp:HyperLink
+                            runat="server"
+                            NavigateUrl="~/aluno/InformacoesAluno.aspx"
+                            Text="As minhas informações"
+                            CssClass="dropdown-item" />
+                    </li>
+
+                    <li>
+                        <asp:HyperLink
+                            runat="server"
+                            NavigateUrl="~/aluno/NotasAluno.aspx"
+                            Text="Notas"
+                            CssClass="dropdown-item" />
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+
+                    <li>
+                        <asp:LoginStatus
+                            ID="LoginStatus1"
+                            runat="server"
+                            CssClass="dropdown-item"
+                            LogoutAction="RedirectToLoginPage"
+                            LogoutText="Terminar sessão"
+                            LoginText="Iniciar sessão"
+                            OnLoggedOut="LoginStatus1_LoggedOut" />
+                    </li>
+
+                </ul>
+
             </div>
-        </nav>
-        <main class="container py-4">
-            <asp:ContentPlaceHolder ID="mainContent" runat="server" />
-        </main>
-        <footer class="d-flex align-items-center justify-content-center">&copy; 2026 Inovar Inovado</footer>
-    </form>
-    <script src="<%= ResolveUrl("~/Scripts/bootstrap.bundle.min.js") %>"></script>
+
+        </div>
+
+    </header>
+
+    <!-- Conteúdo -->
+    <main>
+        <asp:ContentPlaceHolder ID="mainContent" runat="server"></asp:ContentPlaceHolder>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        <p style="margin:0">&copy; 2026 Inovar Inovado — Todos os direitos reservados</p>
+        <p style="margin:0">
+            <a href="#">Política de Privacidade</a> |
+            <a href="#">Termos de Utilização</a> |
+            <a href="#">Contactos</a>
+        </p>
+    </footer>
+
+</form>
+
 </body>
 </html>

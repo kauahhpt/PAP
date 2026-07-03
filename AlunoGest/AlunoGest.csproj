@@ -87,6 +87,7 @@
     <Content Include="agrupamento\turma_basico.aspx" />
     <Content Include="agrupamento\turma_professores.aspx" />
     <Content Include="agrupamento\turma_secundario.aspx" />
+    <Content Include="aluno\dashboard.aspx" />
     <Content Include="aluno\HomeAluno.aspx" />
     <Content Include="aluno\InformacoesAluno.aspx" />
     <Content Include="aluno\NotasAluno.aspx" />
@@ -111,6 +112,10 @@
     <Content Include="Foto.jpg" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
+    <Content Include="professor\calendario.aspx" />
+    <Content Include="professor\conta.aspx" />
+    <Content Include="professor\dashboard.aspx" />
+    <Content Include="professor\turma.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -143,11 +148,19 @@
     <Content Include="agrupamento\Web.config" />
     <Content Include="lixo.Master" />
     <Content Include="aluno\MasterAluno1.Master" />
+    <Content Include="professor\ModeloProfessor.Master" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
     <Content Include="Scripts\jquery-3.7.1.slim.js" />
     <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
+    <Content Include="uploads\eventos\4692e09329004246a429afb98f4e9d61_ScreenShot-2026-6-27_17-20-2.png" />
+    <Content Include="uploads\eventos\9caaf527af3249be9ef31b11520ef19b_ScreenShot-2026-6-5_20-18-47.png" />
+    <Content Include="uploads\eventos\ab2f9a908ea74644b8f8016632ce76ab_ScreenShot-2026-6-27_17-18-5.png" />
+    <Content Include="uploads\eventos\ba6bdc80b8454ff99955a2c57ed9bd61_ScreenShot-2026-6-27_17-18-5.png" />
+    <Content Include="uploads\perfis\104041f5570f4dc7a6b6acd1a05bf0a2.png" />
+    <Content Include="uploads\perfis\654d282b6fda4465996b56e61110ae0f.png" />
+    <Content Include="uploads\perfis\cb3536b92c5046888f965251c83bc995.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +248,13 @@
     <Compile Include="agrupamento\turma_secundario.aspx.designer.cs">
       <DependentUpon>turma_secundario.aspx</DependentUpon>
     </Compile>
+    <Compile Include="aluno\dashboard.aspx.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="aluno\dashboard.aspx.designer.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
     <Compile Include="aluno\HomeAluno.aspx.cs">
       <DependentUpon>HomeAluno.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -287,6 +307,41 @@
     <Compile Include="login.aspx.designer.cs">
       <DependentUpon>login.aspx</DependentUpon>
     </Compile>
+    <Compile Include="professor\calendario.aspx.cs">
+      <DependentUpon>calendario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="professor\calendario.aspx.designer.cs">
+      <DependentUpon>calendario.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="professor\conta.aspx.cs">
+      <DependentUpon>conta.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="professor\conta.aspx.designer.cs">
+      <DependentUpon>conta.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="professor\dashboard.aspx.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="professor\dashboard.aspx.designer.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="professor\ModeloProfessor.Master.cs">
+      <DependentUpon>ModeloProfessor.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="professor\ModeloProfessor.Master.designer.cs">
+      <DependentUpon>ModeloProfessor.Master</DependentUpon>
+    </Compile>
+    <Compile Include="professor\turma.aspx.cs">
+      <DependentUpon>turma.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="professor\turma.aspx.designer.cs">
+      <DependentUpon>turma.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\CriarConta.cs" />
   </ItemGroup>
@@ -303,7 +358,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="agrupamento\uploads\eventos\" />
-    <Folder Include="professor\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
