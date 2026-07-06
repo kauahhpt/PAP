@@ -169,63 +169,46 @@
         }
 
 
-      .post-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
+        .post-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
 
 
         .post-avatar {
-    width: 44px !important;
-    height: 44px !important;
-
-    min-width: 44px;
-    min-height: 44px;
-
-    max-width: 44px;
-    max-height: 44px;
-
-    flex: 0 0 44px;
-
-    border-radius: 50%;
-    overflow: hidden;
-
-    background: linear-gradient(
-        135deg,
-        #123570,
-        #2563eb
-    );
-
-    color: white;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-weight: 700;
-    font-size: 18px;
-}
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px;
+            min-height: 44px;
+            max-width: 44px;
+            max-height: 44px;
+            flex: 0 0 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient( 135deg, #123570, #2563eb );
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
 
 
-.post-avatar-img,
-.post-avatar img {
-    width: 44px !important;
-    height: 44px !important;
-
-    min-width: 44px;
-    min-height: 44px;
-
-    max-width: 44px !important;
-    max-height: 44px !important;
-
-    object-fit: cover;
-
-    border-radius: 50%;
-
-    display: block;
-}
+            .post-avatar-img,
+            .post-avatar img {
+                width: 44px !important;
+                height: 44px !important;
+                min-width: 44px;
+                min-height: 44px;
+                max-width: 44px !important;
+                max-height: 44px !important;
+                object-fit: cover;
+                border-radius: 50%;
+                display: block;
+            }
 
 
         .post-author {
@@ -1067,104 +1050,57 @@
                             TextMode="MultiLine"
                             Rows="5" />
 
-
                     </div>
-
-
-
                     <div class="mb-3">
-
-
                         <label class="form-label">
                             Anexo
-
                         </label>
-
-
                         <asp:FileUpload
                             ID="FilePublicacao"
                             runat="server"
                             CssClass="form-control" />
-
-
                     </div>
-
-
-
                     <div class="mb-2">
-
-
                         <asp:CheckBox
                             ID="ChkPublicaTurma"
                             runat="server"
                             Text=" Tornar visível para a turma" />
-
-
                     </div>
-
-
                 </div>
-
-
-
                 <div class="modal-footer">
-
-
                     <button
                         type="button"
                         class="btn btn-outline-secondary"
                         data-bs-dismiss="modal">
                         Cancelar
-
                     </button>
-
-
                     <asp:Button
                         ID="BtnPublicar"
                         runat="server"
                         Text="Publicar"
                         CssClass="btn btn-primary"
                         OnClick="BtnPublicar_Click" />
-
-
                 </div>
-
-
             </div>
-
-
         </div>
-
-
     </div>
-
-
-
     <!-- ==================================================
          CALENDÁRIO
     =================================================== -->
-
     <script>
-
         document.addEventListener(
             'DOMContentLoaded',
             function () {
-
                 var calendarElement =
                     document.getElementById('calendar');
-
-
                 var calendar =
                     new FullCalendar.Calendar(
                         calendarElement,
                         {
-
                             initialView:
                                 'dayGridMonth',
-
                             locale:
                                 'pt',
-
                             headerToolbar:
                             {
                                 left:
@@ -1176,29 +1112,24 @@
                                 right:
                                     'dayGridMonth,timeGridWeek,timeGridDay'
                             },
-
                             buttonText: {
                                 today: 'Hoje',
                                 month: 'Mês',
                                 week: 'Semana',
                                 day: 'Dia'
                             },
-
                             events:
                                 JSON.parse(
                                     document.getElementById(
-                                        '<%= HdnEvents.ClientID %>' 
-                                             ).value || '[]'
-                                         )
+                                        '<%= HdnEvents.ClientID %>'
+                                    ).value || '[]'
+                                )
+                        }
+                    );
+                calendar.render();
 
-                                 }
-                             );
-
-
-                         calendar.render();
-
-                     }
-                 );
+            }
+        );
 
     </script>
 

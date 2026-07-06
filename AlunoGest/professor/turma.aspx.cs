@@ -11,166 +11,826 @@ namespace AlunoGest.professor
     public partial class turma : System.Web.UI.Page
     {
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-        private int TurmaId { get { int id; return int.TryParse(Request.QueryString["id"], out id) ? id : 0; } }
 
-        protected void Page_Load(object sender, EventArgs e)
+        #region Propriedades
+
+        private int TurmaId
         {
-            try
+            get
             {
-                if (TurmaId == 0 || !ProfessorTemTurma()) { Response.Redirect("~/professor/dashboard.aspx"); return; }
-                if (!IsPostBack) { CarregarCabecalho(); CarregarAlunosDisponiveis(); CarregarAlunos(); CarregarAtividades(); }
+                int id;
+                return int.TryParse(Request.QueryString["id"], out id) ? id : 0;
             }
-            catch (Exception ex) { MostrarMensagem("Não foi possível carregar a turma: " + ex.Message, true); }
-        }
-
-        protected void TxtPesquisaAluno_TextChanged(object sender, EventArgs e) { CarregarAlunos(); }
-        protected void BtnAdicionarAluno_Click(object sender, EventArgs e)
-        {
-            int alunoId;
-            if (!int.TryParse(DdlAlunosDisponiveis.SelectedValue, out alunoId)) { MostrarMensagem("Selecione um aluno disponível.", true); return; }
-            if (!ProfessorTemTurma()) return;
-            const string sql = @"
-                INSERT INTO dbo.AlunoTurma(AlunoId,TurmaId,Desde,Ate,TemPortugues,TemEMRC)
-                SELECT @AlunoId,@TurmaId,CAST(GETDATE() AS date),NULL,0,0
-                WHERE EXISTS(SELECT 1 FROM dbo.Aluno a INNER JOIN dbo.Turma t ON t.Id=@TurmaId INNER JOIN dbo.Escola e ON e.Id=t.EscolaId
-                             WHERE a.Id=@AlunoId AND a.AgrupamentoId=e.AgrupamentoId AND a.Ativo=1)
-                  AND NOT EXISTS(SELECT 1 FROM dbo.AlunoTurma WHERE AlunoId=@AlunoId AND Ate IS NULL);";
-            using (SqlConnection c=new SqlConnection(_connectionString)) using (SqlCommand cmd=new SqlCommand(sql,c))
-            { cmd.Parameters.AddWithValue("@AlunoId",alunoId); cmd.Parameters.AddWithValue("@TurmaId",TurmaId); c.Open();
-              if(cmd.ExecuteNonQuery()==0){MostrarMensagem("O aluno já pertence a uma turma ou deixou de estar disponível.",true);return;} }
-            CarregarAlunosDisponiveis(); CarregarAlunos(); MostrarMensagem("Aluno adicionado à turma.",false);
-        }
-
-        protected void GridAlunos_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if(e.CommandName!="RemoverAluno" || !ProfessorTemTurma()) return;
-            int index; if(!int.TryParse(e.CommandArgument.ToString(),out index) || index<0 || index>=GridAlunos.Rows.Count)return;
-            int alunoTurmaId=Convert.ToInt32(GridAlunos.DataKeys[index].Value);
-            using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("UPDATE dbo.AlunoTurma SET Ate=CAST(GETDATE() AS date) WHERE Id=@Id AND TurmaId=@TurmaId AND Ate IS NULL",c))
-            {cmd.Parameters.AddWithValue("@Id",alunoTurmaId);cmd.Parameters.AddWithValue("@TurmaId",TurmaId);c.Open();cmd.ExecuteNonQuery();}
-            CarregarAlunosDisponiveis(); CarregarAlunos(); MostrarMensagem("Aluno removido da turma.",false);
-        }
-        protected void BtnNova_Click(object sender, EventArgs e) { LimparFormulario(); PainelFormulario.Visible=true; }
-        protected void BtnCancelar_Click(object sender, EventArgs e) { LimparFormulario(); PainelFormulario.Visible=false; }
-
-        protected void BtnGuardar_Click(object sender, EventArgs e)
-        {
-            if (!Page.IsValid || !ProfessorTemTurma()) return;
-            DateTime dataHora;
-            if (!DateTime.TryParse(TxtDataHora.Text, out dataHora)) { MostrarMensagem("A data e hora não são válidas.", true); return; }
-            try
-            {
-                int eventoId;
-                if (string.IsNullOrEmpty(HdnEventoId.Value)) eventoId=InserirEvento(dataHora);
-                else { eventoId=Convert.ToInt32(HdnEventoId.Value); AtualizarEvento(eventoId, dataHora); }
-                if (FileAnexo.HasFile) GuardarAnexo(eventoId);
-                LimparFormulario(); PainelFormulario.Visible=false; CarregarAtividades();
-                MostrarMensagem("Atividade guardada e publicada para a turma.", false);
-            }
-            catch (Exception ex) { MostrarMensagem("Não foi possível guardar: "+ex.Message, true); }
-        }
-
-        protected void GridAtividades_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            int index; if (!int.TryParse(e.CommandArgument.ToString(), out index) || index<0 || index>=GridAtividades.Rows.Count) return;
-            int eventoId=Convert.ToInt32(GridAtividades.DataKeys[index].Value);
-            if (e.CommandName=="EditarAtividade") CarregarEvento(eventoId);
-            else if (e.CommandName=="ApagarAtividade")
-            {
-                try { ApagarEvento(eventoId); CarregarAtividades(); PainelFormulario.Visible=false; MostrarMensagem("Atividade eliminada.", false); }
-                catch (Exception ex) { MostrarMensagem("Não foi possível eliminar: "+ex.Message, true); }
-            }
-        }
-
-        protected void RepeaterAnexos_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName!="Remover") return;
-            int eventoId; if (!int.TryParse(HdnEventoId.Value, out eventoId) || !EventoPertenceATurma(eventoId)) return;
-            ApagarAnexo(Convert.ToInt32(e.CommandArgument), eventoId); CarregarAnexos(eventoId);
-            MostrarMensagem("Anexo removido.", false);
         }
 
         private int ProfessorId
         {
             get
             {
-                int id; if (Session["ProfessorID"]!=null && int.TryParse(Session["ProfessorID"].ToString(),out id)) return id;
-                if (Session["UserId"]==null) throw new InvalidOperationException("A sessão terminou.");
-                using (SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand("SELECT Id FROM dbo.Professor WHERE UserId=@UserId AND Ativo=1",c))
-                { cmd.Parameters.AddWithValue("@UserId",new Guid(Session["UserId"].ToString())); c.Open(); object v=cmd.ExecuteScalar(); if(v==null) throw new InvalidOperationException("Professor não encontrado."); id=Convert.ToInt32(v); Session["ProfessorID"]=id; return id; }
+                int professorId;
+
+                if (Session["ProfessorID"] != null && int.TryParse(Session["ProfessorID"].ToString(), out professorId))
+                {
+                    return professorId;
+                }
+
+                if (Session["UserId"] == null)
+                {
+                    throw new InvalidOperationException("A sessão terminou. Inicie sessão novamente.");
+                }
+
+                Guid userId;
+                if (!Guid.TryParse(Session["UserId"].ToString(), out userId))
+                {
+                    throw new InvalidOperationException("O identificador do utilizador é inválido.");
+                }
+
+                const string sql = @"
+                    SELECT Id
+                    FROM dbo.Professor
+                    WHERE UserId = @UserId AND Ativo = 1;";
+
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
+                    conn.Open();
+
+                    object resultado = cmd.ExecuteScalar();
+                    if (resultado == null || resultado == DBNull.Value)
+                    {
+                        throw new InvalidOperationException("Professor não encontrado.");
+                    }
+
+                    professorId = Convert.ToInt32(resultado);
+                    Session["ProfessorID"] = professorId;
+                    return professorId;
+                }
             }
         }
 
-        private bool ProfessorTemTurma()
+        #endregion
+
+        #region Página
+
+        protected void Page_Load(object sender, EventArgs e)
         {
-            const string sql=@"SELECT COUNT(1) FROM dbo.TurmaDisciplinaProfessor tdp INNER JOIN dbo.TurmaDisciplina td ON td.Id=tdp.TurmaDisciplinaId WHERE tdp.ProfessorId=@ProfessorId AND td.TurmaId=@TurmaId AND tdp.Ate IS NULL";
-            using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) { cmd.Parameters.AddWithValue("@ProfessorId",ProfessorId); cmd.Parameters.AddWithValue("@TurmaId",TurmaId); c.Open(); return Convert.ToInt32(cmd.ExecuteScalar())>0; }
+            try
+            {
+                if (TurmaId == 0 || !ProfessorTemAcessoATurma())
+                {
+                    Response.Redirect("~/professor/dashboard.aspx");
+                    return;
+                }
+
+                if (!IsPostBack)
+                {
+                    CarregarPagina();
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarMensagem("Não foi possível carregar a turma: " + ex.Message, true);
+            }
         }
+
+        private void CarregarPagina()
+        {
+            CarregarCabecalho();
+            CarregarResumo();
+            CarregarAlunos();
+            CarregarProfessores();
+            CarregarAtividades();
+        }
+
+        protected void TxtPesquisaAluno_TextChanged(object sender, EventArgs e)
+        {
+            CarregarAlunos();
+        }
+
+        #endregion
+
+        #region Acesso à turma
+
+        private bool ProfessorTemAcessoATurma()
+        {
+            const string sql = @"
+                SELECT COUNT(1)
+                FROM dbo.TurmaDisciplinaProfessor tdp
+                INNER JOIN dbo.TurmaDisciplina td ON td.Id = tdp.TurmaDisciplinaId
+                WHERE tdp.ProfessorId = @ProfessorId
+                  AND td.TurmaId = @TurmaId
+                  AND tdp.Ate IS NULL;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@ProfessorId", SqlDbType.Int).Value = ProfessorId;
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                conn.Open();
+
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
+        #endregion
+
+        #region Cabeçalho e resumo
 
         private void CarregarCabecalho()
         {
-            const string sql=@"SELECT CAST(t.AnoEscolaridade AS varchar(2))+'.º'+t.CodigoTurma Turma,e.Nome,al.Descricao FROM dbo.Turma t INNER JOIN dbo.Escola e ON e.Id=t.EscolaId INNER JOIN dbo.AnoLetivo al ON al.Id=t.AnoLetivoId WHERE t.Id=@Id;
-                SELECT STUFF((SELECT DISTINCT ', '+d.Nome FROM dbo.TurmaDisciplina td INNER JOIN dbo.TurmaDisciplinaProfessor tdp ON tdp.TurmaDisciplinaId=td.Id AND tdp.ProfessorId=@ProfessorId AND tdp.Ate IS NULL INNER JOIN dbo.Disciplina d ON d.Id=td.DisciplinaId WHERE td.TurmaId=@Id FOR XML PATH(''),TYPE).value('.','nvarchar(max)'),1,2,'');";
-            using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) { cmd.Parameters.AddWithValue("@Id",TurmaId); cmd.Parameters.AddWithValue("@ProfessorId",ProfessorId); c.Open(); using(SqlDataReader r=cmd.ExecuteReader()) { if(r.Read()){LblTurma.Text="Turma "+r["Turma"]; LblDetalhes.Text=r["Nome"]+" | "+r["Descricao"];} if(r.NextResult()&&r.Read()) LblDisciplinas.Text=r[0].ToString(); } }
+            const string sql = @"
+                SELECT
+                    CAST(t.AnoEscolaridade AS varchar(2)) + '.º' + t.CodigoTurma AS Turma,
+                    e.Nome AS Escola,
+                    al.Descricao AS AnoLetivo
+                FROM dbo.Turma t
+                INNER JOIN dbo.Escola e ON e.Id = t.EscolaId
+                INNER JOIN dbo.AnoLetivo al ON al.Id = t.AnoLetivoId
+                WHERE t.Id = @TurmaId;
+
+                SELECT STUFF
+                (
+                    (
+                        SELECT DISTINCT ', ' + d.Nome
+                        FROM dbo.TurmaDisciplina td
+                        INNER JOIN dbo.TurmaDisciplinaProfessor tdp ON tdp.TurmaDisciplinaId = td.Id
+                        INNER JOIN dbo.Disciplina d ON d.Id = td.DisciplinaId
+                        WHERE td.TurmaId = @TurmaId
+                          AND tdp.ProfessorId = @ProfessorId
+                          AND tdp.Ate IS NULL
+                        FOR XML PATH(''), TYPE
+                    ).value('.', 'nvarchar(max)'), 1, 2, ''
+                ) AS Disciplinas;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                cmd.Parameters.Add("@ProfessorId", SqlDbType.Int).Value = ProfessorId;
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        LblTurma.Text = "Turma " + reader["Turma"].ToString();
+                        LblDetalhes.Text = reader["Escola"].ToString() + " | " + reader["AnoLetivo"].ToString();
+                    }
+
+                    if (reader.NextResult() && reader.Read())
+                    {
+                        LblDisciplinas.Text = reader["Disciplinas"] == DBNull.Value
+                            ? "Sem disciplina atribuída"
+                            : reader["Disciplinas"].ToString();
+                    }
+                }
+            }
         }
+
+        private void CarregarResumo()
+        {
+            const string sql = @"
+                SELECT
+                    (
+                        SELECT COUNT(*)
+                        FROM dbo.AlunoTurma at2
+                        INNER JOIN dbo.Aluno a ON a.Id = at2.AlunoId
+                        WHERE at2.TurmaId = @TurmaId
+                          AND at2.Ate IS NULL
+                          AND a.Ativo = 1
+                    ) AS TotalAlunos,
+                    (
+                        SELECT COUNT(DISTINCT tdp.ProfessorId)
+                        FROM dbo.TurmaDisciplina td
+                        INNER JOIN dbo.TurmaDisciplinaProfessor tdp ON tdp.TurmaDisciplinaId = td.Id
+                        INNER JOIN dbo.Professor p ON p.Id = tdp.ProfessorId
+                        WHERE td.TurmaId = @TurmaId
+                          AND tdp.Ate IS NULL
+                          AND p.Ativo = 1
+                    ) AS TotalProfessores,
+                    (
+                        SELECT COUNT(*)
+                        FROM dbo.Evento ev
+                        WHERE ev.TurmaId = @TurmaId
+                          AND ev.DataHora >= GETDATE()
+                    ) AS TotalAtividades;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        LblTotalAlunos.Text = reader["TotalAlunos"].ToString();
+                        LblTotalProfessores.Text = reader["TotalProfessores"].ToString();
+                        LblTotalAtividades.Text = reader["TotalAtividades"].ToString();
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Alunos
 
         private void CarregarAlunos()
         {
-            const string sql=@"SELECT at2.Id AlunoTurmaId,ROW_NUMBER() OVER(ORDER BY a.NomeCompleto) Numero,a.NomeCompleto,a.NumeroProcesso,a.Email,at2.Desde FROM dbo.AlunoTurma at2 INNER JOIN dbo.Aluno a ON a.Id=at2.AlunoId WHERE at2.TurmaId=@TurmaId AND at2.Ate IS NULL AND (@Pesquisa='' OR a.NomeCompleto LIKE '%'+@Pesquisa+'%' OR a.NumeroProcesso LIKE '%'+@Pesquisa+'%') ORDER BY a.NomeCompleto";
-            DataTable dt=new DataTable(); using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) using(SqlDataAdapter da=new SqlDataAdapter(cmd)) { cmd.Parameters.AddWithValue("@TurmaId",TurmaId); cmd.Parameters.AddWithValue("@Pesquisa",TxtPesquisaAluno.Text.Trim()); da.Fill(dt); } GridAlunos.DataSource=dt; GridAlunos.DataBind();
+            const string sql = @"
+                SELECT a.Id, a.NomeCompleto, a.NumeroProcesso, a.Email, a.Foto
+                FROM dbo.AlunoTurma at2
+                INNER JOIN dbo.Aluno a ON a.Id = at2.AlunoId
+                WHERE at2.TurmaId = @TurmaId
+                  AND at2.Ate IS NULL
+                  AND a.Ativo = 1
+                  AND (
+                        @Pesquisa = ''
+                        OR a.NomeCompleto LIKE '%' + @Pesquisa + '%'
+                        OR a.NumeroProcesso LIKE '%' + @Pesquisa + '%'
+                      )
+                ORDER BY a.NomeCompleto;";
+
+            DataTable tabela = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                cmd.Parameters.Add("@Pesquisa", SqlDbType.NVarChar, 200).Value = TxtPesquisaAluno.Text.Trim();
+                adapter.Fill(tabela);
+            }
+
+            RepeaterAlunos.DataSource = tabela;
+            RepeaterAlunos.DataBind();
+            PainelSemAlunos.Visible = tabela.Rows.Count == 0;
         }
 
-        private void CarregarAlunosDisponiveis()
+        #endregion
+
+        #region Professores
+
+        private void CarregarProfessores()
         {
-            const string sql=@"SELECT a.Id,a.NomeCompleto+' ('+ISNULL(a.NumeroProcesso,'sem processo')+')' Nome FROM dbo.Aluno a INNER JOIN dbo.Turma t ON t.Id=@TurmaId INNER JOIN dbo.Escola e ON e.Id=t.EscolaId WHERE a.AgrupamentoId=e.AgrupamentoId AND a.Ativo=1 AND NOT EXISTS(SELECT 1 FROM dbo.AlunoTurma at2 WHERE at2.AlunoId=a.Id AND at2.Ate IS NULL) ORDER BY a.NomeCompleto";
-            DataTable dt=new DataTable();using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand(sql,c))using(SqlDataAdapter da=new SqlDataAdapter(cmd)){cmd.Parameters.AddWithValue("@TurmaId",TurmaId);da.Fill(dt);}DdlAlunosDisponiveis.DataSource=dt;DdlAlunosDisponiveis.DataTextField="Nome";DdlAlunosDisponiveis.DataValueField="Id";DdlAlunosDisponiveis.DataBind();DdlAlunosDisponiveis.Items.Insert(0,new ListItem("-- selecionar --",""));
+            const string sql = @"
+                SELECT
+                    p.Id,
+                    p.Nome,
+                    STUFF
+                    (
+                        (
+                            SELECT DISTINCT ', ' + d2.Nome
+                            FROM dbo.TurmaDisciplina td2
+                            INNER JOIN dbo.TurmaDisciplinaProfessor tdp2 ON tdp2.TurmaDisciplinaId = td2.Id
+                            INNER JOIN dbo.Disciplina d2 ON d2.Id = td2.DisciplinaId
+                            WHERE td2.TurmaId = @TurmaId
+                              AND tdp2.ProfessorId = p.Id
+                              AND tdp2.Ate IS NULL
+                            FOR XML PATH(''), TYPE
+                        ).value('.', 'nvarchar(max)'), 1, 2, ''
+                    ) AS Disciplinas
+                FROM dbo.Professor p
+                WHERE p.Ativo = 1
+                  AND EXISTS
+                  (
+                        SELECT 1
+                        FROM dbo.TurmaDisciplina td
+                        INNER JOIN dbo.TurmaDisciplinaProfessor tdp ON tdp.TurmaDisciplinaId = td.Id
+                        WHERE td.TurmaId = @TurmaId
+                          AND tdp.ProfessorId = p.Id
+                          AND tdp.Ate IS NULL
+                  )
+                ORDER BY p.Nome;";
+
+            DataTable tabela = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                adapter.Fill(tabela);
+            }
+
+            RepeaterProfessores.DataSource = tabela;
+            RepeaterProfessores.DataBind();
+            PainelSemProfessores.Visible = tabela.Rows.Count == 0;
+        }
+
+        #endregion
+
+        #region Atividades
+
+        protected void BtnNova_Click(object sender, EventArgs e)
+        {
+            LimparFormulario();
+            PainelFormulario.Visible = true;
+        }
+
+        protected void BtnCancelar_Click(object sender, EventArgs e)
+        {
+            LimparFormulario();
+            PainelFormulario.Visible = false;
+        }
+
+        protected void BtnGuardar_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid || !ProfessorTemAcessoATurma())
+            {
+                return;
+            }
+
+            DateTime dataHora;
+            if (!DateTime.TryParse(TxtDataHora.Text, out dataHora))
+            {
+                MostrarMensagem("A data e hora não são válidas.", true);
+                return;
+            }
+
+            try
+            {
+                int eventoId;
+
+                if (string.IsNullOrWhiteSpace(HdnEventoId.Value))
+                {
+                    eventoId = InserirEvento(dataHora);
+                }
+                else
+                {
+                    eventoId = Convert.ToInt32(HdnEventoId.Value);
+                    AtualizarEvento(eventoId, dataHora);
+                }
+
+                if (FileAnexo.HasFile)
+                {
+                    GuardarAnexo(eventoId);
+                }
+
+                LimparFormulario();
+                PainelFormulario.Visible = false;
+                CarregarAtividades();
+                CarregarResumo();
+                MostrarMensagem("Atividade guardada e publicada para a turma.", false);
+            }
+            catch (Exception ex)
+            {
+                MostrarMensagem("Não foi possível guardar: " + ex.Message, true);
+            }
         }
 
         private void CarregarAtividades()
         {
-            const string sql=@"SELECT ev.Id,ev.Tipo,ev.Titulo,ev.DataHora,(SELECT COUNT(*) FROM dbo.EventoAnexo ea WHERE ea.EventoId=ev.Id) TotalAnexos FROM dbo.Evento ev WHERE ev.TurmaId=@TurmaId ORDER BY ev.DataHora DESC";
-            DataTable dt=new DataTable(); using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) using(SqlDataAdapter da=new SqlDataAdapter(cmd)) {cmd.Parameters.AddWithValue("@TurmaId",TurmaId); da.Fill(dt);} GridAtividades.DataSource=dt; GridAtividades.DataBind();
+            const string sql = @"
+                SELECT
+                    ev.Id,
+                    ev.Tipo,
+                    ev.Titulo,
+                    ev.DataHora,
+                    (
+                        SELECT COUNT(*)
+                        FROM dbo.EventoAnexo ea
+                        WHERE ea.EventoId = ev.Id
+                    ) AS TotalAnexos
+                FROM dbo.Evento ev
+                WHERE ev.TurmaId = @TurmaId
+                ORDER BY ev.DataHora DESC;";
+
+            DataTable tabela = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                adapter.Fill(tabela);
+            }
+
+            GridAtividades.DataSource = tabela;
+            GridAtividades.DataBind();
         }
 
         private int InserirEvento(DateTime dataHora)
         {
-            const string sql=@"INSERT INTO dbo.Evento(AlunoId,TurmaId,Titulo,Tipo,DataHora) VALUES(NULL,@TurmaId,@Titulo,@Tipo,@DataHora); SELECT CAST(SCOPE_IDENTITY() AS int);";
-            using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) { ParametrosEvento(cmd,dataHora); c.Open(); return Convert.ToInt32(cmd.ExecuteScalar()); }
-        }
-        private void AtualizarEvento(int id,DateTime dataHora)
-        {
-            const string sql=@"UPDATE dbo.Evento SET Titulo=@Titulo,Tipo=@Tipo,DataHora=@DataHora WHERE Id=@Id AND TurmaId=@TurmaId";
-            using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) { ParametrosEvento(cmd,dataHora); cmd.Parameters.AddWithValue("@Id",id); c.Open(); if(cmd.ExecuteNonQuery()==0) throw new InvalidOperationException("Atividade não encontrada."); }
-        }
-        private void ParametrosEvento(SqlCommand cmd,DateTime dataHora) { cmd.Parameters.AddWithValue("@TurmaId",TurmaId); cmd.Parameters.AddWithValue("@Titulo",TxtTitulo.Text.Trim()); cmd.Parameters.AddWithValue("@Tipo",DdlTipo.SelectedValue); cmd.Parameters.AddWithValue("@DataHora",dataHora); }
+            const string sql = @"
+                INSERT INTO dbo.Evento (AlunoId, TurmaId, Titulo, Tipo, DataHora)
+                VALUES (NULL, @TurmaId, @Titulo, @Tipo, @DataHora);
 
-        private void CarregarEvento(int id)
-        {
-            const string sql="SELECT Id,Titulo,Tipo,DataHora FROM dbo.Evento WHERE Id=@Id AND TurmaId=@TurmaId";
-            using(SqlConnection c=new SqlConnection(_connectionString)) using(SqlCommand cmd=new SqlCommand(sql,c)) {cmd.Parameters.AddWithValue("@Id",id);cmd.Parameters.AddWithValue("@TurmaId",TurmaId);c.Open();using(SqlDataReader r=cmd.ExecuteReader()){if(!r.Read())return;HdnEventoId.Value=r["Id"].ToString();TxtTitulo.Text=r["Titulo"].ToString();DdlTipo.SelectedValue=r["Tipo"].ToString();TxtDataHora.Text=Convert.ToDateTime(r["DataHora"]).ToString("yyyy-MM-ddTHH:mm");}}
-            PainelFormulario.Visible=true; CarregarAnexos(id);
+                SELECT CAST(SCOPE_IDENTITY() AS int);";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                AdicionarParametrosEvento(cmd, dataHora);
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
         }
-        private bool EventoPertenceATurma(int id) { using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("SELECT COUNT(1) FROM dbo.Evento WHERE Id=@Id AND TurmaId=@TurmaId",c)){cmd.Parameters.AddWithValue("@Id",id);cmd.Parameters.AddWithValue("@TurmaId",TurmaId);c.Open();return Convert.ToInt32(cmd.ExecuteScalar())>0;} }
+
+        private void AtualizarEvento(int eventoId, DateTime dataHora)
+        {
+            const string sql = @"
+                UPDATE dbo.Evento
+                SET Titulo = @Titulo,
+                    Tipo = @Tipo,
+                    DataHora = @DataHora
+                WHERE Id = @EventoId AND TurmaId = @TurmaId;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                AdicionarParametrosEvento(cmd, dataHora);
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                conn.Open();
+
+                if (cmd.ExecuteNonQuery() == 0)
+                {
+                    throw new InvalidOperationException("Atividade não encontrada.");
+                }
+            }
+        }
+
+        private void AdicionarParametrosEvento(SqlCommand cmd, DateTime dataHora)
+        {
+            cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+            cmd.Parameters.Add("@Titulo", SqlDbType.NVarChar, 200).Value = TxtTitulo.Text.Trim();
+            cmd.Parameters.Add("@Tipo", SqlDbType.NVarChar, 50).Value = DdlTipo.SelectedValue;
+            cmd.Parameters.Add("@DataHora", SqlDbType.DateTime).Value = dataHora;
+        }
+
+        #endregion
+
+        #region Grid de atividades
+
+        protected void GridAtividades_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            int index;
+            if (!int.TryParse(e.CommandArgument.ToString(), out index) || index < 0 || index >= GridAtividades.Rows.Count)
+            {
+                return;
+            }
+
+            int eventoId = Convert.ToInt32(GridAtividades.DataKeys[index].Value);
+
+            if (e.CommandName == "EditarAtividade")
+            {
+                CarregarEvento(eventoId);
+            }
+            else if (e.CommandName == "ApagarAtividade")
+            {
+                try
+                {
+                    ApagarEvento(eventoId);
+                    CarregarAtividades();
+                    CarregarResumo();
+                    PainelFormulario.Visible = false;
+                    MostrarMensagem("Atividade eliminada.", false);
+                }
+                catch (Exception ex)
+                {
+                    MostrarMensagem("Não foi possível eliminar: " + ex.Message, true);
+                }
+            }
+        }
+
+        private void CarregarEvento(int eventoId)
+        {
+            const string sql = @"
+                SELECT Id, Titulo, Tipo, DataHora
+                FROM dbo.Evento
+                WHERE Id = @EventoId AND TurmaId = @TurmaId;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read())
+                    {
+                        return;
+                    }
+
+                    HdnEventoId.Value = reader["Id"].ToString();
+                    TxtTitulo.Text = reader["Titulo"].ToString();
+                    DdlTipo.SelectedValue = reader["Tipo"].ToString();
+                    TxtDataHora.Text = Convert.ToDateTime(reader["DataHora"]).ToString("yyyy-MM-ddTHH:mm");
+                }
+            }
+
+            PainelFormulario.Visible = true;
+            CarregarAnexos(eventoId);
+        }
+
+        private bool EventoPertenceATurma(int eventoId)
+        {
+            const string sql = @"
+                SELECT COUNT(1)
+                FROM dbo.Evento
+                WHERE Id = @EventoId AND TurmaId = @TurmaId;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                cmd.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                conn.Open();
+
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
+        #endregion
+
+        #region Anexos
+
+        protected void RepeaterAnexos_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName != "Remover")
+            {
+                return;
+            }
+
+            int eventoId;
+            if (!int.TryParse(HdnEventoId.Value, out eventoId) || !EventoPertenceATurma(eventoId))
+            {
+                return;
+            }
+
+            int anexoId = Convert.ToInt32(e.CommandArgument);
+            ApagarAnexo(anexoId, eventoId);
+            CarregarAnexos(eventoId);
+            MostrarMensagem("Anexo removido.", false);
+        }
 
         private void GuardarAnexo(int eventoId)
         {
-            if(FileAnexo.PostedFile.ContentLength>10*1024*1024) throw new InvalidOperationException("O anexo excede 10 MB.");
-            string original=Path.GetFileName(FileAnexo.FileName); string nome=Guid.NewGuid().ToString("N")+"_"+original; string pasta=Server.MapPath("~/uploads/eventos/"); Directory.CreateDirectory(pasta); FileAnexo.SaveAs(Path.Combine(pasta,nome));
-            using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("INSERT INTO dbo.EventoAnexo(EventoId,NomeFicheiro,CaminhoFicheiro) VALUES(@EventoId,@Nome,@Caminho)",c)){cmd.Parameters.AddWithValue("@EventoId",eventoId);cmd.Parameters.AddWithValue("@Nome",original);cmd.Parameters.AddWithValue("@Caminho",ResolveUrl("~/uploads/eventos/"+nome));c.Open();cmd.ExecuteNonQuery();}
+            if (FileAnexo.PostedFile.ContentLength > 10 * 1024 * 1024)
+            {
+                throw new InvalidOperationException("O anexo excede 10 MB.");
+            }
+
+            string nomeOriginal = Path.GetFileName(FileAnexo.FileName);
+            string nomeGuardado = Guid.NewGuid().ToString("N") + "_" + nomeOriginal;
+            string pastaFisica = Server.MapPath("~/uploads/eventos/");
+            Directory.CreateDirectory(pastaFisica);
+
+            string caminhoFisico = Path.Combine(pastaFisica, nomeGuardado);
+            FileAnexo.SaveAs(caminhoFisico);
+
+            string caminhoRelativo = ResolveUrl("~/uploads/eventos/" + nomeGuardado);
+
+            const string sql = @"
+                INSERT INTO dbo.EventoAnexo (EventoId, NomeFicheiro, CaminhoFicheiro)
+                VALUES (@EventoId, @NomeFicheiro, @CaminhoFicheiro);";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                cmd.Parameters.Add("@NomeFicheiro", SqlDbType.NVarChar, 255).Value = nomeOriginal;
+                cmd.Parameters.Add("@CaminhoFicheiro", SqlDbType.NVarChar, 500).Value = caminhoRelativo;
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
         }
-        private void CarregarAnexos(int eventoId) { DataTable dt=new DataTable();using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("SELECT Id,NomeFicheiro,CaminhoFicheiro FROM dbo.EventoAnexo WHERE EventoId=@Id ORDER BY CreatedAt",c))using(SqlDataAdapter da=new SqlDataAdapter(cmd)){cmd.Parameters.AddWithValue("@Id",eventoId);da.Fill(dt);}RepeaterAnexos.DataSource=dt;RepeaterAnexos.DataBind(); }
-        private void ApagarAnexo(int id,int eventoId)
+
+        private void CarregarAnexos(int eventoId)
         {
-            string caminho=null;using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("SELECT CaminhoFicheiro FROM dbo.EventoAnexo WHERE Id=@Id AND EventoId=@EventoId",c)){cmd.Parameters.AddWithValue("@Id",id);cmd.Parameters.AddWithValue("@EventoId",eventoId);c.Open();object v=cmd.ExecuteScalar();if(v!=null)caminho=v.ToString();}
-            if(caminho==null)return;using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("DELETE FROM dbo.EventoAnexo WHERE Id=@Id AND EventoId=@EventoId",c)){cmd.Parameters.AddWithValue("@Id",id);cmd.Parameters.AddWithValue("@EventoId",eventoId);c.Open();cmd.ExecuteNonQuery();} ApagarFicheiro(caminho);
+            const string sql = @"
+                SELECT Id, NomeFicheiro, CaminhoFicheiro
+                FROM dbo.EventoAnexo
+                WHERE EventoId = @EventoId
+                ORDER BY CreatedAt;";
+
+            DataTable tabela = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                adapter.Fill(tabela);
+            }
+
+            RepeaterAnexos.DataSource = tabela;
+            RepeaterAnexos.DataBind();
         }
-        private void ApagarEvento(int id)
+
+        private void ApagarAnexo(int anexoId, int eventoId)
         {
-            if(!EventoPertenceATurma(id))return;List<string> caminhos=new List<string>();using(SqlConnection c=new SqlConnection(_connectionString))using(SqlCommand cmd=new SqlCommand("SELECT CaminhoFicheiro FROM dbo.EventoAnexo WHERE EventoId=@Id",c)){cmd.Parameters.AddWithValue("@Id",id);c.Open();using(SqlDataReader r=cmd.ExecuteReader())while(r.Read())caminhos.Add(r[0].ToString());}
-            using(SqlConnection c=new SqlConnection(_connectionString)){c.Open();SqlTransaction t=c.BeginTransaction();try{using(SqlCommand a=new SqlCommand("DELETE FROM dbo.EventoAnexo WHERE EventoId=@Id",c,t)){a.Parameters.AddWithValue("@Id",id);a.ExecuteNonQuery();}using(SqlCommand e=new SqlCommand("DELETE FROM dbo.Evento WHERE Id=@Id AND TurmaId=@TurmaId",c,t)){e.Parameters.AddWithValue("@Id",id);e.Parameters.AddWithValue("@TurmaId",TurmaId);e.ExecuteNonQuery();}t.Commit();}catch{t.Rollback();throw;}} foreach(string p in caminhos)ApagarFicheiro(p);
+            string caminhoFicheiro = null;
+
+            const string sqlObter = @"
+                SELECT CaminhoFicheiro
+                FROM dbo.EventoAnexo
+                WHERE Id = @AnexoId AND EventoId = @EventoId;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sqlObter, conn))
+            {
+                cmd.Parameters.Add("@AnexoId", SqlDbType.Int).Value = anexoId;
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                conn.Open();
+
+                object resultado = cmd.ExecuteScalar();
+                if (resultado != null && resultado != DBNull.Value)
+                {
+                    caminhoFicheiro = resultado.ToString();
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(caminhoFicheiro))
+            {
+                return;
+            }
+
+            const string sqlApagar = @"
+                DELETE FROM dbo.EventoAnexo
+                WHERE Id = @AnexoId AND EventoId = @EventoId;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sqlApagar, conn))
+            {
+                cmd.Parameters.Add("@AnexoId", SqlDbType.Int).Value = anexoId;
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            ApagarFicheiro(caminhoFicheiro);
         }
-        private void ApagarFicheiro(string caminho) { try { string p=Server.MapPath(caminho);if(File.Exists(p))File.Delete(p); } catch { } }
-        private void LimparFormulario(){HdnEventoId.Value="";TxtTitulo.Text="";TxtDataHora.Text="";DdlTipo.SelectedIndex=0;RepeaterAnexos.DataSource=null;RepeaterAnexos.DataBind();}
-        private void MostrarMensagem(string texto,bool erro){LblMensagem.Text=texto;LblMensagem.CssClass=erro?"alert alert-warning d-block":"alert alert-success d-block";LblMensagem.Visible=true;}
+
+        #endregion
+
+        #region Eliminar atividade
+
+        private void ApagarEvento(int eventoId)
+        {
+            if (!EventoPertenceATurma(eventoId))
+            {
+                return;
+            }
+
+            List<string> caminhos = new List<string>();
+
+            const string sqlCaminhos = @"
+                SELECT CaminhoFicheiro
+                FROM dbo.EventoAnexo
+                WHERE EventoId = @EventoId;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand(sqlCaminhos, conn))
+            {
+                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        caminhos.Add(reader["CaminhoFicheiro"].ToString());
+                    }
+                }
+            }
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
+                {
+                    using (SqlCommand cmdAnexos = new SqlCommand(
+                        "DELETE FROM dbo.EventoAnexo WHERE EventoId = @EventoId;",
+                        conn, transaction))
+                    {
+                        cmdAnexos.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                        cmdAnexos.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand cmdEvento = new SqlCommand(
+                        "DELETE FROM dbo.Evento WHERE Id = @EventoId AND TurmaId = @TurmaId;",
+                        conn, transaction))
+                    {
+                        cmdEvento.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                        cmdEvento.Parameters.Add("@TurmaId", SqlDbType.Int).Value = TurmaId;
+                        cmdEvento.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
+            foreach (string caminho in caminhos)
+            {
+                ApagarFicheiro(caminho);
+            }
+        }
+
+        private void ApagarFicheiro(string caminho)
+        {
+            try
+            {
+                string caminhoFisico = Server.MapPath(caminho);
+                if (File.Exists(caminhoFisico))
+                {
+                    File.Delete(caminhoFisico);
+                }
+            }
+            catch { }
+        }
+
+        #endregion
+
+        #region Fotografias
+
+        protected bool TemFoto(object foto)
+        {
+            if (foto == null || foto == DBNull.Value)
+            {
+                return false;
+            }
+
+            return !string.IsNullOrWhiteSpace(foto.ToString());
+        }
+
+        protected string ObterFoto(object foto)
+        {
+            if (!TemFoto(foto))
+            {
+                return "";
+            }
+
+            string caminho = foto.ToString().Trim();
+
+            if (caminho.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                caminho.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return caminho;
+            }
+
+            if (caminho.StartsWith("~/"))
+            {
+                return ResolveUrl(caminho);
+            }
+
+            if (caminho.StartsWith("/"))
+            {
+                return ResolveUrl("~" + caminho);
+            }
+
+            return ResolveUrl("~/" + caminho);
+        }
+
+        protected string ObterInicial(object nome)
+        {
+            if (nome == null || nome == DBNull.Value)
+            {
+                return "?";
+            }
+
+            string texto = nome.ToString().Trim();
+            if (string.IsNullOrWhiteSpace(texto))
+            {
+                return "?";
+            }
+
+            return texto.Substring(0, 1).ToUpper();
+        }
+
+        #endregion
+
+        #region Utilitários
+
+        private void LimparFormulario()
+        {
+            HdnEventoId.Value = "";
+            TxtTitulo.Text = "";
+            TxtDataHora.Text = "";
+            DdlTipo.SelectedIndex = 0;
+            RepeaterAnexos.DataSource = null;
+            RepeaterAnexos.DataBind();
+        }
+
+        private void MostrarMensagem(string texto, bool erro)
+        {
+            LblMensagem.Text = texto;
+            LblMensagem.CssClass = erro ? "alert alert-warning d-block" : "alert alert-success d-block";
+            LblMensagem.Visible = true;
+        }
+
+        #endregion
     }
 }

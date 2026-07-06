@@ -22,24 +22,103 @@
 </head>
 <body>
     <form id="formProfessor" runat="server">
-        <nav class="navbar navbar-expand-lg navbar-dark topbar px-3 px-lg-4">
-            <a class="brand" href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">Inovar Inovado</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuProfessor">
-                <span class="navbar-toggler-icon"></span>
+      <nav class="navbar navbar-dark topbar px-3 px-lg-4">
+
+    <a
+        class="brand"
+        href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">
+
+        Inovar Inovado
+
+    </a>
+
+
+    <div class="ms-auto d-flex align-items-center">
+
+        <asp:Label
+            ID="LblProfessor"
+            runat="server"
+            CssClass="teacher-name me-3" />
+
+
+        <div class="dropdown">
+
+            <button
+                class="btn btn-dark dropdown-toggle"
+                type="button"
+                id="menuProfessor"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+
+                Menu
+
             </button>
-            <div class="collapse navbar-collapse" id="menuProfessor">
-                <div class="navbar-nav ms-lg-4">
-                    <a class="nav-link" href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">As minhas turmas</a>
-                    <a class="nav-link" href="<%= ResolveUrl("~/professor/calendario.aspx") %>">Calendário</a>
-                    <a class="nav-link" href="<%= ResolveUrl("~/professor/conta.aspx") %>">A minha conta</a>
-                </div>
-                <div class="ms-auto d-flex align-items-center gap-3">
-                    <asp:Label ID="LblProfessor" runat="server" CssClass="teacher-name" />
-                    <asp:LoginStatus ID="LoginStatus1" runat="server" CssClass="btn btn-outline-light btn-sm"
-                        LogoutText="Terminar sessão" LogoutAction="RedirectToLoginPage" OnLoggedOut="LoginStatus1_LoggedOut" />
-                </div>
-            </div>
-        </nav>
+
+
+            <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="menuProfessor">
+
+
+                <li>
+
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/professor/dashboard.aspx"
+                        Text="As minhas turmas"
+                        CssClass="dropdown-item" />
+
+                </li>
+
+
+                <li>
+
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/professor/calendario.aspx"
+                        Text="Home"
+                        CssClass="dropdown-item" />
+
+                </li>
+
+
+                <li>
+
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/professor/conta.aspx"
+                        Text="Minha conta"
+                        CssClass="dropdown-item" />
+
+                </li>
+
+
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+
+
+                <li>
+
+                    <asp:LoginStatus
+                        ID="LoginStatus1"
+                        runat="server"
+                        CssClass="dropdown-item"
+                        LogoutAction="RedirectToLoginPage"
+                        LogoutText="Terminar sessão"
+                        LoginText="Iniciar sessão"
+                        OnLoggedOut="LoginStatus1_LoggedOut" />
+
+                </li>
+
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
         <main class="container py-4">
             <asp:ContentPlaceHolder ID="mainContent" runat="server" />
         </main>

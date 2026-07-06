@@ -101,7 +101,7 @@
                         <asp:HyperLink
                             runat="server"
                             NavigateUrl="~/aluno/dashboard.aspx"
-                            Text="Dashboard"
+                            Text="Home"
                             CssClass="dropdown-item" />
                     </li>
 
@@ -109,15 +109,7 @@
                         <asp:HyperLink
                             runat="server"
                             NavigateUrl="~/aluno/InformacoesAluno.aspx"
-                            Text="As minhas informações"
-                            CssClass="dropdown-item" />
-                    </li>
-
-                    <li>
-                        <asp:HyperLink
-                            runat="server"
-                            NavigateUrl="~/aluno/NotasAluno.aspx"
-                            Text="Notas"
+                            Text="Minha Conta"
                             CssClass="dropdown-item" />
                     </li>
 
