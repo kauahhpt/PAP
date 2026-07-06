@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterAluno1.Master.cs" Inherits="AlunoGest.aluno.MasterAluno1" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterAluno1.Master.cs" Inherits="AlunoGest.aluno.MasterAluno1" %>
 
 <!DOCTYPE html>
 
@@ -118,6 +118,14 @@
                             runat="server"
                             NavigateUrl="~/aluno/NotasAluno.aspx"
                             Text="Notas"
+                            CssClass="dropdown-item" />
+                    </li>
+
+                    <li>
+                        <asp:HyperLink
+                            runat="server"
+                            NavigateUrl="~/aluno/MinhaTurma.aspx"
+                            Text="Minha Turma"
                             CssClass="dropdown-item" />
                     </li>
 

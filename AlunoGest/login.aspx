@@ -12,9 +12,8 @@
         <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
             <div class="p-4 bg-light border rounded">
                 <asp:Login ID="loginUtilizador" runat="server"
-                    CreateUserText="Criar conta"
-                    CreateUserUrl="criarConta.aspx"
-                    OnLoggedIn="loginUtilizador_LoggedIn"></asp:Login>
+                    OnLoggedIn="loginUtilizador_LoggedIn">
+                </asp:Login>
             </div>
         </div>
     </form>

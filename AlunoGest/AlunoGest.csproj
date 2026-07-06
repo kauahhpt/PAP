@@ -88,8 +88,8 @@
     <Content Include="agrupamento\turma_professores.aspx" />
     <Content Include="agrupamento\turma_secundario.aspx" />
     <Content Include="aluno\dashboard.aspx" />
-    <Content Include="aluno\HomeAluno.aspx" />
     <Content Include="aluno\InformacoesAluno.aspx" />
+    <Content Include="aluno\MInhaTurma.aspx" />
     <Content Include="aluno\NotasAluno.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -255,13 +255,6 @@
     <Compile Include="aluno\dashboard.aspx.designer.cs">
       <DependentUpon>dashboard.aspx</DependentUpon>
     </Compile>
-    <Compile Include="aluno\HomeAluno.aspx.cs">
-      <DependentUpon>HomeAluno.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="aluno\HomeAluno.aspx.designer.cs">
-      <DependentUpon>HomeAluno.aspx</DependentUpon>
-    </Compile>
     <Compile Include="aluno\InformacoesAluno.aspx.cs">
       <DependentUpon>InformacoesAluno.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -275,6 +268,13 @@
     </Compile>
     <Compile Include="aluno\MasterAluno1.Master.designer.cs">
       <DependentUpon>MasterAluno1.Master</DependentUpon>
+    </Compile>
+    <Compile Include="aluno\MInhaTurma.aspx.cs">
+      <DependentUpon>MInhaTurma.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="aluno\MInhaTurma.aspx.designer.cs">
+      <DependentUpon>MInhaTurma.aspx</DependentUpon>
     </Compile>
     <Compile Include="aluno\NotasAluno.aspx.cs">
       <DependentUpon>NotasAluno.aspx</DependentUpon>
