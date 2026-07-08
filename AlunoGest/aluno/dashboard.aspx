@@ -5,24 +5,24 @@
     CodeBehind="dashboard.aspx.cs"
     Inherits="AlunoGest.aluno.dashboard" %>
 
-
-<asp:Content ID="Head"
+<asp:Content
+    ID="Head"
     ContentPlaceHolderID="headContent"
     runat="server">
 
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css"
+    <link
+        href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css"
         rel="stylesheet" />
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-
     <style>
         /* =====================================================
-           CONTAINER GERAL
+           CONTAINER
         ===================================================== */
 
         .dashboard-page {
-            width: calc(100% - 40px);
+            width: 100%;
             max-width: 1500px;
             margin: 0 auto;
             text-align: left;
@@ -30,48 +30,47 @@
 
 
         /* =====================================================
-           CABEÇALHO DO DASHBOARD
+           CABEÇALHO
         ===================================================== */
 
         .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
             margin-bottom: 24px;
         }
 
             .dashboard-header h1 {
                 margin: 0 0 5px 0;
-                font-size: 30px;
-                font-weight: 700;
                 color: #1f2937;
+                font-size: 30px;
+                font-weight: 800;
             }
 
-            .dashboard-header .dashboard-resumo {
-                color: #64748b;
-                font-size: 15px;
-            }
+        .dashboard-resumo {
+            color: #64748b;
+            font-size: 15px;
+        }
 
 
         /* =====================================================
-           GRID PRINCIPAL
+           LAYOUT PRINCIPAL
         ===================================================== */
 
-        .dashboard-grid {
-            display: grid !important;
-            grid-template-columns: minmax(0, 1fr) 380px;
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(400px, 0.65fr);
             gap: 24px;
             align-items: start;
-            width: 100%;
         }
-
 
         .dashboard-main {
             min-width: 0;
-            width: 100%;
         }
 
-
-        .dashboard-sidebar {
+        .dashboard-side {
             min-width: 0;
-            width: 100%;
         }
 
 
@@ -87,24 +86,47 @@
             overflow: hidden;
         }
 
-
         .dashboard-card-body {
             padding: 20px;
         }
 
+        .side-card {
+            margin-bottom: 20px;
+        }
+
 
         /* =====================================================
-           CAIXA CRIAR PUBLICAÇÃO
+           CRIAR PUBLICAÇÃO
         ===================================================== */
 
         .create-post-card {
             margin-bottom: 24px;
         }
 
+        .create-post-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .create-post-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient( 135deg, #123570, #2563eb );
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+        }
 
         .create-post-button {
+            flex: 1;
             width: 100%;
-            padding: 16px 20px;
+            padding: 13px 18px;
             border: 1px solid #d8dee9;
             background: #f8fafc;
             border-radius: 30px;
@@ -114,7 +136,6 @@
             transition: background 0.2s, border-color 0.2s;
         }
 
-
             .create-post-button:hover {
                 background: #f1f5f9;
                 border-color: #94a3b8;
@@ -122,23 +143,36 @@
 
 
         /* =====================================================
-           TÍTULO DAS SECÇÕES
+           TÍTULOS
         ===================================================== */
 
-        .section-title {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 16px;
         }
 
-
-            .section-title h2 {
+            .section-header h2 {
                 margin: 0;
-                font-size: 20px;
-                font-weight: 700;
                 color: #1f2937;
+                font-size: 20px;
+                font-weight: 750;
             }
+
+        .section-description {
+            margin: 4px 0 0 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .side-card-title {
+            margin-bottom: 15px;
+            color: #1f2937;
+            font-size: 18px;
+            font-weight: 750;
+        }
 
 
         /* =====================================================
@@ -146,19 +180,16 @@
         ===================================================== */
 
         .feed-section {
-            margin-bottom: 24px;
+            min-width: 0;
         }
-
 
         .post-card {
             margin-bottom: 16px;
         }
 
-
             .post-card:last-child {
                 margin-bottom: 0;
             }
-
 
         .post-header {
             display: flex;
@@ -168,14 +199,12 @@
             margin-bottom: 15px;
         }
 
-
         .post-user {
             display: flex;
             align-items: center;
             gap: 12px;
             min-width: 0;
         }
-
 
         .post-avatar {
             width: 44px !important;
@@ -196,7 +225,6 @@
             font-size: 18px;
         }
 
-
             .post-avatar-img,
             .post-avatar img {
                 width: 44px !important;
@@ -210,20 +238,24 @@
                 display: block;
             }
 
-
-        .post-author {
-            font-weight: 700;
-            color: #1f2937;
-            font-size: 15px;
+        .post-user-info {
+            min-width: 0;
         }
 
+        .post-author {
+            color: #1f2937;
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
         .post-date {
             color: #94a3b8;
             font-size: 13px;
             margin-top: 2px;
         }
-
 
         .post-type {
             padding: 5px 10px;
@@ -235,22 +267,19 @@
             white-space: nowrap;
         }
 
-
         .post-title {
+            margin-bottom: 8px;
+            color: #1f2937;
             font-size: 19px;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 8px;
         }
-
 
         .publicacao-conteudo {
-            white-space: pre-line;
+            margin-bottom: 18px;
             color: #475569;
             line-height: 1.6;
-            margin-bottom: 18px;
+            white-space: pre-line;
         }
-
 
         .post-actions {
             display: flex;
@@ -262,19 +291,49 @@
 
 
         /* =====================================================
-           SIDEBAR
+           CALENDÁRIO COMPACTO
         ===================================================== */
 
-        .sidebar-card {
+        .calendar-card {
             margin-bottom: 20px;
         }
 
+        .calendar-container {
+            padding: 18px;
+        }
 
-        .sidebar-card-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 15px;
+        #calendar {
+            width: 100%;
+            background: #ffffff;
+        }
+
+        .fc .fc-toolbar {
+            gap: 8px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.05rem;
+            font-weight: 750;
+        }
+
+        .fc .fc-button {
+            padding: 0.35rem 0.55rem;
+            font-size: 0.78rem;
+        }
+
+        .fc .fc-col-header-cell-cushion {
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .fc .fc-daygrid-day-number {
+            color: #334155;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .fc .fc-event {
+            font-size: 11px;
         }
 
 
@@ -282,101 +341,131 @@
            TABELAS
         ===================================================== */
 
-        .dashboard-table {
-            margin-bottom: 0;
+        .table-wrapper {
             width: 100%;
+            overflow-x: auto;
         }
 
+        .dashboard-table {
+            width: 100%;
+            margin-bottom: 0;
+        }
 
             .dashboard-table th {
                 color: #475569;
-                font-size: 13px;
+                font-size: 12px;
                 font-weight: 700;
                 border-bottom: 1px solid #e2e8f0;
                 white-space: nowrap;
             }
 
-
             .dashboard-table td {
-                font-size: 14px;
-                vertical-align: middle;
                 color: #334155;
+                font-size: 13px;
+                vertical-align: middle;
+            }
+
+            .dashboard-table .btn {
+                white-space: nowrap;
             }
 
 
         /* =====================================================
-           CALENDÁRIO
-        ===================================================== */
-
-        .calendar-section {
-            margin-top: 24px;
-        }
-
-
-        #calendar {
-            background: #ffffff;
-            width: 100%;
-            min-height: 620px;
-        }
-
-
-        .calendar-container {
-            padding: 20px;
-        }
-
-
-        /* =====================================================
-           ENTREGA
+           PAINEL DE ENTREGA
         ===================================================== */
 
         .entrega-section {
             margin-top: 24px;
         }
 
+        .entrega-header {
+            margin-bottom: 15px;
+        }
+
+            .entrega-header h2 {
+                margin: 0;
+                color: #1f2937;
+                font-size: 21px;
+                font-weight: 750;
+            }
+
+        .anexo-professor {
+            display: inline-flex;
+            padding: 7px 10px;
+            margin: 4px 5px 4px 0;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+            .anexo-professor:hover {
+                background: #dbeafe;
+            }
+
 
         /* =====================================================
            RESPONSIVO
         ===================================================== */
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
+            .dashboard-layout {
+                grid-template-columns: minmax(0, 1fr) minmax(350px, 0.72fr);
+            }
+        }
 
-            .dashboard-grid {
+        @media (max-width: 950px) {
+            .dashboard-layout {
                 grid-template-columns: 1fr;
             }
 
-
-            .dashboard-sidebar {
+            .dashboard-side {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 20px;
             }
 
+            .calendar-card {
+                grid-column: 1 / -1;
+                margin-bottom: 0;
+            }
 
-            .sidebar-card {
+            .side-card {
                 margin-bottom: 0;
             }
         }
 
-
         @media (max-width: 700px) {
-
-            .dashboard-page {
-                width: calc(100% - 20px);
+            .dashboard-header {
+                flex-direction: column;
             }
 
-
-            .dashboard-sidebar {
+            .dashboard-side {
                 grid-template-columns: 1fr;
             }
 
+            .calendar-card {
+                grid-column: auto;
+            }
 
             .dashboard-card-body {
                 padding: 15px;
             }
 
-
             .post-header {
                 flex-direction: column;
+            }
+
+            .fc .fc-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .fc .fc-toolbar-chunk {
+                display: flex;
+                justify-content: center;
             }
         }
     </style>
@@ -384,14 +473,12 @@
 </asp:Content>
 
 
-
-<asp:Content ID="Main"
+<asp:Content
+    ID="Main"
     ContentPlaceHolderID="mainContent"
     runat="server">
 
-
     <div class="dashboard-page">
-
 
         <!-- ==================================================
              CABEÇALHO
@@ -399,20 +486,27 @@
 
         <div class="dashboard-header">
 
-            <h1>O meu dashboard</h1>
+            <div>
 
-            <div class="dashboard-resumo">
+                <h1>O meu dashboard
+                </h1>
 
-                <asp:Label
-                    ID="LblResumo"
-                    runat="server" />
+                <div class="dashboard-resumo">
+
+                    <asp:Label
+                        ID="LblResumo"
+                        runat="server" />
+
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- MENSAGENS -->
+        <!-- ==================================================
+             MENSAGENS
+        =================================================== -->
 
         <asp:Label
             ID="LblMensagem"
@@ -421,14 +515,14 @@
 
 
         <!-- ==================================================
-             GRID PRINCIPAL
+             LAYOUT PRINCIPAL
         =================================================== -->
 
-        <div class="dashboard-grid">
+        <div class="dashboard-layout">
 
 
             <!-- ==================================================
-                 COLUNA PRINCIPAL
+                 COLUNA PRINCIPAL - FEED
             =================================================== -->
 
             <div class="dashboard-main">
@@ -440,30 +534,44 @@
 
                     <div class="dashboard-card-body">
 
-                        <button
-                            type="button"
-                            class="create-post-button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modalPublicacao">
-                            Em que estás a pensar?
+                        <div class="create-post-top">
 
-                        </button>
+                            <div class="create-post-icon">
+                                +
+                            </div>
+
+                            <button
+                                type="button"
+                                class="create-post-button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalPublicacao">
+                                Em que estás a pensar?
+
+                            </button>
+
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                <!-- ==================================================
-                     FEED
-                =================================================== -->
+                <!-- FEED -->
 
                 <section class="feed-section">
 
+                    <div class="section-header">
 
-                    <div class="section-title">
+                        <div>
 
-                        <h2>Feed da turma</h2>
+                            <h2>Feed da turma
+                            </h2>
+
+                            <p class="section-description">
+                                Publicações e mensagens partilhadas com a tua turma.
+                            </p>
+
+                        </div>
 
                     </div>
 
@@ -473,23 +581,15 @@
                         runat="server"
                         OnItemCommand="RepeaterPublicacoes_ItemCommand">
 
-
                         <ItemTemplate>
-
 
                             <article class="dashboard-card post-card">
 
-
                                 <div class="dashboard-card-body">
-
-
-                                    <!-- CABEÇALHO DA PUBLICAÇÃO -->
 
                                     <div class="post-header">
 
-
                                         <div class="post-user">
-
 
                                             <div class="post-avatar">
 
@@ -508,14 +608,11 @@
 
                                             </div>
 
-
-                                            <div>
+                                            <div class="post-user-info">
 
                                                 <div class="post-author">
-
                                                     <%# Eval("NomeCompleto") %>
                                                 </div>
-
 
                                                 <div class="post-date">
 
@@ -529,7 +626,6 @@
 
                                             </div>
 
-
                                         </div>
 
 
@@ -539,12 +635,8 @@
 
                                         </span>
 
-
                                     </div>
 
-
-
-                                    <!-- CONTEÚDO -->
 
                                     <div class="post-title">
 
@@ -558,11 +650,7 @@
                                     </div>
 
 
-
-                                    <!-- AÇÕES -->
-
                                     <div class="post-actions">
-
 
                                         <asp:LinkButton
                                             runat="server"
@@ -570,213 +658,178 @@
                                             CommandArgument='<%# Eval("Id") %>'
                                             CssClass="btn btn-outline-primary btn-sm">
 
-
                                             Gosto (<%# Eval("TotalLikes") %>)
-
 
                                         </asp:LinkButton>
 
-
                                     </div>
-
 
                                 </div>
 
-
                             </article>
-
 
                         </ItemTemplate>
 
-
                     </asp:Repeater>
 
-
                 </section>
-
-
-
-                <!-- ==================================================
-                     CALENDÁRIO
-                =================================================== -->
-
-                <section class="calendar-section">
-
-
-                    <div class="section-title">
-
-                        <h2>Calendário</h2>
-
-                    </div>
-
-
-                    <div class="dashboard-card">
-
-
-                        <div class="calendar-container">
-
-                            <div id="calendar"></div>
-
-                        </div>
-
-
-                    </div>
-
-
-                </section>
-
 
             </div>
 
 
-
             <!-- ==================================================
-                 SIDEBAR
+                 COLUNA DIREITA
             =================================================== -->
 
-            <aside class="dashboard-sidebar">
+            <aside class="dashboard-side">
+
+
+                <!-- CALENDÁRIO -->
+
+                <div class="dashboard-card calendar-card">
+
+                    <div class="dashboard-card-body">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <h2>Calendário
+                                </h2>
+
+                                <p class="section-description">
+                                    Próximos testes, trabalhos e eventos.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="calendar-container">
+
+                        <div id="calendar"></div>
+
+                    </div>
+
+                </div>
 
 
                 <!-- TRABALHOS E TESTES -->
 
-                <div class="dashboard-card sidebar-card">
-
+                <div class="dashboard-card side-card">
 
                     <div class="dashboard-card-body">
 
-
-                        <div class="sidebar-card-title">
+                        <div class="side-card-title">
                             Trabalhos e testes
+                        </div>
+
+                        <div class="table-wrapper">
+
+                            <asp:GridView
+                                ID="GridEventos"
+                                runat="server"
+                                AutoGenerateColumns="false"
+                                CssClass="table table-hover dashboard-table"
+                                GridLines="None"
+                                DataKeyNames="Id"
+                                EmptyDataText="Ainda não existem eventos da turma."
+                                OnRowCommand="GridEventos_RowCommand">
+
+                                <Columns>
+
+                                    <asp:BoundField
+                                        DataField="Tipo"
+                                        HeaderText="Tipo" />
+
+                                    <asp:BoundField
+                                        DataField="Titulo"
+                                        HeaderText="Título" />
+
+                                    <asp:BoundField
+                                        DataField="DataHora"
+                                        HeaderText="Data"
+                                        DataFormatString="{0:dd/MM HH:mm}" />
+
+                                    <asp:BoundField
+                                        DataField="EstadoEntrega"
+                                        HeaderText="Entrega" />
+
+                                    <asp:TemplateField>
+
+                                        <ItemTemplate>
+
+                                            <asp:LinkButton
+                                                runat="server"
+                                                Text="Abrir"
+                                                CommandName="AbrirEvento"
+                                                CommandArgument='<%# Container.DataItemIndex %>'
+                                                CssClass="btn btn-primary btn-sm" />
+
+                                        </ItemTemplate>
+
+                                    </asp:TemplateField>
+
+                                </Columns>
+
+                            </asp:GridView>
 
                         </div>
 
-
-                        <asp:GridView
-                            ID="GridEventos"
-                            runat="server"
-                            AutoGenerateColumns="false"
-                            CssClass="table table-hover dashboard-table"
-                            GridLines="None"
-                            DataKeyNames="Id"
-                            EmptyDataText="Ainda não existem eventos da turma."
-                            OnRowCommand="GridEventos_RowCommand">
-
-
-                            <Columns>
-
-
-                                <asp:BoundField
-                                    DataField="Tipo"
-                                    HeaderText="Tipo" />
-
-
-                                <asp:BoundField
-                                    DataField="Titulo"
-                                    HeaderText="Título" />
-
-
-                                <asp:BoundField
-                                    DataField="DataHora"
-                                    HeaderText="Data"
-                                    DataFormatString="{0:dd/MM HH:mm}" />
-
-
-                                <asp:BoundField
-                                    DataField="EstadoEntrega"
-                                    HeaderText="Entrega" />
-
-
-                                <asp:TemplateField>
-
-
-                                    <ItemTemplate>
-
-
-                                        <asp:LinkButton
-                                            runat="server"
-                                            Text="Abrir"
-                                            CommandName="AbrirEvento"
-                                            CommandArgument='<%# Container.DataItemIndex %>'
-                                            CssClass="btn btn-primary btn-sm" />
-
-
-                                    </ItemTemplate>
-
-
-                                </asp:TemplateField>
-
-
-                            </Columns>
-
-
-                        </asp:GridView>
-
-
                     </div>
 
-
                 </div>
-
 
 
                 <!-- NOTAS -->
 
-                <div class="dashboard-card sidebar-card">
-
+                <div class="dashboard-card side-card">
 
                     <div class="dashboard-card-body">
 
-
-                        <div class="sidebar-card-title">
+                        <div class="side-card-title">
                             Notas e feedback
+                        </div>
+
+                        <div class="table-wrapper">
+
+                            <asp:GridView
+                                ID="GridNotas"
+                                runat="server"
+                                AutoGenerateColumns="false"
+                                CssClass="table table-hover dashboard-table"
+                                GridLines="None"
+                                EmptyDataText="Ainda não existem avaliações.">
+
+                                <Columns>
+
+                                    <asp:BoundField
+                                        DataField="Evento"
+                                        HeaderText="Evento" />
+
+                                    <asp:BoundField
+                                        DataField="Nota"
+                                        HeaderText="Nota" />
+
+                                    <asp:BoundField
+                                        DataField="Feedback"
+                                        HeaderText="Feedback" />
+
+                                </Columns>
+
+                            </asp:GridView>
 
                         </div>
 
-
-                        <asp:GridView
-                            ID="GridNotas"
-                            runat="server"
-                            AutoGenerateColumns="false"
-                            CssClass="table table-hover dashboard-table"
-                            GridLines="None"
-                            EmptyDataText="Ainda não existem avaliações.">
-
-
-                            <Columns>
-
-
-                                <asp:BoundField
-                                    DataField="Evento"
-                                    HeaderText="Evento" />
-
-
-                                <asp:BoundField
-                                    DataField="Nota"
-                                    HeaderText="Nota" />
-
-
-                                <asp:BoundField
-                                    DataField="Feedback"
-                                    HeaderText="Feedback" />
-
-
-                            </Columns>
-
-
-                        </asp:GridView>
-
-
                     </div>
-
 
                 </div>
 
-
             </aside>
 
-
         </div>
-
 
 
         <!-- ==================================================
@@ -789,18 +842,19 @@
             Visible="false"
             CssClass="dashboard-card entrega-section">
 
-
             <div class="dashboard-card-body">
 
+                <div class="entrega-header">
 
-                <h2>
+                    <h2>
 
-                    <asp:Label
-                        ID="LblEventoSelecionado"
-                        runat="server" />
+                        <asp:Label
+                            ID="LblEventoSelecionado"
+                            runat="server" />
 
-                </h2>
+                    </h2>
 
+                </div>
 
                 <asp:HiddenField
                     ID="HdnEventoId"
@@ -809,7 +863,6 @@
 
                 <p class="text-muted">
                     Anexos publicados pelo professor:
-
                 </p>
 
 
@@ -817,25 +870,18 @@
                     ID="RepeaterAnexosProfessor"
                     runat="server">
 
-
                     <ItemTemplate>
 
+                        <a
+                            class="anexo-professor"
+                            href='<%# Eval("CaminhoFicheiro") %>'
+                            target="_blank">
 
-                        <div>
+                            <%# Eval("NomeFicheiro") %>
 
-                            <a
-                                href='<%# Eval("CaminhoFicheiro") %>'
-                                target="_blank">
-
-                                <%# Eval("NomeFicheiro") %>
-
-                            </a>
-
-                        </div>
-
+                        </a>
 
                     </ItemTemplate>
-
 
                 </asp:Repeater>
 
@@ -845,33 +891,25 @@
 
                 <div class="row g-3">
 
-
                     <div class="col-md-5">
-
 
                         <label class="form-label">
                             Anexo da entrega
-
                         </label>
-
 
                         <asp:FileUpload
                             ID="FileEntrega"
                             runat="server"
                             CssClass="form-control" />
 
-
                     </div>
 
 
                     <div class="col-md-7">
 
-
                         <label class="form-label">
                             Observação
-
                         </label>
-
 
                         <asp:TextBox
                             ID="TxtObservacao"
@@ -880,15 +918,12 @@
                             TextMode="MultiLine"
                             Rows="2" />
 
-
                     </div>
-
 
                 </div>
 
 
                 <div class="mt-3">
-
 
                     <asp:Button
                         ID="BtnEntregar"
@@ -896,7 +931,6 @@
                         Text="Enviar entrega"
                         CssClass="btn btn-success"
                         OnClick="BtnEntregar_Click" />
-
 
                     <asp:Button
                         ID="BtnFecharEntrega"
@@ -906,12 +940,9 @@
                         OnClick="BtnFecharEntrega_Click"
                         CausesValidation="false" />
 
-
                 </div>
 
-
             </div>
-
 
         </asp:Panel>
 
@@ -920,9 +951,7 @@
             ID="HdnEvents"
             runat="server" />
 
-
     </div>
-
 
 
     <!-- ==================================================
@@ -936,22 +965,17 @@
         aria-labelledby="modalPublicacaoLabel"
         aria-hidden="true">
 
-
         <div class="modal-dialog modal-lg modal-dialog-centered">
-
 
             <div class="modal-content">
 
-
                 <div class="modal-header">
-
 
                     <h5
                         class="modal-title"
                         id="modalPublicacaoLabel">Criar publicação
 
                     </h5>
-
 
                     <button
                         type="button"
@@ -960,88 +984,66 @@
                         aria-label="Fechar">
                     </button>
 
-
                 </div>
-
 
 
                 <div class="modal-body">
 
-
                     <div class="mb-3">
-
 
                         <label class="form-label">
                             Tipo
-
                         </label>
-
 
                         <asp:DropDownList
                             ID="DdlTipoPublicacao"
                             runat="server"
                             CssClass="form-select">
 
-
                             <asp:ListItem
                                 Text="Publicação"
                                 Value="Publicacao" />
-
 
                             <asp:ListItem
                                 Text="Dúvida"
                                 Value="Duvida" />
 
-
                             <asp:ListItem
                                 Text="Material"
                                 Value="Material" />
-
 
                             <asp:ListItem
                                 Text="Aviso"
                                 Value="Aviso" />
 
-
                             <asp:ListItem
                                 Text="Dica"
                                 Value="Dica" />
 
-
                         </asp:DropDownList>
-
 
                     </div>
 
 
-
                     <div class="mb-3">
-
 
                         <label class="form-label">
                             Título
-
                         </label>
-
 
                         <asp:TextBox
                             ID="TxtTituloPublicacao"
                             runat="server"
                             CssClass="form-control" />
 
-
                     </div>
-
 
 
                     <div class="mb-3">
 
-
                         <label class="form-label">
                             Conteúdo
-
                         </label>
-
 
                         <asp:TextBox
                             ID="TxtConteudoPublicacao"
@@ -1051,73 +1053,103 @@
                             Rows="5" />
 
                     </div>
+
+
                     <div class="mb-3">
+
                         <label class="form-label">
                             Anexo
                         </label>
+
                         <asp:FileUpload
                             ID="FilePublicacao"
                             runat="server"
                             CssClass="form-control" />
+
                     </div>
+
+
                     <div class="mb-2">
+
                         <asp:CheckBox
                             ID="ChkPublicaTurma"
                             runat="server"
                             Text=" Tornar visível para a turma" />
+
                     </div>
+
                 </div>
+
+
                 <div class="modal-footer">
+
                     <button
                         type="button"
                         class="btn btn-outline-secondary"
                         data-bs-dismiss="modal">
                         Cancelar
+
                     </button>
+
                     <asp:Button
                         ID="BtnPublicar"
                         runat="server"
                         Text="Publicar"
                         CssClass="btn btn-primary"
                         OnClick="BtnPublicar_Click" />
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
+
     <!-- ==================================================
          CALENDÁRIO
     =================================================== -->
+
     <script>
         document.addEventListener(
             'DOMContentLoaded',
             function () {
+
                 var calendarElement =
                     document.getElementById('calendar');
+
                 var calendar =
                     new FullCalendar.Calendar(
                         calendarElement,
                         {
                             initialView:
                                 'dayGridMonth',
+
                             locale:
                                 'pt',
+
+                            height:
+                                500,
+
                             headerToolbar:
                             {
                                 left:
-                                    'prev,next today',
+                                    'prev,next',
 
                                 center:
                                     'title',
 
                                 right:
-                                    'dayGridMonth,timeGridWeek,timeGridDay'
+                                    'today'
                             },
-                            buttonText: {
-                                today: 'Hoje',
-                                month: 'Mês',
-                                week: 'Semana',
-                                day: 'Dia'
+
+                            buttonText:
+                            {
+                                today:
+                                    'Hoje'
                             },
+
                             events:
                                 JSON.parse(
                                     document.getElementById(
@@ -1126,12 +1158,10 @@
                                 )
                         }
                     );
-                calendar.render();
 
+                calendar.render();
             }
         );
-
     </script>
-
 
 </asp:Content>

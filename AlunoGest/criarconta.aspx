@@ -1,656 +1,1224 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="criarconta.aspx.cs" Inherits="AlunoGest.criarconta" %>
+﻿<%@ Page Language="C#"
+    AutoEventWireup="true"
+    CodeBehind="criarconta.aspx.cs"
+    Inherits="AlunoGest.criarconta" %>
 
 <!DOCTYPE html>
 
-<html lang="pt-PT" xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <!-- Meta Tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Inovar Inovado - Criar Conta" />
-    <meta name="theme-color" content="#343a40" />
-    <title>Inovar Inovado - Criar Conta</title>
+<html lang="pt-PT"
+xmlns="http://www.w3.org/1999/xhtml">
 
-    <!-- Bootstrap CSS -->
-    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+<head runat="server">
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1" />
+
+    <meta
+        name="description"
+        content="Inovar Inovado - Criar Conta" />
+
+    <meta
+        name="theme-color"
+        content="#123570" />
+
+    <title>Inovar Inovado | Criar Conta
+    </title>
+
+    <link
+        href="Content/bootstrap.min.css"
+        rel="stylesheet" />
+
 
     <style>
-        /* ========== VARIÁVEIS E RESET ========== */
-
-        :root {
-            --primary-dark: #343a40;
-            --primary-light: #007bff;
-            --secondary-gray: #6c757d;
-            --light-bg: #f8f9fa;
-            --border-color: #dee2e6;
-            --danger-color: #dc3545;
-            --success-color: #28a745;
-        }
-
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
+
+        html,
+        body {
+            margin: 0;
             width: 100%;
+            min-height: 100%;
         }
+
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #212529;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #2c3e50 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
+            background: #f3f6fb;
+            color: #1f2937;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ========== CONTAINER DO FORMULÁRIO ========== */
 
         form {
             width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100vh;
         }
+
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .register-page {
+            width: 100%;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(330px, 0.72fr) minmax(600px, 1.28fr);
+        }
+
+
+        /* =====================================================
+           ÁREA ESQUERDA
+        ===================================================== */
+
+        .brand-side {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 55px;
+            overflow: hidden;
+            background: linear-gradient( 145deg, #0f2c61 0%, #123570 45%, #1d4ed8 100% );
+            color: #ffffff;
+        }
+
+
+            .brand-side::before {
+                content: "";
+                position: absolute;
+                width: 400px;
+                height: 400px;
+                top: -170px;
+                right: -170px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.07);
+            }
+
+
+            .brand-side::after {
+                content: "";
+                position: absolute;
+                width: 280px;
+                height: 280px;
+                bottom: -130px;
+                left: -120px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.06);
+            }
+
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+
+        .brand-logo {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+
+        .brand-title {
+            margin: 0 0 14px 0;
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+
+        .brand-description {
+            max-width: 450px;
+            margin: 0 0 35px 0;
+            color: #dbeafe;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+
+        .brand-features {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+
+        .brand-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #eff6ff;
+            font-size: 14px;
+        }
+
+
+        .feature-check {
+            width: 27px;
+            height: 27px;
+            flex: 0 0 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           ÁREA DO FORMULÁRIO
+        ===================================================== */
+
+        .form-side {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 45px 35px;
+            background: #f3f6fb;
+        }
+
 
         .form-wrapper {
             width: 100%;
-            max-width: 650px;
-            padding: 2.5rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.4s ease-out;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-width: 900px;
+            margin: auto 0;
         }
 
-        @keyframes slideIn {
 
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .mobile-brand {
+            display: none;
+            margin-bottom: 25px;
+            color: #123570;
+            font-size: 24px;
+            font-weight: 800;
         }
 
-        /* ========== HEADER DO FORMULÁRIO ========== */
+
+        /* =====================================================
+           CABEÇALHO
+        ===================================================== */
 
         .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--light-bg);
-            padding-bottom: 1.5rem;
+            margin-bottom: 25px;
         }
+
 
             .form-header h1 {
-                font-size: 1.75rem;
-                font-weight: 700;
-                color: var(--primary-dark);
-                margin-bottom: 0.5rem;
+                margin: 0 0 7px 0;
+                color: #111827;
+                font-size: 31px;
+                font-weight: 800;
+                letter-spacing: -0.02em;
             }
+
 
             .form-header p {
-                font-size: 0.875rem;
-                color: var(--secondary-gray);
                 margin: 0;
+                color: #64748b;
+                font-size: 15px;
+                line-height: 1.6;
             }
 
-        /* ========== SEÇÕES DO FORMULÁRIO ========== */
+
+        /* =====================================================
+           CARD
+        ===================================================== */
+
+        .register-card {
+            padding: 30px;
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+        }
+
+
+        /* =====================================================
+           SECÇÕES
+        ===================================================== */
 
         .form-section {
-            margin-bottom: 2rem;
+            margin-bottom: 28px;
         }
 
-        .form-section-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--light-bg);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
 
-        /* ========== LINHAS DO FORMULÁRIO ========== */
-
-        .form-row-custom {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-            .form-row-custom.two-cols {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1.5rem;
-                align-items: start;
+            .form-section:last-of-type {
+                margin-bottom: 0;
             }
+
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+
+        .section-number {
+            width: 31px;
+            height: 31px;
+            flex: 0 0 31px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            background: #e8f0ff;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+
+        .section-title {
+            margin: 0;
+            color: #1f2937;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+
+        .section-description {
+            margin: 2px 0 0 0;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           GRID DOS CAMPOS
+        ===================================================== */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+
+            .form-grid.three-columns {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+
+        .field-full {
+            grid-column: 1 / -1;
+        }
+
+
+        .field-group {
+            min-width: 0;
+        }
+
 
         .form-label-custom {
-            font-weight: 500;
-            color: var(--primary-dark);
-            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 7px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 650;
         }
+
 
         .required {
-            color: var(--danger-color);
-            font-weight: bold;
+            color: #dc2626;
         }
 
-        /* ========== INPUTS ========== */
 
-        .form-control {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background-color: var(--light-bg);
-            font-family: inherit;
+        /* =====================================================
+           INPUTS
+        ===================================================== */
+
+        .input-custom {
             width: 100%;
+            min-height: 46px;
+            padding: 10px 13px;
+            border: 1px solid #d8dee9;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #1f2937;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
 
-            .form-control:focus {
-                outline: none;
-                border-color: var(--primary-light);
-                background-color: white;
-                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+
+            .input-custom:focus {
+                background: #ffffff;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
             }
 
-        textarea.form-control {
+
+            .input-custom::placeholder {
+                color: #94a3b8;
+            }
+
+
+        textarea.input-custom {
+            min-height: 85px;
             resize: vertical;
-            min-height: 80px;
         }
 
-        /* ========== VALIDAÇÃO ========== */
+
+        /* =====================================================
+           CREDENCIAIS
+        ===================================================== */
+
+        .credentials-box {
+            padding: 20px;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            background: linear-gradient( 145deg, #f8fbff, #eff6ff );
+        }
+
+
+            .credentials-box .section-header {
+                border-bottom-color: #dbeafe;
+            }
+
+
+        /* =====================================================
+           VALIDADORES
+        ===================================================== */
 
         .validator-error {
-            color: var(--danger-color);
-            font-size: 0.85rem;
-            margin-top: 0.25rem;
             display: block;
+            margin-top: 5px;
+            color: #dc2626;
+            font-size: 12px;
         }
 
-        /* ========== BOTÕES ========== */
+
+        /* =====================================================
+           BOTÕES
+        ===================================================== */
+
+        .button-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 28px;
+            padding-top: 22px;
+            border-top: 1px solid #edf0f5;
+        }
+
 
         .button-group {
             display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            justify-content: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
+
         .btn-custom {
-            padding: 0.875rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
+            min-height: 44px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            min-width: 140px;
+            padding: 10px 18px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s, background 0.2s;
         }
 
-        .btn-success-custom {
-            background-color: var(--success-color);
-            color: white;
+
+        .btn-create {
+            min-width: 150px;
+            border: 0;
+            background: linear-gradient( 135deg, #123570, #2563eb );
+            color: #ffffff;
         }
 
-            .btn-success-custom:hover,
-            .btn-success-custom:focus {
-                background-color: #218838;
-                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-                transform: translateY(-2px);
-                outline: 2px solid rgba(40, 167, 69, 0.4);
-                outline-offset: 2px;
+
+            .btn-create:hover {
+                color: #ffffff;
+                box-shadow: 0 8px 20px rgba(37, 99, 235, 0.24);
+                opacity: 0.96;
             }
 
-            .btn-success-custom:active {
-                transform: translateY(0);
-            }
 
         .btn-secondary-custom {
-            background-color: var(--secondary-gray);
-            color: white;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #475569;
         }
 
-            .btn-secondary-custom:hover,
-            .btn-secondary-custom:focus {
-                background-color: #5a6268;
-                box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-                transform: translateY(-2px);
-                outline: 2px solid rgba(108, 117, 125, 0.4);
-                outline-offset: 2px;
+
+            .btn-secondary-custom:hover {
+                background: #f8fafc;
+                color: #1f2937;
             }
 
-            .btn-secondary-custom:active {
-                transform: translateY(0);
-            }
 
-        .btn-primary-custom {
-            background-color: var(--primary-light);
-            color: white;
+        .btn-custom:active {
+            transform: translateY(1px);
         }
 
-            .btn-primary-custom:hover,
-            .btn-primary-custom:focus {
-                background-color: #0056b3;
-                box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-                transform: translateY(-2px);
-                outline: 2px solid rgba(0, 123, 255, 0.4);
-                outline-offset: 2px;
-            }
 
-            .btn-primary-custom:active {
-                transform: translateY(0);
-            }
+        /* =====================================================
+           LOGIN
+        ===================================================== */
 
-        /* ========== LINK DE LOGIN ========== */
-
-        .login-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
+        .login-area {
+            color: #64748b;
+            font-size: 13px;
         }
 
-            .login-link a {
-                color: var(--primary-light);
+
+            .login-area a {
+                color: #2563eb;
+                font-weight: 700;
                 text-decoration: none;
-                font-weight: 600;
-                transition: all 0.3s ease;
             }
 
-                .login-link a:hover,
-                .login-link a:focus {
-                    color: #0056b3;
+
+                .login-area a:hover {
                     text-decoration: underline;
-                    outline: 2px solid rgba(0, 123, 255, 0.4);
-                    outline-offset: 4px;
-                    border-radius: 4px;
                 }
 
-        /* ========== RESPONSIVIDADE ========== */
 
-        @media (max-width: 768px) {
+        /* =====================================================
+           FOOTER
+        ===================================================== */
 
-            .form-wrapper {
-                padding: 1.5rem;
+        .form-footer {
+            margin-top: 20px;
+            color: #94a3b8;
+            text-align: center;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .register-page {
+                grid-template-columns: minmax(300px, 0.65fr) minmax(550px, 1.35fr);
             }
 
-            .form-header h1 {
-                font-size: 1.5rem;
+
+            .brand-side {
+                padding: 40px;
             }
 
-            .form-row-custom.two-cols {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+
+            .brand-title {
+                font-size: 35px;
             }
 
-            .button-group {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
 
-            .btn-custom {
-                width: 100%;
+            .form-side {
+                padding: 30px 25px;
             }
         }
 
-        @media (max-width: 480px) {
 
-            .form-wrapper {
-                padding: 1rem;
-                max-height: 95vh;
+        @media (max-width: 850px) {
+
+            .register-page {
+                display: block;
             }
 
-            .form-header h1 {
-                font-size: 1.25rem;
-            }
 
-            .form-section-title {
-                font-size: 0.85rem;
-            }
-
-            .form-control {
-                font-size: 16px; /* Evita zoom em mobile */
-            }
-
-            .form-row-custom {
-                margin-bottom: 1rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .btn-custom {
-                width: 100%;
-            }
-        }
-
-        /* ========== ACESSIBILIDADE ========== */
-
-        @media (prefers-reduced-motion: reduce) {
-
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-
-            .form-wrapper {
-                animation: none;
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-
-            body {
-                background: linear-gradient(135deg, #1a1a1a 0%, #0d1117 100%);
-            }
-
-            .form-wrapper {
-                background-color: #2d2d2d;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            }
-
-            .form-header {
-                border-bottom-color: #444;
-            }
-
-                .form-header h1 {
-                    color: #e0e0e0;
-                }
-
-                .form-header p {
-                    color: #b0b0b0;
-                }
-
-            .form-section-title {
-                color: #e0e0e0;
-                border-bottom-color: #444;
-            }
-
-            .form-label-custom {
-                color: #e0e0e0;
-            }
-
-            .form-control {
-                background-color: #3a3a3a;
-                border-color: #555;
-                color: #e0e0e0;
-            }
-
-                .form-control:focus {
-                    background-color: #444;
-                }
-
-            .button-group {
-                border-top-color: #555;
-            }
-
-            .login-link {
-                border-top-color: #555;
-            }
-        }
-
-        /* ========== IMPRESSÃO ========== */
-
-        @media print {
-
-            body {
-                background: white;
-            }
-
-            .form-wrapper {
-                box-shadow: none;
-            }
-
-            .button-group {
+            .brand-side {
                 display: none;
             }
+
+
+            .form-side {
+                min-height: 100vh;
+                padding: 30px 18px;
+            }
+
+
+            .mobile-brand {
+                display: block;
+            }
         }
 
-        /* ========== FOCUS VISÍVEL ========== */
 
-        :focus-visible {
-            outline: 2px solid var(--primary-light);
-            outline-offset: 2px;
-            border-radius: 2px;
+        @media (max-width: 650px) {
+
+            .register-card {
+                padding: 22px 18px;
+            }
+
+
+            .form-grid,
+            .form-grid.three-columns {
+                grid-template-columns: 1fr;
+            }
+
+
+            .field-full {
+                grid-column: auto;
+            }
+
+
+            .button-area {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+
+            .button-group {
+                width: 100%;
+            }
+
+
+            .btn-custom {
+                width: 100%;
+            }
+
+
+            .login-area {
+                text-align: center;
+            }
+
+
+            .form-header h1 {
+                font-size: 27px;
+            }
+        }
+
+
+        @media (max-width: 400px) {
+
+            .form-side {
+                padding: 20px 10px;
+            }
+
+
+            .register-card {
+                padding: 20px 15px;
+            }
         }
     </style>
+
 </head>
 
+
 <body>
-    <form id="form1" runat="server">
-        <div class="form-wrapper">
 
-            <!-- Header do Formulário -->
-            <div class="form-header">
-                <h1>Criar Conta</h1>
-                <p>Preencha todos os campos para registar-se</p>
-            </div>
+    <form
+        id="form1"
+        runat="server">
 
-            <!-- Painel do Formulário -->
-            <asp:Panel runat="server">
+        <div class="register-page">
 
-                <!-- SEÇÃO: INFORMAÇÕES PESSOAIS -->
-                <div class="form-section">
-                    <div class="form-section-title">Informações Pessoais</div>
 
-                    <!-- Nome -->
-                    <div class="form-row-custom">
-                        <label class="form-label-custom" for="txtNome">
-                            Nome <span class="required">*</span>
-                        </label>
-                        <asp:TextBox ID="txtNome" runat="server"
-                            CssClass="form-control"
-                            placeholder="Digite seu nome completo" />
-                        <asp:RequiredFieldValidator
-                            runat="server"
-                            ControlToValidate="txtNome"
-                            ErrorMessage="O nome é obrigatório"
-                            CssClass="validator-error" />
+            <!-- ==================================================
+                 ÁREA INSTITUCIONAL
+            =================================================== -->
+
+            <aside class="brand-side">
+
+                <div class="brand-content">
+
+                    <div class="brand-logo">
+                        II
                     </div>
 
-                    <!-- Email -->
-                    <div class="form-row-custom">
-                        <label class="form-label-custom" for="txtEmail">
-                            Email <span class="required">*</span>
-                        </label>
-                        <asp:TextBox ID="txtEmail" runat="server"
-                            CssClass="form-control"
-                            TextMode="Email"
-                            placeholder="seu.email@exemplo.com" />
-                        <asp:RequiredFieldValidator
-                            runat="server"
-                            ControlToValidate="txtEmail"
-                            ErrorMessage="O email é obrigatório"
-                            CssClass="validator-error"
-                            Display="Dynamic" />
-                        <asp:RegularExpressionValidator
-                            runat="server"
-                            ControlToValidate="txtEmail"
-                            ErrorMessage="Email inválido"
-                            CssClass="validator-error"
-                            ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$"
-                            Display="Dynamic" />
-                    </div>
 
-                    <!-- Telefone -->
-                    <div class="form-row-custom">
-                        <label class="form-label-custom" for="txtTelefone">
-                            Telefone <span class="required">*</span>
-                        </label>
-                        <asp:TextBox ID="txtTelefone" runat="server"
-                            CssClass="form-control"
-                            placeholder="+351 9XXXXXXXX" />
-                        <asp:RequiredFieldValidator
-                            runat="server"
-                            ControlToValidate="txtTelefone"
-                            ErrorMessage="O telefone é obrigatório"
-                            CssClass="validator-error" />
-                    </div>
-                </div>
+                    <h1 class="brand-title">Inovar Inovado
 
-                <!-- SEÇÃO: MORADA -->
-                <div class="form-section">
-                    <div class="form-section-title">Morada</div>
+                    </h1>
 
-                    <!-- Morada -->
-                    <div class="form-row-custom">
-                        <label class="form-label-custom" for="txtMorada">
-                            Morada <span class="required">*</span>
-                        </label>
-                        <asp:TextBox ID="txtMorada" runat="server"
-                            CssClass="form-control"
-                            TextMode="MultiLine"
-                            Rows="3"
-                            placeholder="Rua, número, complemento..." />
-                        <asp:RequiredFieldValidator
-                            runat="server"
-                            ControlToValidate="txtMorada"
-                            ErrorMessage="A morada é obrigatória"
-                            CssClass="validator-error" />
-                    </div>
 
-                    <!-- Código Postal e Localidade (lado a lado) -->
-                    <div class="form-row-custom two-cols">
-                        <div>
-                            <label class="form-label-custom" for="txtCodigoPostal">
-                                Código Postal <span class="required">*</span>
-                            </label>
-                            <asp:TextBox ID="txtCodigoPostal" runat="server"
-                                CssClass="form-control"
-                                placeholder="1234-567" />
-                            <asp:RequiredFieldValidator
-                                runat="server"
-                                ControlToValidate="txtCodigoPostal"
-                                ErrorMessage="O código postal é obrigatório"
-                                CssClass="validator-error" />
+                    <p class="brand-description">
+                        Crie a sua conta e faça parte de uma plataforma
+                        pensada para simplificar a gestão e a comunicação escolar.
+
+                    </p>
+
+
+                    <div class="brand-features">
+
+
+                        <div class="brand-feature">
+
+                            <span class="feature-check">✓
+                            </span>
+
+                            Gestão centralizada das instituições.
+
                         </div>
 
-                        <div>
-                            <label class="form-label-custom" for="txtLocalidade">
-                                Localidade <span class="required">*</span>
-                            </label>
-                            <asp:TextBox ID="txtLocalidade" runat="server"
-                                CssClass="form-control"
-                                placeholder="Cidade ou município" />
-                            <asp:RequiredFieldValidator
-                                runat="server"
-                                ControlToValidate="txtLocalidade"
-                                ErrorMessage="A localidade é obrigatória"
-                                CssClass="validator-error" />
-                        </div>
-                    </div>
-                </div>
 
-                <!-- SEÇÃO: INFORMAÇÕES PROFISSIONAIS -->
-                <div class="form-section">
-                    <div class="form-section-title">Informações Profissionais</div>
+                        <div class="brand-feature">
 
-                    <!-- Código MEC -->
-                    <div class="form-row-custom">
-                        <label class="form-label-custom" for="txtCodigoMEC">Código MEC</label>
-                        <asp:TextBox ID="txtCodigoMEC" runat="server"
-                            CssClass="form-control"
-                            placeholder="(Opcional)" />
-                    </div>
-                </div>
+                            <span class="feature-check">✓
+                            </span>
 
-                <!-- SEÇÃO: CREDENCIAIS DE ACESSO -->
-                <div class="form-section">
-                    <div class="form-section-title">Credenciais de Acesso</div>
+                            Comunicação entre escolas, professores e alunos.
 
-                    <!-- Username e Password (lado a lado) -->
-                    <div class="form-row-custom two-cols">
-                        <div>
-                            <label class="form-label-custom" for="txtUsername">
-                                Nome de Utilizador <span class="required">*</span>
-                            </label>
-                            <asp:TextBox ID="txtUsername" runat="server"
-                                CssClass="form-control"
-                                placeholder="seu_utilizador" />
-                            <asp:RequiredFieldValidator
-                                runat="server"
-                                ControlToValidate="txtUsername"
-                                ErrorMessage="O nome de utilizador é obrigatório"
-                                CssClass="validator-error" />
                         </div>
 
-                        <div>
-                            <label class="form-label-custom" for="txtPassword">
-                                Senha <span class="required">*</span>
-                            </label>
-                            <asp:TextBox ID="txtPassword" runat="server"
-                                CssClass="form-control"
-                                TextMode="Password"
-                                placeholder="Mínimo 6 caracteres" />
-                            <asp:RequiredFieldValidator
-                                runat="server"
-                                ControlToValidate="txtPassword"
-                                ErrorMessage="A senha é obrigatória"
-                                CssClass="validator-error" />
+
+                        <div class="brand-feature">
+
+                            <span class="feature-check">✓
+                            </span>
+
+                            Acesso simples, organizado e seguro.
+
                         </div>
+
+
                     </div>
+
                 </div>
 
-                <!-- BOTÕES -->
-                <div class="button-group">
-                    <asp:Button ID="btnCriarConta" runat="server"
-                        Text="Criar Conta"
-                        CssClass="btn-custom btn-success-custom"
-                        OnClick="btnCriarConta_Click" />
+            </aside>
 
-                    <asp:Button ID="btnCancelar" runat="server"
-                        Text="Cancelar"
-                        CssClass="btn-custom btn-secondary-custom"
-                        CausesValidation="false" />
 
-                    <asp:HyperLink ID="lnkVoltar" runat="server"
-                        NavigateUrl="login.aspx"
-                        CssClass="btn-custom btn-primary-custom"
-                        Text="Voltar para Login" />
+            <!-- ==================================================
+                 ÁREA DO FORMULÁRIO
+            =================================================== -->
+
+            <main class="form-side">
+
+                <div class="form-wrapper">
+
+
+                    <div class="mobile-brand">
+                        Inovar Inovado
+
+                    </div>
+
+
+                    <div class="form-header">
+
+                        <h1>Criar conta
+                        </h1>
+
+                        <p>
+                            Preencha os seus dados para criar uma nova conta na plataforma.
+                        </p>
+
+                    </div>
+
+
+                    <div class="register-card">
+
+
+                        <asp:Panel runat="server">
+
+
+                            <!-- ==================================================
+                                 1. INFORMAÇÕES PESSOAIS
+                            =================================================== -->
+
+                            <section class="form-section">
+
+                                <div class="section-header">
+
+                                    <div class="section-number">
+                                        1
+                                    </div>
+
+                                    <div>
+
+                                        <h2 class="section-title">Informações pessoais
+                                        </h2>
+
+                                        <p class="section-description">
+                                            Dados gerais de contacto da instituição.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-grid three-columns">
+
+
+                                    <!-- NOME -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtNome">
+                                            Nome
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtNome"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            placeholder="Nome completo" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtNome"
+                                            ErrorMessage="O nome é obrigatório."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                    <!-- EMAIL -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtEmail">
+                                            Email
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtEmail"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            TextMode="Email"
+                                            placeholder="email@exemplo.com" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtEmail"
+                                            ErrorMessage="O email é obrigatório."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+
+                                        <asp:RegularExpressionValidator
+                                            runat="server"
+                                            ControlToValidate="txtEmail"
+                                            ErrorMessage="Introduza um email válido."
+                                            CssClass="validator-error"
+                                            ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                    <!-- TELEFONE -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtTelefone">
+                                            Telefone
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtTelefone"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            placeholder="+351 9XXXXXXXX" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtTelefone"
+                                            ErrorMessage="O telefone é obrigatório."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- ==================================================
+                                 2. MORADA
+                            =================================================== -->
+
+                            <section class="form-section">
+
+                                <div class="section-header">
+
+                                    <div class="section-number">
+                                        2
+                                    </div>
+
+                                    <div>
+
+                                        <h2 class="section-title">Morada
+                                        </h2>
+
+                                        <p class="section-description">
+                                            Localização e dados de endereço.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-grid">
+
+
+                                    <!-- MORADA -->
+
+                                    <div class="field-group field-full">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtMorada">
+                                            Morada
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtMorada"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            TextMode="MultiLine"
+                                            Rows="3"
+                                            placeholder="Rua, número e informação adicional" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtMorada"
+                                            ErrorMessage="A morada é obrigatória."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                    <!-- CÓDIGO POSTAL -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtCodigoPostal">
+                                            Código postal
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtCodigoPostal"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            placeholder="1234-567" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtCodigoPostal"
+                                            ErrorMessage="O código postal é obrigatório."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                    <!-- LOCALIDADE -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtLocalidade">
+                                            Localidade
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtLocalidade"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            placeholder="Localidade" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtLocalidade"
+                                            ErrorMessage="A localidade é obrigatória."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- ==================================================
+                                 3. INFORMAÇÕES DA INSTITUIÇÃO
+                            =================================================== -->
+
+                            <section class="form-section">
+
+                                <div class="section-header">
+
+                                    <div class="section-number">
+                                        3
+                                    </div>
+
+                                    <div>
+
+                                        <h2 class="section-title">Informação institucional
+                                        </h2>
+
+                                        <p class="section-description">
+                                            Identificação adicional da instituição.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-grid">
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtCodigoMEC">
+                                            Código MEC
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtCodigoMEC"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            placeholder="Opcional" />
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- ==================================================
+                                 4. CREDENCIAIS
+                            =================================================== -->
+
+                            <section class="form-section credentials-box">
+
+                                <div class="section-header">
+
+                                    <div class="section-number">
+                                        4
+                                    </div>
+
+                                    <div>
+
+                                        <h2 class="section-title">Credenciais de acesso
+                                        </h2>
+
+                                        <p class="section-description">
+                                            Dados utilizados para iniciar sessão.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-grid">
+
+
+                                    <!-- USERNAME -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtUsername">
+                                            Nome de utilizador
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtUsername"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            placeholder="Nome de utilizador" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtUsername"
+                                            ErrorMessage="O nome de utilizador é obrigatório."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                    <!-- PASSWORD -->
+
+                                    <div class="field-group">
+
+                                        <label
+                                            class="form-label-custom"
+                                            for="txtPassword">
+                                            Palavra-passe
+                                            <span class="required">*</span>
+
+                                        </label>
+
+
+                                        <asp:TextBox
+                                            ID="txtPassword"
+                                            runat="server"
+                                            CssClass="input-custom"
+                                            TextMode="Password"
+                                            placeholder="Introduza a palavra-passe" />
+
+
+                                        <asp:RequiredFieldValidator
+                                            runat="server"
+                                            ControlToValidate="txtPassword"
+                                            ErrorMessage="A palavra-passe é obrigatória."
+                                            CssClass="validator-error"
+                                            Display="Dynamic" />
+
+                                    </div>
+
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- ==================================================
+                                 AÇÕES
+                            =================================================== -->
+
+                            <div class="button-area">
+
+
+                                <div class="button-group">
+
+
+                                    <asp:Button
+                                        ID="btnCriarConta"
+                                        runat="server"
+                                        Text="Criar conta"
+                                        CssClass="btn-custom btn-create"
+                                        OnClick="btnCriarConta_Click" />
+
+
+                                    <asp:HyperLink
+                                        ID="lnkVoltar"
+                                        runat="server"
+                                        NavigateUrl="login.aspx"
+                                        CssClass="btn-custom btn-secondary-custom"
+                                        Text="Voltar ao login" />
+
+
+                                </div>
+
+
+                                <div class="login-area">
+                                    Já tem uma conta?
+
+                                    <asp:HyperLink
+                                        ID="lnkIrLogin"
+                                        runat="server"
+                                        NavigateUrl="login.aspx">
+
+                                        Iniciar sessão
+
+                                    </asp:HyperLink>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- Mantido para compatibilidade com a página atual -->
+
+                            <asp:Button
+                                ID="btnCancelar"
+                                runat="server"
+                                Text="Cancelar"
+                                CausesValidation="false"
+                                Style="display: none;" />
+
+
+                        </asp:Panel>
+
+                    </div>
+
+
+                    <div class="form-footer">
+                        © 2026 Inovar Inovado — Plataforma de Gestão Escolar
+
+                    </div>
+
                 </div>
 
-                <!-- Link para Login -->
-                <div class="login-link">
-                    <span>Já tem conta? </span>
-                    <asp:HyperLink ID="lnkIrLogin" runat="server" NavigateUrl="login.aspx">Iniciar Sessão</asp:HyperLink>
-                </div>
-
-            </asp:Panel>
+            </main>
 
         </div>
+
     </form>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 
 </html>
-

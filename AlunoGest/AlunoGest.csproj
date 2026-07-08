@@ -113,9 +113,9 @@
     <Content Include="Foto.jpg" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
-    <Content Include="professor\calendario.aspx" />
+    <Content Include="professor\Home.aspx" />
     <Content Include="professor\conta.aspx" />
-    <Content Include="professor\dashboard.aspx" />
+    <Content Include="professor\MinhasTurmas.aspx" />
     <Content Include="professor\turma.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -272,6 +272,7 @@
     </Compile>
     <Compile Include="aluno\mensagens.aspx.cs">
       <DependentUpon>mensagens.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="aluno\mensagens.aspx.designer.cs">
       <DependentUpon>mensagens.aspx</DependentUpon>
@@ -314,12 +315,12 @@
     <Compile Include="login.aspx.designer.cs">
       <DependentUpon>login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="professor\calendario.aspx.cs">
-      <DependentUpon>calendario.aspx</DependentUpon>
+    <Compile Include="professor\Home.aspx.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="professor\calendario.aspx.designer.cs">
-      <DependentUpon>calendario.aspx</DependentUpon>
+    <Compile Include="professor\Home.aspx.designer.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
     </Compile>
     <Compile Include="professor\conta.aspx.cs">
       <DependentUpon>conta.aspx</DependentUpon>
@@ -328,12 +329,12 @@
     <Compile Include="professor\conta.aspx.designer.cs">
       <DependentUpon>conta.aspx</DependentUpon>
     </Compile>
-    <Compile Include="professor\dashboard.aspx.cs">
-      <DependentUpon>dashboard.aspx</DependentUpon>
+    <Compile Include="professor\MinhasTurmas.aspx.cs">
+      <DependentUpon>MinhasTurmas.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="professor\dashboard.aspx.designer.cs">
-      <DependentUpon>dashboard.aspx</DependentUpon>
+    <Compile Include="professor\MinhasTurmas.aspx.designer.cs">
+      <DependentUpon>MinhasTurmas.aspx</DependentUpon>
     </Compile>
     <Compile Include="professor\ModeloProfessor.Master.cs">
       <DependentUpon>ModeloProfessor.Master</DependentUpon>

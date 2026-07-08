@@ -37,7 +37,7 @@ namespace AlunoGest.professor
             int turmaId = TurmaSelecionada;
             if (turmaId > 0)
             {
-                Response.Redirect("~/professor/calendario.aspx?turma=" + turmaId);
+                Response.Redirect("~/professor/Home.aspx?turma=" + turmaId);
             }
         }
 

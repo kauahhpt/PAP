@@ -1,165 +1,366 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterAluno1.Master.cs" Inherits="AlunoGest.aluno.MasterAluno1" %>
+﻿<%@ Master Language="C#"
+    AutoEventWireup="true"
+    CodeBehind="MasterAluno1.Master.cs"
+    Inherits="AlunoGest.aluno.MasterAluno1" %>
 
 <!DOCTYPE html>
 
 <html lang="pt-PT">
+
 <head runat="server">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta http-equiv="Content-Type"
+        content="text/html; charset=utf-8" />
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1" />
+
     <title>Inovar Inovado</title>
 
-    <asp:ContentPlaceHolder ID="headContent" runat="server"></asp:ContentPlaceHolder>
+    <link
+        runat="server"
+        href="~/Content/bootstrap.min.css"
+        rel="stylesheet" />
 
-    <!-- Bootstrap -->
-    <link runat="server" href="~/Content/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- CSS -->
-    <link runat="server" href="~/css/master.css" rel="stylesheet" />
+    <link
+        runat="server"
+        href="~/css/master.css"
+        rel="stylesheet" />
 
     <style>
-        header {
-            height: 45px;
-            background-color: #343a40;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px;
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
         }
 
-        header h1 {
-            margin: 10px;
+        body {
+            background: #f3f6fb;
+            color: #1f2937;
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        *,
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
+
+        form.page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .topbar {
+            min-height: 68px;
+            background: #343a40;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.14);
+        }
+
+        .brand {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 800;
             font-style: italic;
-            font-size: 22px;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+            .brand:hover {
+                color: #ffffff;
+            }
+
+        .navbar-nav {
+            align-items: center;
+            gap: 4px;
+        }
+
+            .navbar-nav .nav-link {
+                color: #d1d5db;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 9px 13px !important;
+                border-radius: 8px;
+                transition: background 0.2s, color 0.2s;
+            }
+
+                .navbar-nav .nav-link:hover {
+                    color: #ffffff;
+                    background: rgba(255, 255, 255, 0.12);
+                }
+
+        .student-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
         }
 
         .student-name {
             color: #d1d5db;
-            margin-right: 15px;
+            font-size: 14px;
             font-weight: 600;
+            white-space: nowrap;
         }
 
-        form.page-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        .logout-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            color: #ffffff !important;
+            background: transparent;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, border-color 0.2s;
         }
+
+            .logout-button:hover {
+                background: rgba(255, 255, 255, 0.13);
+                border-color: #ffffff;
+            }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+        /* =====================================================
+           CONTEÚDO
+        ===================================================== */
 
         main {
             flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 25px;
+            width: 100%;
+            min-height: calc(100vh - 122px);
         }
 
+        .main-container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
         footer {
-            background-color: #808080;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            height: 45px;
-            font-size: 14px;
-            line-height: 1.4em;
+            min-height: 58px;
+            padding: 8px 15px;
+            background: #ffffff;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+            footer a {
+                color: #475569;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    color: #1f2937;
+                    text-decoration: underline;
+                }
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                padding-top: 14px;
+                padding-bottom: 10px;
+            }
+
+            .navbar-nav {
+                align-items: stretch;
+                gap: 3px;
+            }
+
+                .navbar-nav .nav-link {
+                    padding: 10px 12px !important;
+                }
+
+            .student-area {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid rgba(255, 255, 255, 0.15);
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                padding: 16px 10px;
+            }
+
+            .brand {
+                font-size: 1.1rem;
+            }
+
+            .student-area {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            footer {
+                text-align: center;
+            }
         }
     </style>
+
+    <asp:ContentPlaceHolder
+        ID="headContent"
+        runat="server">
+    </asp:ContentPlaceHolder>
 
 </head>
 
 <body>
 
-<form id="formAluno" runat="server" class="page-container">
+    <form
+        id="formAluno"
+        runat="server"
+        class="page-container">
 
-    <!-- Header -->
-    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark topbar px-3 px-lg-4">
 
-        <h1>Inovar Inovado</h1>
+            <a
+                class="brand navbar-brand"
+                href="<%= ResolveUrl("~/aluno/dashboard.aspx") %>">Inovar Inovado
 
-        <div class="d-flex align-items-center">
+            </a>
 
-            <asp:Label
-                ID="LblAluno"
-                runat="server"
-                CssClass="student-name" />
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menuAluno"
+                aria-controls="menuAluno"
+                aria-expanded="false"
+                aria-label="Abrir menu">
 
-            <div class="dropdown">
+                <span class="navbar-toggler-icon"></span>
 
-                <button class="btn btn-dark dropdown-toggle"
-                    type="button"
-                    id="menuAluno"
-                    data-bs-toggle="dropdown">
+            </button>
 
-                    Menu
+            <div
+                class="collapse navbar-collapse"
+                id="menuAluno">
 
-                </button>
+                <div class="navbar-nav ms-lg-4">
 
-                <ul class="dropdown-menu dropdown-menu-end">
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/aluno/dashboard.aspx"
+                        Text="Home"
+                        CssClass="nav-link" />
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/aluno/mensagens.aspx"
+                        Text="Chat"
+                        CssClass="nav-link" />
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/aluno/MinhaTurma.aspx"
+                        Text="Minha Turma"
+                        CssClass="nav-link" />
 
-                    <li>
-                        <asp:HyperLink
-                            runat="server"
-                            NavigateUrl="~/aluno/dashboard.aspx"
-                            Text="Home"
-                            CssClass="dropdown-item" />
-                    </li>
 
-                    <li>
-                        <asp:HyperLink
-                            runat="server"
-                            NavigateUrl="~/aluno/InformacoesAluno.aspx"
-                            Text="Minha Conta"
-                            CssClass="dropdown-item" />
-                    </li>
 
-                    <li>
-                        <asp:HyperLink
-                            runat="server"
-                            NavigateUrl="~/aluno/MinhaTurma.aspx"
-                            Text="Minha Turma"
-                            CssClass="dropdown-item" />
-                    </li>
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/aluno/InformacoesAluno.aspx"
+                        Text="Minha Conta"
+                        CssClass="nav-link" />
 
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
+                </div>
 
-                    <li>
-                        <asp:LoginStatus
-                            ID="LoginStatus1"
-                            runat="server"
-                            CssClass="dropdown-item"
-                            LogoutAction="RedirectToLoginPage"
-                            LogoutText="Terminar sessão"
-                            LoginText="Iniciar sessão"
-                            OnLoggedOut="LoginStatus1_LoggedOut" />
-                    </li>
+                <div class="student-area">
 
-                </ul>
+                    <asp:Label
+                        ID="LblAluno"
+                        runat="server"
+                        CssClass="student-name" />
+
+                    <asp:LoginStatus
+                        ID="LoginStatus1"
+                        runat="server"
+                        CssClass="logout-button"
+                        LogoutAction="RedirectToLoginPage"
+                        LogoutText="Terminar sessão"
+                        LoginText="Iniciar sessão"
+                        OnLoggedOut="LoginStatus1_LoggedOut" />
+
+                </div>
 
             </div>
 
-        </div>
+        </nav>
 
-    </header>
+        <main>
 
-    <!-- Conteúdo -->
-    <main>
-        <asp:ContentPlaceHolder ID="mainContent" runat="server"></asp:ContentPlaceHolder>
-    </main>
+            <div class="main-container">
 
-    <!-- Rodapé -->
-    <footer>
-        <p style="margin:0">&copy; 2026 Inovar Inovado — Todos os direitos reservados</p>
-        <p style="margin:0">
-            <a href="#">Política de Privacidade</a> |
-            <a href="#">Termos de Utilização</a> |
-            <a href="#">Contactos</a>
-        </p>
-    </footer>
+                <asp:ContentPlaceHolder
+                    ID="mainContent"
+                    runat="server">
+                </asp:ContentPlaceHolder>
 
-</form>
+            </div>
+
+        </main>
+
+        <footer class="d-flex flex-column align-items-center justify-content-center">
+
+            <p style="margin: 0;">
+                &copy; 2026 Inovar Inovado — Todos os direitos reservados
+            </p>
+
+            <p style="margin: 0;">
+
+                <a href="#">Política de Privacidade
+                </a>
+
+                |
+
+                <a href="#">Termos de Utilização
+                </a>
+
+                |
+
+                <a href="#">Contactos
+                </a>
+
+            </p>
+
+        </footer>
+
+    </form>
+
+    <script src="<%= ResolveUrl("~/Scripts/bootstrap.bundle.min.js") %>"></script>
 
 </body>
+
 </html>

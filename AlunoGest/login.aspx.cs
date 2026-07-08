@@ -32,7 +32,7 @@ namespace AlunoGest
                 Response.Redirect("~/agrupamento/dashboard.aspx");
             }
             if (Roles.IsUserInRole(loginUtilizador.UserName, "professor"))
-                Response.Redirect("~/professor/dashboard.aspx");
+                Response.Redirect("~/professor/Home.aspx");
             if (Roles.IsUserInRole(loginUtilizador.UserName, "aluno"))
                 Response.Redirect("~/aluno/dashboard.aspx");
         }

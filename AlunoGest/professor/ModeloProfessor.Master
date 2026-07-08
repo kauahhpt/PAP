@@ -1,129 +1,346 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="ModeloProfessor.Master.cs" Inherits="AlunoGest.professor.ModeloProfessor" %>
+<%@ Master Language="C#"
+    AutoEventWireup="true"
+    CodeBehind="ModeloProfessor.Master.cs"
+    Inherits="AlunoGest.professor.ModeloProfessor" %>
+
 <!DOCTYPE html>
+
 <html lang="pt-PT">
+
 <head runat="server">
+
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><asp:ContentPlaceHolder ID="titleContent" runat="server">Área do professor</asp:ContentPlaceHolder></title>
-    <link runat="server" href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1" />
+
+    <title>
+        <asp:ContentPlaceHolder
+            ID="titleContent"
+            runat="server">
+            Área do professor
+        </asp:ContentPlaceHolder>
+    </title>
+
+    <link
+        runat="server"
+        href="~/Content/bootstrap.min.css"
+        rel="stylesheet" />
+
     <style>
-        body { background: #f3f6fb; color: #1f2937; font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        *, button, input, textarea, select { font-family: inherit; }
-        .topbar { background: #123570; min-height: 68px; }
-        .brand { color: #fff; font-size: 1.25rem; font-weight: 800; text-decoration: none; font-family: 'Arial Rounded MT Bold', 'Segoe UI Rounded', 'Nunito', 'Segoe UI', sans-serif; letter-spacing: -.02em; }
-        .teacher-name { color: #dbeafe; }
-        main { min-height: calc(100vh - 122px); }
-        .page-card { border: 0; border-radius: 14px; box-shadow: 0 4px 18px rgba(15, 23, 42, .08); }
-        .stat-card { border: 0; border-left: 4px solid #2563eb; border-radius: 12px; }
-        .table thead th { background: #eef3fb; color: #334155; border: 0; }
-        footer { min-height: 54px; background: #fff; color: #64748b; }
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #1f2937;
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        *,
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
+
+        form.page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .topbar {
+            min-height: 68px;
+            background: #123570;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.14);
+        }
+
+        .brand {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-decoration: none;
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI Rounded', 'Nunito', 'Segoe UI', sans-serif;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+            .brand:hover {
+                color: #ffffff;
+            }
+
+        .navbar-nav {
+            align-items: center;
+            gap: 4px;
+        }
+
+            .navbar-nav .nav-link {
+                color: #dbeafe;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 9px 13px !important;
+                border-radius: 8px;
+                transition: background 0.2s, color 0.2s;
+            }
+
+                .navbar-nav .nav-link:hover {
+                    color: #ffffff;
+                    background: rgba(255, 255, 255, 0.12);
+                }
+
+        .teacher-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+        }
+
+        .teacher-name {
+            color: #dbeafe;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .logout-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            color: #ffffff !important;
+            background: transparent;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+            .logout-button:hover {
+                background: rgba(255, 255, 255, 0.13);
+                border-color: #ffffff;
+            }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+        /* =====================================================
+           CONTEÚDO
+        ===================================================== */
+
+        main {
+            flex: 1;
+            width: 100%;
+            min-height: calc(100vh - 122px);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* =====================================================
+           COMPONENTES GERAIS
+        ===================================================== */
+
+        .page-card {
+            border: 0;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .stat-card {
+            border: 0;
+            border-left: 4px solid #2563eb;
+            border-radius: 12px;
+        }
+
+        .table thead th {
+            background: #eef3fb;
+            color: #334155;
+            border: 0;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+            min-height: 54px;
+            background: #ffffff;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                padding-top: 14px;
+                padding-bottom: 10px;
+            }
+
+            .navbar-nav {
+                align-items: stretch;
+                gap: 3px;
+            }
+
+                .navbar-nav .nav-link {
+                    padding: 10px 12px !important;
+                }
+
+            .teacher-area {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid rgba(255, 255, 255, 0.15);
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                padding: 16px 10px;
+            }
+
+            .brand {
+                font-size: 1.1rem;
+            }
+
+            .teacher-area {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
     </style>
-    <asp:ContentPlaceHolder ID="headContent" runat="server" />
+
+    <asp:ContentPlaceHolder
+        ID="headContent"
+        runat="server" />
+
 </head>
+
 <body>
-    <form id="formProfessor" runat="server">
-      <nav class="navbar navbar-dark topbar px-3 px-lg-4">
 
-    <a
-        class="brand"
-        href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">
+    <form
+        id="formProfessor"
+        runat="server"
+        class="page-container">
 
-        Inovar Inovado
+        <nav class="navbar navbar-expand-lg navbar-dark topbar px-3 px-lg-4">
 
-    </a>
+            <a
+                class="brand navbar-brand"
+                href="<%= ResolveUrl("~/professor/dashboard.aspx") %>">Inovar Inovado
 
-
-    <div class="ms-auto d-flex align-items-center">
-
-        <asp:Label
-            ID="LblProfessor"
-            runat="server"
-            CssClass="teacher-name me-3" />
-
-
-        <div class="dropdown">
+            </a>
 
             <button
-                class="btn btn-dark dropdown-toggle"
+                class="navbar-toggler"
                 type="button"
-                id="menuProfessor"
-                data-bs-toggle="dropdown"
-                aria-expanded="false">
+                data-bs-toggle="collapse"
+                data-bs-target="#menuProfessor"
+                aria-controls="menuProfessor"
+                aria-expanded="false"
+                aria-label="Abrir menu">
 
-                Menu
+                <span class="navbar-toggler-icon"></span>
 
             </button>
 
+            <div
+                class="collapse navbar-collapse"
+                id="menuProfessor">
 
-            <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="menuProfessor">
-
-
-                <li>
+                <div class="navbar-nav ms-lg-4">
 
                     <asp:HyperLink
                         runat="server"
-                        NavigateUrl="~/professor/dashboard.aspx"
-                        Text="As minhas turmas"
-                        CssClass="dropdown-item" />
-
-                </li>
-
-
-                <li>
-
-                    <asp:HyperLink
-                        runat="server"
-                        NavigateUrl="~/professor/calendario.aspx"
+                        NavigateUrl="~/professor/Home.aspx"
                         Text="Home"
-                        CssClass="dropdown-item" />
+                        CssClass="nav-link" />
 
-                </li>
+                    <asp:HyperLink
+                        runat="server"
+                        NavigateUrl="~/professor/MinhasTurmas.aspx"
+                        Text="As minhas turmas"
+                        CssClass="nav-link" />
 
 
-                <li>
 
                     <asp:HyperLink
                         runat="server"
                         NavigateUrl="~/professor/conta.aspx"
                         Text="Minha conta"
-                        CssClass="dropdown-item" />
+                        CssClass="nav-link" />
 
-                </li>
+                </div>
 
+                <div class="teacher-area">
 
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-
-
-                <li>
+                    <asp:Label
+                        ID="LblProfessor"
+                        runat="server"
+                        CssClass="teacher-name" />
 
                     <asp:LoginStatus
                         ID="LoginStatus1"
                         runat="server"
-                        CssClass="dropdown-item"
+                        CssClass="logout-button"
                         LogoutAction="RedirectToLoginPage"
                         LogoutText="Terminar sessão"
                         LoginText="Iniciar sessão"
                         OnLoggedOut="LoginStatus1_LoggedOut" />
 
-                </li>
+                </div>
 
+            </div>
 
-            </ul>
+        </nav>
 
-        </div>
+        <main>
 
-    </div>
+            <div class="main-container">
 
-</nav>
-        <main class="container py-4">
-            <asp:ContentPlaceHolder ID="mainContent" runat="server" />
+                <asp:ContentPlaceHolder
+                    ID="mainContent"
+                    runat="server" />
+
+            </div>
+
         </main>
-        <footer class="d-flex align-items-center justify-content-center">&copy; 2026 Inovar Inovado</footer>
+
+        <footer class="d-flex align-items-center justify-content-center">
+            &copy; 2026 Inovar Inovado
+
+        </footer>
+
     </form>
+
     <script src="<%= ResolveUrl("~/Scripts/bootstrap.bundle.min.js") %>"></script>
+
 </body>
+
 </html>
