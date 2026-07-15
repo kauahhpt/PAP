@@ -17,17 +17,16 @@ xmlns="http://www.w3.org/1999/xhtml">
 
     <meta
         name="description"
-        content="Inovar Inovado - Criar Conta" />
+        content="Inovar Inovado - Criar Agrupamento" />
 
     <meta
         name="theme-color"
         content="#123570" />
 
-    <title>Inovar Inovado | Criar Conta
-    </title>
+    <title>Inovar Inovado | Criar Agrupamento</title>
 
     <link
-        href="Content/bootstrap.min.css"
+        href="../Content/bootstrap.min.css"
         rel="stylesheet" />
 
 
@@ -626,6 +625,28 @@ xmlns="http://www.w3.org/1999/xhtml">
                 padding: 20px 15px;
             }
         }
+
+        .message-success {
+            display: block;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            background: #f0fdf4;
+            color: #166534;
+            font-size: 14px;
+        }
+
+        .message-error {
+            display: block;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 14px;
+        }
     </style>
 
 </head>
@@ -659,9 +680,8 @@ xmlns="http://www.w3.org/1999/xhtml">
 
 
                     <p class="brand-description">
-                        Crie a sua conta e faça parte de uma plataforma
-                        pensada para simplificar a gestão e a comunicação escolar.
-
+                        Área reservada à administração da plataforma para
+                        criação e gestão dos agrupamentos escolares.
                     </p>
 
 
@@ -722,18 +742,19 @@ xmlns="http://www.w3.org/1999/xhtml">
 
                     <div class="form-header">
 
-                        <h1>Criar conta
-                        </h1>
+                        <h1>Criar agrupamento</h1>
 
                         <p>
-                            Preencha os seus dados para criar uma nova conta na plataforma.
+                            Registe um novo agrupamento e defina as respetivas credenciais de acesso.
                         </p>
-
                     </div>
 
 
                     <div class="register-card">
-
+                        <asp:Label
+                            ID="lblMensagem"
+                            runat="server"
+                            Visible="false" />
 
                         <asp:Panel runat="server">
 
@@ -752,8 +773,9 @@ xmlns="http://www.w3.org/1999/xhtml">
 
                                     <div>
 
-                                        <h2 class="section-title">Informações pessoais
-                                        </h2>
+                                        <h2 class="section-title">
+                                            Informações do agrupamento
+                                       </h2>
 
                                         <p class="section-description">
                                             Dados gerais de contacto da instituição.
@@ -774,7 +796,7 @@ xmlns="http://www.w3.org/1999/xhtml">
                                         <label
                                             class="form-label-custom"
                                             for="txtNome">
-                                            Nome
+                                            Nome do agrupamento
                                             <span class="required">*</span>
 
                                         </label>
@@ -1157,37 +1179,15 @@ xmlns="http://www.w3.org/1999/xhtml">
                                     <asp:Button
                                         ID="btnCriarConta"
                                         runat="server"
-                                        Text="Criar conta"
+                                        Text="Criar agrupamento"
                                         CssClass="btn-custom btn-create"
                                         OnClick="btnCriarConta_Click" />
 
 
-                                    <asp:HyperLink
-                                        ID="lnkVoltar"
-                                        runat="server"
-                                        NavigateUrl="login.aspx"
-                                        CssClass="btn-custom btn-secondary-custom"
-                                        Text="Voltar ao login" />
+
 
 
                                 </div>
-
-
-                                <div class="login-area">
-                                    Já tem uma conta?
-
-                                    <asp:HyperLink
-                                        ID="lnkIrLogin"
-                                        runat="server"
-                                        NavigateUrl="login.aspx">
-
-                                        Iniciar sessão
-
-                                    </asp:HyperLink>
-
-                                </div>
-
-
                             </div>
 
 

@@ -108,7 +108,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="criarconta.aspx" />
+    <Content Include="Administrador\criarconta.aspx" />
     <Content Include="css\master.css" />
     <Content Include="Foto.jpg" />
     <Content Include="Global.asax" />
@@ -150,6 +150,7 @@
     <Content Include="lixo.Master" />
     <Content Include="aluno\MasterAluno1.Master" />
     <Content Include="professor\ModeloProfessor.Master" />
+    <Content Include="Administrador\Web.config" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -291,11 +292,11 @@
     <Compile Include="aluno\NotasAluno.aspx.designer.cs">
       <DependentUpon>NotasAluno.aspx</DependentUpon>
     </Compile>
-    <Compile Include="criarconta.aspx.cs">
+    <Compile Include="Administrador\criarconta.aspx.cs">
       <DependentUpon>criarconta.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="criarconta.aspx.designer.cs">
+    <Compile Include="Administrador\criarconta.aspx.designer.cs">
       <DependentUpon>criarconta.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
