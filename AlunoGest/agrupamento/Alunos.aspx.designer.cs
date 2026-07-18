@@ -87,6 +87,15 @@ namespace AlunoGest.agrupamento
         protected global::System.Web.UI.WebControls.TextBox TxtNumeroProcesso;
 
         /// <summary>
+        /// Controle RfvNumeroProcesso.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvNumeroProcesso;
+
+        /// <summary>
         /// Controle TxtEmail.
         /// </summary>
         /// <remarks>
@@ -94,6 +103,51 @@ namespace AlunoGest.agrupamento
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TxtEmail;
+
+        /// <summary>
+        /// Controle RfvEmail.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvEmail;
+
+        /// <summary>
+        /// Controle RevEmail.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator RevEmail;
+
+        /// <summary>
+        /// Controle TxtTelefone.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtTelefone;
+
+        /// <summary>
+        /// Controle RfvTelefone.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvTelefone;
+
+        /// <summary>
+        /// Controle RevTelefone.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator RevTelefone;
 
         /// <summary>
         /// Controle ChkAtivo.

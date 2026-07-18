@@ -33,15 +33,6 @@ namespace AlunoGest.aluno
         protected global::System.Web.UI.WebControls.Label LblMensagem;
 
         /// <summary>
-        /// Controle RepeaterPublicacoes.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater RepeaterPublicacoes;
-
-        /// <summary>
         /// Controle GridEventos.
         /// </summary>
         /// <remarks>
@@ -58,6 +49,15 @@ namespace AlunoGest.aluno
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView GridNotas;
+
+        /// <summary>
+        /// Controle RepeaterPublicacoes.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater RepeaterPublicacoes;
 
         /// <summary>
         /// Controle PainelEntrega.
@@ -78,6 +78,15 @@ namespace AlunoGest.aluno
         protected global::System.Web.UI.WebControls.Label LblEventoSelecionado;
 
         /// <summary>
+        /// Controle LblPrazoEntrega.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblPrazoEntrega;
+
+        /// <summary>
         /// Controle HdnEventoId.
         /// </summary>
         /// <remarks>
@@ -94,6 +103,15 @@ namespace AlunoGest.aluno
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater RepeaterAnexosProfessor;
+
+        /// <summary>
+        /// Controle GridSubmissoes.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GridSubmissoes;
 
         /// <summary>
         /// Controle FileEntrega.
@@ -184,6 +202,42 @@ namespace AlunoGest.aluno
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox ChkPublicaTurma;
+
+        /// <summary>
+        /// Controle CblAlunosDestinatarios.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList CblAlunosDestinatarios;
+
+        /// <summary>
+        /// Controle LblSemAlunosDestinatarios.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblSemAlunosDestinatarios;
+
+        /// <summary>
+        /// Controle CblProfessoresDestinatarios.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList CblProfessoresDestinatarios;
+
+        /// <summary>
+        /// Controle LblSemProfessoresDestinatarios.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblSemProfessoresDestinatarios;
 
         /// <summary>
         /// Controle BtnPublicar.

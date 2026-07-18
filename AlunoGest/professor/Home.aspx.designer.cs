@@ -42,24 +42,6 @@ namespace AlunoGest.professor
         protected global::System.Web.UI.WebControls.DropDownList DdlTurmas;
 
         /// <summary>
-        /// Controle RepeaterPublicacoes.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater RepeaterPublicacoes;
-
-        /// <summary>
-        /// Controle PainelSemPublicacoes.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PainelSemPublicacoes;
-
-        /// <summary>
         /// Controle HdnEventoId.
         /// </summary>
         /// <remarks>
@@ -121,6 +103,24 @@ namespace AlunoGest.professor
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnLimpar;
+
+        /// <summary>
+        /// Controle RepeaterPublicacoes.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater RepeaterPublicacoes;
+
+        /// <summary>
+        /// Controle PainelSemPublicacoes.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PainelSemPublicacoes;
 
         /// <summary>
         /// Controle GridEventos.
@@ -202,5 +202,95 @@ namespace AlunoGest.professor
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField HdnEvents;
+
+        /// <summary>
+        /// Controle DdlTipoPublicacaoProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList DdlTipoPublicacaoProfessor;
+
+        /// <summary>
+        /// Controle TxtTituloPublicacaoProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtTituloPublicacaoProfessor;
+
+        /// <summary>
+        /// Controle TxtConteudoPublicacaoProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtConteudoPublicacaoProfessor;
+
+        /// <summary>
+        /// Controle FilePublicacaoProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.FileUpload FilePublicacaoProfessor;
+
+        /// <summary>
+        /// Controle ChkPublicaTurmaProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox ChkPublicaTurmaProfessor;
+
+        /// <summary>
+        /// Controle CblAlunosDestinatariosProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList CblAlunosDestinatariosProfessor;
+
+        /// <summary>
+        /// Controle LblSemAlunosDestinatariosProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblSemAlunosDestinatariosProfessor;
+
+        /// <summary>
+        /// Controle CblProfessoresDestinatariosProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList CblProfessoresDestinatariosProfessor;
+
+        /// <summary>
+        /// Controle LblSemProfessoresDestinatariosProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblSemProfessoresDestinatariosProfessor;
+
+        /// <summary>
+        /// Controle BtnPublicarProfessor.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnPublicarProfessor;
     }
 }

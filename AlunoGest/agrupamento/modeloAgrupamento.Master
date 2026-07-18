@@ -108,13 +108,13 @@
                             CssClass="dropdown-item" />
                     </li>
 
-                    <li>
+<%--                    <li>
                         <asp:HyperLink
                             NavigateUrl="~/agrupamento/turmas.aspx"
                             runat="server"
                             Text="Turmas"
                             CssClass="dropdown-item" />
-                    </li>
+                    </li>--%>
 
                     <%-- <li>
                         <hr class="dropdown-divider">

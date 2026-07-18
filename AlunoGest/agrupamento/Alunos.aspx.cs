@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.Web.Security;
 using AlunoGest.Util;
 
@@ -12,7 +12,9 @@ namespace AlunoGest.agrupamento
         #region Campos
 
         private readonly string _ConnectionString =
-            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            ConfigurationManager
+                .ConnectionStrings["DefaultConnection"]
+                .ConnectionString;
 
         #endregion
 
@@ -20,7 +22,9 @@ namespace AlunoGest.agrupamento
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!TryGetAgrupamentoId(out _))
+            int agrupamentoId;
+
+            if (!TryGetAgrupamentoId(out agrupamentoId))
             {
                 Response.Redirect("~/login.aspx");
                 return;
@@ -30,6 +34,7 @@ namespace AlunoGest.agrupamento
             {
                 Controlos.Visible = false;
                 LblMensagem.Visible = false;
+
                 GetAlunos();
             }
         }
@@ -38,97 +43,147 @@ namespace AlunoGest.agrupamento
 
         #region Eventos de Controlos
 
-        protected void ButtonCriar_Click(object sender, EventArgs e)
+        protected void ButtonCriar_Click(
+            object sender,
+            EventArgs e)
         {
             LimparMensagem();
             LimparFormulario();
 
             GridAlunos.SelectedIndex = -1;
+
             Controlos.Visible = true;
             ViewState["Op"] = "criar";
+
             ChkAtivo.Checked = true;
         }
 
-        protected void ButtonEditar_Click(object sender, EventArgs e)
+        protected void ButtonEditar_Click(
+            object sender,
+            EventArgs e)
         {
             LimparMensagem();
 
-            if (!AlunoSelecionado(out int IdAluno))
+            int idAluno;
+
+            if (!AlunoSelecionado(out idAluno))
             {
                 MostrarMensagem("Selecione um aluno.");
                 return;
             }
 
-            CarregarAluno(IdAluno);
+            CarregarAluno(idAluno);
+
             Controlos.Visible = true;
             ViewState["Op"] = "editar";
         }
 
-        protected void ButtonGuardar_Click(object sender, EventArgs e)
+        protected void ButtonGuardar_Click(
+            object sender,
+            EventArgs e)
         {
             LimparMensagem();
 
             if (!Page.IsValid)
                 return;
 
-            if (!TryGetAgrupamentoId(out int AgrupamentoId))
+            int agrupamentoId;
+
+            if (!TryGetAgrupamentoId(out agrupamentoId))
             {
                 Response.Redirect("~/login.aspx");
                 return;
             }
 
-            string Operacao = Convert.ToString(ViewState["Op"]);
+            string operacao =
+                Convert.ToString(ViewState["Op"]);
+
+            string nomeCompleto =
+                TxtNomeCompleto.Text.Trim();
+
+            string numeroProcesso =
+                TxtNumeroProcesso.Text.Trim();
+
+            string email =
+                TxtEmail.Text.Trim();
+
+            string telefone =
+                TxtTelefone.Text.Trim();
 
             try
             {
-                if (Operacao == "criar")
+                if (operacao == "criar")
                 {
-                    string NomeCompleto = TxtNomeCompleto.Text.Trim();
-                    string EmailPessoal = TxtEmail.Text.Trim();
+                    Guid userIdAluno =
+                        CriarContaAluno(
+                            nomeCompleto,
+                            email
+                        );
 
-                    if (string.IsNullOrWhiteSpace(EmailPessoal))
+                    int linhas = InsertAluno(
+                        userIdAluno,
+                        agrupamentoId,
+                        nomeCompleto,
+                        numeroProcesso,
+                        email,
+                        telefone,
+                        ChkAtivo.Checked
+                    );
+
+                    if (linhas > 0)
                     {
-                        MostrarMensagem("É necessário indicar um email para gerar as credenciais de acesso.");
+                        MostrarMensagem(
+                            "Aluno criado com sucesso.",
+                            false
+                        );
+                    }
+                    else
+                    {
+                        MostrarMensagem(
+                            "Não foi possível criar o aluno."
+                        );
+
                         return;
                     }
-
-                    // Cria a conta de login, envia o email com as credenciais.
-                    Guid UserIdAluno = CriarContaAluno(NomeCompleto, EmailPessoal);
-
-                    int Linhas = InsertAluno(
-                        UserIdAluno,
-                        AgrupamentoId,
-                        NomeCompleto,
-                        TxtNumeroProcesso.Text.Trim(),
-                        EmailPessoal,
-                        ChkAtivo.Checked);
-
-                    if (Linhas > 0)
-                        MostrarMensagem("Aluno criado com sucesso.", false);
-                    else
-                        MostrarMensagem("Não foi possível criar o aluno.");
                 }
-                else if (Operacao == "editar")
+                else if (operacao == "editar")
                 {
-                    if (!AlunoSelecionado(out int IdAluno))
+                    int idAluno;
+
+                    if (!AlunoSelecionado(out idAluno))
                     {
-                        MostrarMensagem("Selecione um aluno.");
+                        MostrarMensagem(
+                            "Selecione um aluno."
+                        );
+
                         return;
                     }
 
-                    // No editar não criamos conta nem enviamos email.
-                    int Linhas = UpdateAluno(
-                        IdAluno,
-                        AgrupamentoId,
-                        TxtNomeCompleto.Text.Trim(),
-                        TxtNumeroProcesso.Text.Trim(),
-                        TxtEmail.Text.Trim(),
-                        ChkAtivo.Checked);
+                    int linhas = UpdateAluno(
+                        idAluno,
+                        agrupamentoId,
+                        nomeCompleto,
+                        numeroProcesso,
+                        email,
+                        telefone,
+                        ChkAtivo.Checked
+                    );
 
-                    if (Linhas > 0)
-                        MostrarMensagem("Aluno atualizado com sucesso.", false);
+                    if (linhas > 0)
+                    {
+                        MostrarMensagem(
+                            "Aluno atualizado com sucesso.",
+                            false
+                        );
+                    }
                     else
-                        MostrarMensagem("Não foi possível atualizar o aluno.");
+                    {
+                        MostrarMensagem(
+                            "Não foi possível atualizar o aluno."
+                        );
+
+                        return;
+                    }
                 }
                 else
                 {
@@ -138,21 +193,43 @@ namespace AlunoGest.agrupamento
 
                 GetAlunos();
                 LimparFormulario();
+
                 GridAlunos.SelectedIndex = -1;
                 ViewState["Op"] = null;
                 Controlos.Visible = false;
             }
-            catch (Exception Ex)
+            catch (MembershipCreateUserException ex)
             {
-                MostrarMensagem("Erro ao guardar o aluno: " + Ex.Message);
+                MostrarMensagem(
+                    "Não foi possível criar a conta do aluno: " +
+                    ex.Message
+                );
+            }
+            catch (SqlException ex)
+            {
+                MostrarMensagem(
+                    "Erro na base de dados ao guardar o aluno: " +
+                    ex.Message
+                );
+            }
+            catch (Exception ex)
+            {
+                MostrarMensagem(
+                    "Erro ao guardar o aluno: " +
+                    ex.Message
+                );
             }
         }
 
-        protected void ButtonCancelar_Click(object sender, EventArgs e)
+        protected void ButtonCancelar_Click(
+            object sender,
+            EventArgs e)
         {
             LimparFormulario();
             LimparMensagem();
+
             GridAlunos.SelectedIndex = -1;
+
             ViewState["Op"] = null;
             Controlos.Visible = false;
         }
@@ -163,40 +240,59 @@ namespace AlunoGest.agrupamento
 
         private void GetAlunos()
         {
-            if (!TryGetAgrupamentoId(out int AgrupamentoId))
+            int agrupamentoId;
+
+            if (!TryGetAgrupamentoId(out agrupamentoId))
             {
                 Response.Redirect("~/login.aspx");
                 return;
             }
 
-            DataTable Dt = new DataTable();
+            DataTable dt = new DataTable();
 
-            const string Sql = @"
+            const string sql = @"
                 SELECT
                     Id,
                     NomeCompleto,
                     NumeroProcesso,
                     Email,
+                    Telefone,
                     Ativo
                 FROM dbo.Aluno
                 WHERE AgrupamentoId = @AgrupamentoId
                 ORDER BY NomeCompleto;";
 
-            using (SqlConnection Conn = new SqlConnection(_ConnectionString))
-            using (SqlCommand Cmd = new SqlCommand(Sql, Conn))
-            using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
+            using (SqlConnection conn =
+                   new SqlConnection(_ConnectionString))
+            using (SqlCommand cmd =
+                   new SqlCommand(sql, conn))
+            using (SqlDataAdapter da =
+                   new SqlDataAdapter(cmd))
             {
-                Cmd.Parameters.Add("@AgrupamentoId", SqlDbType.Int).Value = AgrupamentoId;
-                Da.Fill(Dt);
+                cmd.Parameters
+                    .Add(
+                        "@AgrupamentoId",
+                        SqlDbType.Int
+                    )
+                    .Value = agrupamentoId;
+
+                da.Fill(dt);
             }
 
-            GridAlunos.DataSource = Dt;
+            GridAlunos.DataSource = dt;
             GridAlunos.DataBind();
         }
 
-        private int InsertAluno(Guid UserId, int AgrupamentoId, string NomeCompleto, string NumeroProcesso, string Email, bool Ativo)
+        private int InsertAluno(
+            Guid userId,
+            int agrupamentoId,
+            string nomeCompleto,
+            string numeroProcesso,
+            string email,
+            string telefone,
+            bool ativo)
         {
-            const string Sql = @"
+            const string sql = @"
                 INSERT INTO dbo.Aluno
                 (
                     AgrupamentoId,
@@ -204,6 +300,7 @@ namespace AlunoGest.agrupamento
                     NomeCompleto,
                     NumeroProcesso,
                     Email,
+                    Telefone,
                     Ativo,
                     CreatedAt
                 )
@@ -214,150 +311,349 @@ namespace AlunoGest.agrupamento
                     @NomeCompleto,
                     @NumeroProcesso,
                     @Email,
+                    @Telefone,
                     @Ativo,
                     SYSDATETIME()
                 );";
 
-            using (SqlConnection Conn = new SqlConnection(_ConnectionString))
-            using (SqlCommand Cmd = new SqlCommand(Sql, Conn))
+            using (SqlConnection conn =
+                   new SqlConnection(_ConnectionString))
+            using (SqlCommand cmd =
+                   new SqlCommand(sql, conn))
             {
-                Cmd.Parameters.Add("@AgrupamentoId", SqlDbType.Int).Value = AgrupamentoId;
-                Cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = UserId;
-                Cmd.Parameters.Add("@NomeCompleto", SqlDbType.NVarChar, 200).Value = NomeCompleto;
-                Cmd.Parameters.Add("@NumeroProcesso", SqlDbType.NVarChar, 50).Value =
-                    string.IsNullOrWhiteSpace(NumeroProcesso) ? (object)DBNull.Value : NumeroProcesso;
-                Cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value =
-                    string.IsNullOrWhiteSpace(Email) ? (object)DBNull.Value : Email;
-                Cmd.Parameters.Add("@Ativo", SqlDbType.Bit).Value = Ativo;
+                cmd.Parameters
+                    .Add(
+                        "@AgrupamentoId",
+                        SqlDbType.Int
+                    )
+                    .Value = agrupamentoId;
 
-                Conn.Open();
-                return Cmd.ExecuteNonQuery();
+                cmd.Parameters
+                    .Add(
+                        "@UserId",
+                        SqlDbType.UniqueIdentifier
+                    )
+                    .Value = userId;
+
+                cmd.Parameters
+                    .Add(
+                        "@NomeCompleto",
+                        SqlDbType.NVarChar,
+                        200
+                    )
+                    .Value = nomeCompleto;
+
+                cmd.Parameters
+                    .Add(
+                        "@NumeroProcesso",
+                        SqlDbType.NVarChar,
+                        50
+                    )
+                    .Value =
+                    string.IsNullOrWhiteSpace(numeroProcesso)
+                        ? (object)DBNull.Value
+                        : numeroProcesso;
+
+                cmd.Parameters
+                    .Add(
+                        "@Email",
+                        SqlDbType.NVarChar,
+                        150
+                    )
+                    .Value =
+                    string.IsNullOrWhiteSpace(email)
+                        ? (object)DBNull.Value
+                        : email;
+
+                cmd.Parameters
+                    .Add(
+                        "@Telefone",
+                        SqlDbType.NVarChar,
+                        20
+                    )
+                    .Value =
+                    string.IsNullOrWhiteSpace(telefone)
+                        ? (object)DBNull.Value
+                        : telefone;
+
+                cmd.Parameters
+                    .Add(
+                        "@Ativo",
+                        SqlDbType.Bit
+                    )
+                    .Value = ativo;
+
+                conn.Open();
+
+                return cmd.ExecuteNonQuery();
             }
         }
 
-        private int UpdateAluno(int IdAluno, int AgrupamentoId, string NomeCompleto, string NumeroProcesso, string Email, bool Ativo)
+        private int UpdateAluno(
+            int idAluno,
+            int agrupamentoId,
+            string nomeCompleto,
+            string numeroProcesso,
+            string email,
+            string telefone,
+            bool ativo)
         {
-            const string Sql = @"
+            const string sql = @"
                 UPDATE dbo.Aluno
                 SET
                     NomeCompleto   = @NomeCompleto,
                     NumeroProcesso = @NumeroProcesso,
                     Email          = @Email,
+                    Telefone       = @Telefone,
                     Ativo          = @Ativo
                 WHERE Id            = @Id
                   AND AgrupamentoId = @AgrupamentoId;";
 
-            using (SqlConnection Conn = new SqlConnection(_ConnectionString))
-            using (SqlCommand Cmd = new SqlCommand(Sql, Conn))
+            using (SqlConnection conn =
+                   new SqlConnection(_ConnectionString))
+            using (SqlCommand cmd =
+                   new SqlCommand(sql, conn))
             {
-                Cmd.Parameters.Add("@Id", SqlDbType.Int).Value = IdAluno;
-                Cmd.Parameters.Add("@AgrupamentoId", SqlDbType.Int).Value = AgrupamentoId;
-                Cmd.Parameters.Add("@NomeCompleto", SqlDbType.NVarChar, 200).Value = NomeCompleto;
-                Cmd.Parameters.Add("@NumeroProcesso", SqlDbType.NVarChar, 50).Value =
-                    string.IsNullOrWhiteSpace(NumeroProcesso) ? (object)DBNull.Value : NumeroProcesso;
-                Cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value =
-                    string.IsNullOrWhiteSpace(Email) ? (object)DBNull.Value : Email;
-                Cmd.Parameters.Add("@Ativo", SqlDbType.Bit).Value = Ativo;
+                cmd.Parameters
+                    .Add(
+                        "@Id",
+                        SqlDbType.Int
+                    )
+                    .Value = idAluno;
 
-                Conn.Open();
-                return Cmd.ExecuteNonQuery();
+                cmd.Parameters
+                    .Add(
+                        "@AgrupamentoId",
+                        SqlDbType.Int
+                    )
+                    .Value = agrupamentoId;
+
+                cmd.Parameters
+                    .Add(
+                        "@NomeCompleto",
+                        SqlDbType.NVarChar,
+                        200
+                    )
+                    .Value = nomeCompleto;
+
+                cmd.Parameters
+                    .Add(
+                        "@NumeroProcesso",
+                        SqlDbType.NVarChar,
+                        50
+                    )
+                    .Value =
+                    string.IsNullOrWhiteSpace(numeroProcesso)
+                        ? (object)DBNull.Value
+                        : numeroProcesso;
+
+                cmd.Parameters
+                    .Add(
+                        "@Email",
+                        SqlDbType.NVarChar,
+                        150
+                    )
+                    .Value =
+                    string.IsNullOrWhiteSpace(email)
+                        ? (object)DBNull.Value
+                        : email;
+
+                cmd.Parameters
+                    .Add(
+                        "@Telefone",
+                        SqlDbType.NVarChar,
+                        20
+                    )
+                    .Value =
+                    string.IsNullOrWhiteSpace(telefone)
+                        ? (object)DBNull.Value
+                        : telefone;
+
+                cmd.Parameters
+                    .Add(
+                        "@Ativo",
+                        SqlDbType.Bit
+                    )
+                    .Value = ativo;
+
+                conn.Open();
+
+                return cmd.ExecuteNonQuery();
             }
         }
 
-        private DataRow GetAlunoById(int IdAluno)
+        private DataRow GetAlunoById(int idAluno)
         {
-            if (!TryGetAgrupamentoId(out int AgrupamentoId))
+            int agrupamentoId;
+
+            if (!TryGetAgrupamentoId(out agrupamentoId))
                 return null;
 
-            DataTable Dt = new DataTable();
+            DataTable dt = new DataTable();
 
-            const string Sql = @"
+            const string sql = @"
                 SELECT
                     Id,
                     NomeCompleto,
                     NumeroProcesso,
                     Email,
+                    Telefone,
                     Ativo
                 FROM dbo.Aluno
                 WHERE Id            = @Id
                   AND AgrupamentoId = @AgrupamentoId;";
 
-            using (SqlConnection Conn = new SqlConnection(_ConnectionString))
-            using (SqlCommand Cmd = new SqlCommand(Sql, Conn))
-            using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
+            using (SqlConnection conn =
+                   new SqlConnection(_ConnectionString))
+            using (SqlCommand cmd =
+                   new SqlCommand(sql, conn))
+            using (SqlDataAdapter da =
+                   new SqlDataAdapter(cmd))
             {
-                Cmd.Parameters.Add("@Id", SqlDbType.Int).Value = IdAluno;
-                Cmd.Parameters.Add("@AgrupamentoId", SqlDbType.Int).Value = AgrupamentoId;
-                Da.Fill(Dt);
+                cmd.Parameters
+                    .Add(
+                        "@Id",
+                        SqlDbType.Int
+                    )
+                    .Value = idAluno;
+
+                cmd.Parameters
+                    .Add(
+                        "@AgrupamentoId",
+                        SqlDbType.Int
+                    )
+                    .Value = agrupamentoId;
+
+                da.Fill(dt);
             }
 
-            if (Dt.Rows.Count == 0)
+            if (dt.Rows.Count == 0)
                 return null;
 
-            return Dt.Rows[0];
+            return dt.Rows[0];
         }
 
         #endregion
 
         #region Membership
 
-        private Guid CriarContaAluno(string NomeCompleto, string Email)
+        private Guid CriarContaAluno(
+            string nomeCompleto,
+            string email)
         {
-            string UsernameBase = CriarConta.GerarUsername(NomeCompleto);
-            string Username = CriarConta.GarantirUsernameUnico(UsernameBase);
-            string Password = CriarConta.GerarPassword();
+            string usernameBase =
+                CriarConta.GerarUsername(nomeCompleto);
 
-            Membership.CreateUser(Username, Password, Email);
-            Roles.AddUserToRole(Username, "Aluno");
+            string username =
+                CriarConta.GarantirUsernameUnico(
+                    usernameBase
+                );
 
-            MembershipUser User = Membership.GetUser(Username);
+            string password =
+                CriarConta.GerarPassword();
+
+            Membership.CreateUser(
+                username,
+                password,
+                email
+            );
+
+            Roles.AddUserToRole(
+                username,
+                "Aluno"
+            );
+
+            MembershipUser user =
+                Membership.GetUser(username);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException(
+                    "A conta foi criada, mas não foi possível " +
+                    "obter os dados do utilizador."
+                );
+            }
 
             CriarConta.EnviarEmailCredenciais(
-                Email,
-                NomeCompleto,
-                Username,
-                Password,
-                "http://localhost/login.aspx");
+                email,
+                nomeCompleto,
+                username,
+                password,
+                "http://localhost/login.aspx"
+            );
 
-            return (Guid)User.ProviderUserKey;
+            return (Guid)user.ProviderUserKey;
         }
 
         #endregion
 
         #region Auxiliares
 
-        private void CarregarAluno(int IdAluno)
+        private void CarregarAluno(int idAluno)
         {
-            DataRow Dr = GetAlunoById(IdAluno);
+            DataRow dr =
+                GetAlunoById(idAluno);
 
-            if (Dr == null)
+            if (dr == null)
             {
-                MostrarMensagem("Não foi possível carregar o aluno.");
+                MostrarMensagem(
+                    "Não foi possível carregar o aluno."
+                );
+
                 return;
             }
 
-            TxtNomeCompleto.Text = Dr["NomeCompleto"] == DBNull.Value ? "" : Dr["NomeCompleto"].ToString();
-            TxtNumeroProcesso.Text = Dr["NumeroProcesso"] == DBNull.Value ? "" : Dr["NumeroProcesso"].ToString();
-            TxtEmail.Text = Dr["Email"] == DBNull.Value ? "" : Dr["Email"].ToString();
-            ChkAtivo.Checked = Dr["Ativo"] != DBNull.Value && Convert.ToBoolean(Dr["Ativo"]);
+            TxtNomeCompleto.Text =
+                dr["NomeCompleto"] == DBNull.Value
+                    ? string.Empty
+                    : dr["NomeCompleto"].ToString();
+
+            TxtNumeroProcesso.Text =
+                dr["NumeroProcesso"] == DBNull.Value
+                    ? string.Empty
+                    : dr["NumeroProcesso"].ToString();
+
+            TxtEmail.Text =
+                dr["Email"] == DBNull.Value
+                    ? string.Empty
+                    : dr["Email"].ToString();
+
+            TxtTelefone.Text =
+                dr["Telefone"] == DBNull.Value
+                    ? string.Empty
+                    : dr["Telefone"].ToString();
+
+            ChkAtivo.Checked =
+                dr["Ativo"] != DBNull.Value &&
+                Convert.ToBoolean(dr["Ativo"]);
         }
 
-        private bool AlunoSelecionado(out int IdAluno)
+        private bool AlunoSelecionado(
+            out int idAluno)
         {
-            IdAluno = 0;
+            idAluno = 0;
 
-            if (GridAlunos.SelectedDataKey == null || GridAlunos.SelectedDataKey.Value == null)
+            if (GridAlunos.SelectedDataKey == null ||
+                GridAlunos.SelectedDataKey.Value == null)
+            {
                 return false;
+            }
 
-            return int.TryParse(GridAlunos.SelectedDataKey.Value.ToString(), out IdAluno);
+            return int.TryParse(
+                GridAlunos.SelectedDataKey.Value.ToString(),
+                out idAluno
+            );
         }
 
-        private bool TryGetAgrupamentoId(out int AgrupamentoId)
+        private bool TryGetAgrupamentoId(
+            out int agrupamentoId)
         {
-            AgrupamentoId = 0;
+            agrupamentoId = 0;
 
             if (Session["AgrupamentoID"] != null &&
-                int.TryParse(Session["AgrupamentoID"].ToString(), out AgrupamentoId))
+                int.TryParse(
+                    Session["AgrupamentoID"].ToString(),
+                    out agrupamentoId))
             {
                 return true;
             }
@@ -365,43 +661,72 @@ namespace AlunoGest.agrupamento
             if (Session["UserId"] == null)
                 return false;
 
-            string UserId = Session["UserId"].ToString();
+            Guid userId;
 
-            const string Sql = @"
+            if (!Guid.TryParse(
+                    Session["UserId"].ToString(),
+                    out userId))
+            {
+                return false;
+            }
+
+            const string sql = @"
                 SELECT Id
                 FROM dbo.Agrupamento
-                WHERE UserID = @UserID;";
+                WHERE UserId = @UserId
+                  AND Ativo = 1;";
 
-            using (SqlConnection Conn = new SqlConnection(_ConnectionString))
-            using (SqlCommand Cmd = new SqlCommand(Sql, Conn))
+            using (SqlConnection conn =
+                   new SqlConnection(_ConnectionString))
+            using (SqlCommand cmd =
+                   new SqlCommand(sql, conn))
             {
-                Cmd.Parameters.Add("@UserID", SqlDbType.NVarChar, 128).Value = UserId;
+                cmd.Parameters
+                    .Add(
+                        "@UserId",
+                        SqlDbType.UniqueIdentifier
+                    )
+                    .Value = userId;
 
-                Conn.Open();
-                object Result = Cmd.ExecuteScalar();
+                conn.Open();
 
-                if (Result == null || Result == DBNull.Value)
+                object resultado =
+                    cmd.ExecuteScalar();
+
+                if (resultado == null ||
+                    resultado == DBNull.Value)
+                {
                     return false;
+                }
 
-                AgrupamentoId = Convert.ToInt32(Result);
-                Session["AgrupamentoID"] = AgrupamentoId;
+                agrupamentoId =
+                    Convert.ToInt32(resultado);
+
+                Session["AgrupamentoID"] =
+                    agrupamentoId;
+
                 return true;
             }
         }
 
         private void LimparFormulario()
         {
-            TxtNomeCompleto.Text = "";
-            TxtNumeroProcesso.Text = "";
-            TxtEmail.Text = "";
+            TxtNomeCompleto.Text = string.Empty;
+            TxtNumeroProcesso.Text = string.Empty;
+            TxtEmail.Text = string.Empty;
+            TxtTelefone.Text = string.Empty;
+
             ChkAtivo.Checked = true;
         }
 
-        private void MostrarMensagem(string Mensagem, bool Erro = true)
+        private void MostrarMensagem(
+            string mensagem,
+            bool erro = true)
         {
             LblMensagem.Visible = true;
-            LblMensagem.Text = Mensagem;
-            LblMensagem.CssClass = Erro
+            LblMensagem.Text = mensagem;
+
+            LblMensagem.CssClass = erro
                 ? "alert alert-warning d-block"
                 : "alert alert-success d-block";
         }
@@ -409,7 +734,8 @@ namespace AlunoGest.agrupamento
         private void LimparMensagem()
         {
             LblMensagem.Visible = false;
-            LblMensagem.Text = "";
+            LblMensagem.Text = string.Empty;
+            LblMensagem.CssClass = string.Empty;
         }
 
         #endregion
