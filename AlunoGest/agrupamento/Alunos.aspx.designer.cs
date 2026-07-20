@@ -96,6 +96,33 @@ namespace AlunoGest.agrupamento
         protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvNumeroProcesso;
 
         /// <summary>
+        /// Controle TxtNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtNIF;
+
+        /// <summary>
+        /// Controle RfvNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvNIF;
+
+        /// <summary>
+        /// Controle RevNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator RevNIF;
+
+        /// <summary>
         /// Controle TxtEmail.
         /// </summary>
         /// <remarks>

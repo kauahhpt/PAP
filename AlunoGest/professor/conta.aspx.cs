@@ -145,13 +145,11 @@ namespace AlunoGest.professor
                 return;
             }
 
-
             Guid userId;
 
             if (!Guid.TryParse(
                     Session["UserId"].ToString(),
-                    out userId
-                ))
+                    out userId))
             {
                 MostrarMensagem(
                     "A sessão do utilizador é inválida.",
@@ -161,37 +159,37 @@ namespace AlunoGest.professor
                 return;
             }
 
-
             const string sql = @"
-                SELECT
-                    p.Nome,
-                    p.NumeroProcesso,
-                    p.Email,
-                    p.Foto,
-                    u.UserName
+        SELECT
+            p.Nome,
+            p.NumeroProcesso,
+            p.Email,
+            p.Foto,
+            p.Telefone,
+            p.NIF,
+            u.UserName
 
-                FROM dbo.Professor p
+        FROM dbo.Professor p
 
-                INNER JOIN dbo.Users u
-                    ON u.UserId = p.UserId
+        INNER JOIN dbo.Users u
+            ON u.UserId = p.UserId
 
-                WHERE p.UserId = @UserId
-                  AND p.Ativo = 1;";
-
+        WHERE p.UserId = @UserId
+          AND p.Ativo = 1;";
 
             using (SqlConnection conn =
                 new SqlConnection(_connectionString))
             using (SqlCommand cmd =
                 new SqlCommand(sql, conn))
             {
-                cmd.Parameters.Add(
-                    "@UserId",
-                    SqlDbType.UniqueIdentifier
-                ).Value = userId;
-
+                cmd.Parameters
+                    .Add(
+                        "@UserId",
+                        SqlDbType.UniqueIdentifier
+                    )
+                    .Value = userId;
 
                 conn.Open();
-
 
                 using (SqlDataReader reader =
                     cmd.ExecuteReader())
@@ -206,36 +204,43 @@ namespace AlunoGest.professor
                         return;
                     }
 
-
                     LblNomeCompleto.Text =
                         reader["Nome"].ToString();
-
 
                     LblNumeroProcesso.Text =
                         reader["NumeroProcesso"] == DBNull.Value
                             ? "Não definido"
                             : reader["NumeroProcesso"].ToString();
 
-
                     LblEmail.Text =
                         reader["Email"] == DBNull.Value
                             ? "Não definido"
                             : reader["Email"].ToString();
 
+                    LblTelefone.Text =
+                        reader["Telefone"] == DBNull.Value ||
+                        string.IsNullOrWhiteSpace(
+                            reader["Telefone"].ToString())
+                            ? "Não definido"
+                            : reader["Telefone"].ToString();
+
+                    LblNIF.Text =
+                        reader["NIF"] == DBNull.Value ||
+                        string.IsNullOrWhiteSpace(
+                            reader["NIF"].ToString())
+                            ? "Não definido"
+                            : reader["NIF"].ToString();
 
                     LblUsername.Text =
                         reader["UserName"].ToString();
 
-
                     TxtUsername.Text =
                         reader["UserName"].ToString();
 
-
                     string foto =
                         reader["Foto"] == DBNull.Value
-                            ? ""
+                            ? string.Empty
                             : reader["Foto"].ToString();
-
 
                     ImgFotoPerfil.ImageUrl =
                         string.IsNullOrWhiteSpace(foto)

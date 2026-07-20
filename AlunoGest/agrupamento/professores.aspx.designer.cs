@@ -132,6 +132,42 @@ namespace AlunoGest.agrupamento
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvTelefone;
 
         /// <summary>
+        /// Controle revTelefone.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revTelefone;
+
+        /// <summary>
+        /// Controle txtNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNIF;
+
+        /// <summary>
+        /// Controle rfvNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNIF;
+
+        /// <summary>
+        /// Controle revNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revNIF;
+
+        /// <summary>
         /// Controle txtNumeroProcesso.
         /// </summary>
         /// <remarks>
@@ -141,13 +177,13 @@ namespace AlunoGest.agrupamento
         protected global::System.Web.UI.WebControls.TextBox txtNumeroProcesso;
 
         /// <summary>
-        /// Controle rfvCodigoPostal.
+        /// Controle rfvNumeroProcesso.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvCodigoPostal;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNumeroProcesso;
 
         /// <summary>
         /// Controle ddlGrupoRecrutamento.

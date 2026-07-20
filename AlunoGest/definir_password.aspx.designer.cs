@@ -7,128 +7,119 @@
 // </gerado automaticamente>
 //------------------------------------------------------------------------------
 
-namespace AlunoGest.aluno
+namespace AlunoGest
 {
 
 
-    public partial class InformacoesAluno
+    public partial class definir_password
     {
 
         /// <summary>
-        /// Controle LblMensagem.
+        /// Controle ltlRedirect.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblMensagem;
+        protected global::System.Web.UI.WebControls.Literal ltlRedirect;
 
         /// <summary>
-        /// Controle ImgFotoPerfil.
+        /// Controle form1.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image ImgFotoPerfil;
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// Controle LblNomeCompleto.
+        /// Controle ValidationSummary1.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblNomeCompleto;
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
 
         /// <summary>
-        /// Controle LblNumeroProcesso.
+        /// Controle LblPassword.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblNumeroProcesso;
+        protected global::System.Web.UI.WebControls.Label LblPassword;
 
         /// <summary>
-        /// Controle LblUsername.
+        /// Controle textPassword.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblUsername;
+        protected global::System.Web.UI.WebControls.TextBox textPassword;
 
         /// <summary>
-        /// Controle LblTelefone.
+        /// Controle RfvPassword.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTelefone;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvPassword;
 
         /// <summary>
-        /// Controle LblNIF.
+        /// Controle LblPasswordRepeticao.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblNIF;
+        protected global::System.Web.UI.WebControls.Label LblPasswordRepeticao;
 
         /// <summary>
-        /// Controle FileFoto.
+        /// Controle textPasswordRepeticao.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload FileFoto;
+        protected global::System.Web.UI.WebControls.TextBox textPasswordRepeticao;
 
         /// <summary>
-        /// Controle BtnAlterarFoto.
+        /// Controle RfvPasswordRepeticao.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BtnAlterarFoto;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvPasswordRepeticao;
 
         /// <summary>
-        /// Controle TxtSenhaAtual.
+        /// Controle ComparePasswords.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TxtSenhaAtual;
+        protected global::System.Web.UI.WebControls.CompareValidator ComparePasswords;
 
         /// <summary>
-        /// Controle TxtNovaSenha.
+        /// Controle btnReset.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TxtNovaSenha;
+        protected global::System.Web.UI.WebControls.Button btnReset;
 
         /// <summary>
-        /// Controle TxtConfirmarSenha.
+        /// Controle lblMessage.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TxtConfirmarSenha;
-
-        /// <summary>
-        /// Controle BtnAlterarSenha.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BtnAlterarSenha;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
     }
 }

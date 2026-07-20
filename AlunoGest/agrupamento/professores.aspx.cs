@@ -1,23 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Web.Security;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using AlunoGest.Util;
 
 namespace AlunoGest.agrupamento
 {
     public partial class professores : Page
     {
-        private readonly string connectionString =
+        #region Campos
+
+        private readonly string _connectionString =
             ConfigurationManager
                 .ConnectionStrings["DefaultConnection"]
                 .ConnectionString;
 
-        protected void Page_Load(object sender, EventArgs e)
+        #endregion
+
+        #region Página
+
+        protected void Page_Load(
+            object sender,
+            EventArgs e)
         {
             if (!IsPostBack)
             {
@@ -29,16 +36,24 @@ namespace AlunoGest.agrupamento
             }
         }
 
-        protected void buttonVer_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Botões principais
+
+        protected void buttonVer_Click(
+            object sender,
+            EventArgs e)
         {
-            if (gridProfessores.SelectedRow == null)
+            int idProfessor;
+
+            if (!ProfessorSelecionado(out idProfessor))
             {
-                MostrarAlert("Selecione um professor.");
+                MostrarAlert(
+                    "Selecione um professor."
+                );
+
                 return;
             }
-
-            int idProfessor =
-                Convert.ToInt32(gridProfessores.SelectedDataKey.Value);
 
             CarregarProfessor(idProfessor);
             CarregarDisciplinasDoProfessor(idProfessor);
@@ -51,9 +66,13 @@ namespace AlunoGest.agrupamento
             ActivarControlos(false);
         }
 
-        protected void buttonCriar_Click(object sender, EventArgs e)
+        protected void buttonCriar_Click(
+            object sender,
+            EventArgs e)
         {
             LimparFormulario();
+
+            gridProfessores.SelectedIndex = -1;
 
             gridDisciplinasProfessor.DataSource = null;
             gridDisciplinasProfessor.DataBind();
@@ -66,16 +85,20 @@ namespace AlunoGest.agrupamento
             ActivarControlos(true);
         }
 
-        protected void buttonEditar_Click(object sender, EventArgs e)
+        protected void buttonEditar_Click(
+            object sender,
+            EventArgs e)
         {
-            if (gridProfessores.SelectedRow == null)
+            int idProfessor;
+
+            if (!ProfessorSelecionado(out idProfessor))
             {
-                MostrarAlert("Selecione um professor.");
+                MostrarAlert(
+                    "Selecione um professor."
+                );
+
                 return;
             }
-
-            int idProfessor =
-                Convert.ToInt32(gridProfessores.SelectedDataKey.Value);
 
             CarregarProfessor(idProfessor);
             CarregarDisciplinasDoProfessor(idProfessor);
@@ -88,20 +111,73 @@ namespace AlunoGest.agrupamento
             ActivarControlos(true);
         }
 
-        protected void buttonGuardar_Click(object sender, EventArgs e)
+        protected void buttonGuardar_Click(
+            object sender,
+            EventArgs e)
         {
             if (!Page.IsValid)
+            {
                 return;
-
-            int agrupamentoId = GetAgrupamentoIdFromSession();
+            }
 
             string modo =
-                Convert.ToString(ViewState["op"])?.ToLowerInvariant();
+                Convert.ToString(
+                    ViewState["op"]
+                )
+                .ToLowerInvariant();
 
-            string nome = txtNome.Text.Trim();
-            string email = txtEmail.Text.Trim();
-            string telefone = txtTelefone.Text.Trim();
-            string numeroProcesso = txtNumeroProcesso.Text.Trim();
+            string nome =
+                txtNome.Text.Trim();
+
+            string email =
+                txtEmail.Text.Trim();
+
+            string telefone =
+                txtTelefone.Text.Trim();
+
+            string numeroProcesso =
+                txtNumeroProcesso.Text.Trim();
+
+            string nif =
+                ValidadorNif.Normalizar(
+                    txtNIF.Text
+                );
+
+            string mensagemNif;
+
+            if (!ValidadorNif.ValidarLocalmente(
+                    nif,
+                    out mensagemNif))
+            {
+                MostrarAlert(mensagemNif);
+                return;
+            }
+
+            //ResultadoValidacaoNifApi resultadoApi =
+            //    ValidadorNif.ValidarNaApi(nif);
+
+            //if (resultadoApi.Estado !=
+            //    EstadoValidacaoNifApi.Valido)
+            //{
+            //    MostrarAlert(
+            //        resultadoApi.Mensagem
+            //    );
+
+            //    return;
+            //}
+
+            int agrupamentoId;
+
+            try
+            {
+                agrupamentoId =
+                    GetAgrupamentoIdFromSession();
+            }
+            catch (Exception ex)
+            {
+                MostrarAlert(ex.Message);
+                return;
+            }
 
             int? grupoRecrutamentoId = null;
 
@@ -110,82 +186,138 @@ namespace AlunoGest.agrupamento
             {
                 grupoRecrutamentoId =
                     Convert.ToInt32(
-                        ddlGrupoRecrutamento.SelectedValue);
+                        ddlGrupoRecrutamento
+                            .SelectedValue
+                    );
             }
 
-            int linhasAfetadas;
-
-            if (modo == "i")
+            try
             {
-                Guid userIdProfessor = CriarContaProfessor();
-
-                linhasAfetadas = InsertProfessor(
-                    userIdProfessor,
-                    agrupamentoId,
-                    nome,
-                    numeroProcesso,
-                    email,
-                    telefone,
-                    grupoRecrutamentoId
-                );
-
-                if (linhasAfetadas == 0)
+                if (modo == "i")
                 {
+                    if (NifJaExiste(
+                            nif,
+                            null,
+                            null))
+                    {
+                        MostrarAlert(
+                            "Já existe um aluno ou professor " +
+                            "com este NIF."
+                        );
+
+                        return;
+                    }
+
+                    Guid userIdProfessor =
+                        CriarContaProfessor();
+
+                    int linhas =
+                        InsertProfessor(
+                            userIdProfessor,
+                            agrupamentoId,
+                            nome,
+                            numeroProcesso,
+                            email,
+                            telefone,
+                            nif,
+                            grupoRecrutamentoId
+                        );
+
+                    if (linhas == 0)
+                    {
+                        MostrarAlert(
+                            "Não foi possível criar o professor."
+                        );
+
+                        return;
+                    }
+
                     MostrarAlert(
-                        "Não foi possível criar o professor."
+                        "Professor criado com sucesso."
                     );
-
-                    return;
                 }
-
-                MostrarAlert(
-                    "Professor criado com sucesso."
-                );
-            }
-            else if (modo == "u")
-            {
-                if (gridProfessores.SelectedRow == null)
+                else if (modo == "u")
                 {
-                    MostrarAlert("Selecione um professor.");
-                    return;
-                }
+                    int idProfessor;
 
-                int idProfessor =
-                    Convert.ToInt32(
-                        gridProfessores.SelectedDataKey.Value
-                    );
+                    if (!ProfessorSelecionado(
+                            out idProfessor))
+                    {
+                        MostrarAlert(
+                            "Selecione um professor."
+                        );
 
-                linhasAfetadas = UpdateProfessor(
-                    idProfessor,
-                    agrupamentoId,
-                    nome,
-                    numeroProcesso,
-                    email,
-                    telefone,
-                    grupoRecrutamentoId
-                );
+                        return;
+                    }
 
-                if (linhasAfetadas == 0)
-                {
+                    if (NifJaExiste(
+                            nif,
+                            null,
+                            idProfessor))
+                    {
+                        MostrarAlert(
+                            "Já existe outro aluno ou professor " +
+                            "com este NIF."
+                        );
+
+                        return;
+                    }
+
+                    int linhas =
+                        UpdateProfessor(
+                            idProfessor,
+                            agrupamentoId,
+                            nome,
+                            numeroProcesso,
+                            email,
+                            telefone,
+                            nif,
+                            grupoRecrutamentoId
+                        );
+
+                    if (linhas == 0)
+                    {
+                        MostrarAlert(
+                            "Não foi possível atualizar o professor."
+                        );
+
+                        return;
+                    }
+
                     MostrarAlert(
-                        "Não foi possível atualizar o professor."
+                        "Professor atualizado com sucesso."
                     );
-
+                }
+                else
+                {
+                    FecharFormulario();
                     return;
                 }
 
-                MostrarAlert(
-                    "Professor atualizado com sucesso."
-                );
-            }
-            else
-            {
+                GetProfessores();
                 FecharFormulario();
-                return;
             }
-
-            GetProfessores();
-            FecharFormulario();
+            catch (MembershipCreateUserException ex)
+            {
+                MostrarAlert(
+                    "Não foi possível criar a conta do professor: " +
+                    ex.Message
+                );
+            }
+            catch (SqlException ex)
+            {
+                MostrarAlert(
+                    "Erro na base de dados: " +
+                    ex.Message
+                );
+            }
+            catch (Exception ex)
+            {
+                MostrarAlert(
+                    "Erro ao guardar o professor: " +
+                    ex.Message
+                );
+            }
         }
 
         protected void buttonCancelar_Click(
@@ -195,11 +327,40 @@ namespace AlunoGest.agrupamento
             FecharFormulario();
         }
 
+        protected void buttonDisciplinasProfessor_Click(
+            object sender,
+            EventArgs e)
+        {
+            int idProfessor;
+
+            if (!ProfessorSelecionado(
+                    out idProfessor))
+            {
+                MostrarAlert(
+                    "Selecione o professor."
+                );
+
+                return;
+            }
+
+            Session["ProfessorId"] =
+                idProfessor;
+
+            Response.Redirect(
+                "~/agrupamento/professor_disciplinas.aspx"
+            );
+        }
+
+        #endregion
+
+        #region Paginação
+
         protected void gridProfessores_PageIndexChanging(
             object sender,
-            System.Web.UI.WebControls.GridViewPageEventArgs e)
+            GridViewPageEventArgs e)
         {
-            gridProfessores.PageIndex = e.NewPageIndex;
+            gridProfessores.PageIndex =
+                e.NewPageIndex;
 
             GetProfessores();
 
@@ -209,128 +370,43 @@ namespace AlunoGest.agrupamento
             painelDisciplinasProfessor.Visible = false;
         }
 
-        private void ActivarControlos(bool ativo)
-        {
-            txtNome.Enabled = ativo;
-            txtEmail.Enabled = ativo;
-            txtTelefone.Enabled = ativo;
-            txtNumeroProcesso.Enabled = ativo;
-            ddlGrupoRecrutamento.Enabled = ativo;
+        #endregion
 
-            buttonGuardar.Visible = ativo;
-        }
+        #region Listagem e leitura
 
-        private void LimparFormulario()
-        {
-            txtNome.Text = string.Empty;
-            txtEmail.Text = string.Empty;
-            txtTelefone.Text = string.Empty;
-            txtNumeroProcesso.Text = string.Empty;
-
-            if (ddlGrupoRecrutamento.Items.Count > 0)
-                ddlGrupoRecrutamento.SelectedIndex = 0;
-        }
-
-        private void FecharFormulario()
-        {
-            LimparFormulario();
-
-            ViewState["op"] = null;
-
-            gridProfessores.SelectedIndex = -1;
-
-            controlos.Visible = false;
-            painelDisciplinasProfessor.Visible = false;
-
-            gridDisciplinasProfessor.DataSource = null;
-            gridDisciplinasProfessor.DataBind();
-        }
-
-        private int GetAgrupamentoIdFromSession()
-        {
-            object sessionUserId = Session["UserId"];
-
-            if (sessionUserId == null)
-            {
-                throw new InvalidOperationException(
-                    "Sessão inválida: não existe Session['UserId']."
-                );
-            }
-
-            Guid userId;
-
-            if (!Guid.TryParse(
-                    sessionUserId.ToString(),
-                    out userId))
-            {
-                throw new InvalidOperationException(
-                    "Session['UserId'] não contém um GUID válido."
-                );
-            }
-
-            const string sql = @"
-                SELECT Id
-                FROM Agrupamento
-                WHERE UserId = @UserId
-                  AND Ativo = 1;";
-
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
-            {
-                cmd.Parameters
-                    .Add(
-                        "@UserId",
-                        SqlDbType.UniqueIdentifier
-                    )
-                    .Value = userId;
-
-                connection.Open();
-
-                object result = cmd.ExecuteScalar();
-
-                if (result == null || result == DBNull.Value)
-                {
-                    throw new InvalidOperationException(
-                        "Não foi encontrado nenhum agrupamento " +
-                        "associado ao utilizador autenticado."
-                    );
-                }
-
-                return Convert.ToInt32(result);
-            }
-        }
-
-        #region Base de dados
-
-        public void GetProfessores()
+        private void GetProfessores()
         {
             int agrupamentoId =
                 GetAgrupamentoIdFromSession();
 
-            var dt = new DataTable();
+            DataTable tabela =
+                new DataTable();
 
             const string sql = @"
                 SELECT
                     p.Id,
                     p.Nome,
                     gr.Nome AS GrupoRecrutamento,
+                    p.NIF,
                     p.Telefone,
                     p.Email
-                FROM Professor p
-                LEFT JOIN GrupoRecrutamento gr
+
+                FROM dbo.Professor p
+
+                LEFT JOIN dbo.GrupoRecrutamento gr
                     ON p.GrupoRecrutamentoId = gr.Id
+
                 WHERE p.AgrupamentoId = @AgrupamentoId
                   AND p.Ativo = 1
+
                 ORDER BY p.Nome;";
 
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
-            using (var da =
-                   new SqlDataAdapter(cmd))
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter =
+                new SqlDataAdapter(cmd))
             {
                 cmd.Parameters
                     .Add(
@@ -339,30 +415,155 @@ namespace AlunoGest.agrupamento
                     )
                     .Value = agrupamentoId;
 
-                da.Fill(dt);
+                adapter.Fill(tabela);
             }
 
-            gridProfessores.DataSource = dt;
+            gridProfessores.DataSource = tabela;
             gridProfessores.DataBind();
         }
 
-        public int InsertProfessor(
+        private DataRow GetProfessorById(
+            int idProfessor)
+        {
+            int agrupamentoId =
+                GetAgrupamentoIdFromSession();
+
+            DataTable tabela =
+                new DataTable();
+
+            const string sql = @"
+                SELECT
+                    Id,
+                    Nome,
+                    Email,
+                    Telefone,
+                    NIF,
+                    NumeroProcesso,
+                    GrupoRecrutamentoId
+
+                FROM dbo.Professor
+
+                WHERE Id = @Id
+                  AND AgrupamentoId = @AgrupamentoId;";
+
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter =
+                new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters
+                    .Add(
+                        "@Id",
+                        SqlDbType.Int
+                    )
+                    .Value = idProfessor;
+
+                cmd.Parameters
+                    .Add(
+                        "@AgrupamentoId",
+                        SqlDbType.Int
+                    )
+                    .Value = agrupamentoId;
+
+                adapter.Fill(tabela);
+            }
+
+            return tabela.Rows.Count > 0
+                ? tabela.Rows[0]
+                : null;
+        }
+
+        private void CarregarProfessor(
+            int idProfessor)
+        {
+            DataRow professor =
+                GetProfessorById(idProfessor);
+
+            if (professor == null)
+            {
+                MostrarAlert(
+                    "Não foi possível encontrar o professor."
+                );
+
+                return;
+            }
+
+            txtNome.Text =
+                ValorTexto(
+                    professor["Nome"]
+                );
+
+            txtEmail.Text =
+                ValorTexto(
+                    professor["Email"]
+                );
+
+            txtTelefone.Text =
+                ValorTexto(
+                    professor["Telefone"]
+                );
+
+            txtNIF.Text =
+                ValorTexto(
+                    professor["NIF"]
+                );
+
+            txtNumeroProcesso.Text =
+                ValorTexto(
+                    professor["NumeroProcesso"]
+                );
+
+            if (professor["GrupoRecrutamentoId"] ==
+                DBNull.Value)
+            {
+                ddlGrupoRecrutamento.SelectedIndex = 0;
+            }
+            else
+            {
+                string valor =
+                    professor[
+                        "GrupoRecrutamentoId"
+                    ]
+                    .ToString();
+
+                ListItem item =
+                    ddlGrupoRecrutamento
+                        .Items
+                        .FindByValue(valor);
+
+                if (item != null)
+                {
+                    ddlGrupoRecrutamento.SelectedValue =
+                        valor;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Inserção e atualização
+
+        private int InsertProfessor(
             Guid userId,
             int agrupamentoId,
             string nome,
             string numeroProcesso,
             string email,
             string telefone,
+            string nif,
             int? grupoRecrutamentoId)
         {
             const string sql = @"
-                INSERT INTO Professor
+                INSERT INTO dbo.Professor
                 (
                     AgrupamentoId,
                     UserId,
                     Nome,
                     Email,
                     Telefone,
+                    NIF,
                     NumeroProcesso,
                     GrupoRecrutamentoId,
                     Ativo,
@@ -375,23 +576,28 @@ namespace AlunoGest.agrupamento
                     @Nome,
                     @Email,
                     @Telefone,
+                    @NIF,
                     @NumeroProcesso,
                     @GrupoRecrutamentoId,
                     1,
                     SYSDATETIME()
                 );";
 
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
             {
-                cmd.Parameters
-                    .Add(
-                        "@AgrupamentoId",
-                        SqlDbType.Int
-                    )
-                    .Value = agrupamentoId;
+                AdicionarParametrosProfessor(
+                    cmd,
+                    agrupamentoId,
+                    nome,
+                    numeroProcesso,
+                    email,
+                    telefone,
+                    nif,
+                    grupoRecrutamentoId
+                );
 
                 cmd.Parameters
                     .Add(
@@ -400,265 +606,225 @@ namespace AlunoGest.agrupamento
                     )
                     .Value = userId;
 
-                cmd.Parameters
-                    .Add(
-                        "@Nome",
-                        SqlDbType.NVarChar,
-                        200
-                    )
-                    .Value = nome;
-
-                cmd.Parameters
-                    .Add(
-                        "@Email",
-                        SqlDbType.NVarChar,
-                        150
-                    )
-                    .Value =
-                    string.IsNullOrWhiteSpace(email)
-                        ? (object)DBNull.Value
-                        : email;
-
-                cmd.Parameters
-                    .Add(
-                        "@Telefone",
-                        SqlDbType.NVarChar,
-                        20
-                    )
-                    .Value =
-                    string.IsNullOrWhiteSpace(telefone)
-                        ? (object)DBNull.Value
-                        : telefone;
-
-                cmd.Parameters
-                    .Add(
-                        "@NumeroProcesso",
-                        SqlDbType.NVarChar,
-                        50
-                    )
-                    .Value =
-                    string.IsNullOrWhiteSpace(numeroProcesso)
-                        ? (object)DBNull.Value
-                        : numeroProcesso;
-
-                cmd.Parameters
-                    .Add(
-                        "@GrupoRecrutamentoId",
-                        SqlDbType.Int
-                    )
-                    .Value =
-                    grupoRecrutamentoId.HasValue
-                        ? (object)grupoRecrutamentoId.Value
-                        : DBNull.Value;
-
-                connection.Open();
+                conn.Open();
 
                 return cmd.ExecuteNonQuery();
             }
         }
 
-        public int UpdateProfessor(
-            int id,
+        private int UpdateProfessor(
+            int idProfessor,
             int agrupamentoId,
             string nome,
             string numeroProcesso,
             string email,
             string telefone,
+            string nif,
             int? grupoRecrutamentoId)
         {
             const string sql = @"
-                UPDATE Professor
+                UPDATE dbo.Professor
+
                 SET
                     Nome = @Nome,
                     Email = @Email,
                     Telefone = @Telefone,
+                    NIF = @NIF,
                     NumeroProcesso = @NumeroProcesso,
                     GrupoRecrutamentoId = @GrupoRecrutamentoId
+
                 WHERE Id = @Id
                   AND AgrupamentoId = @AgrupamentoId;";
 
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
             {
+                AdicionarParametrosProfessor(
+                    cmd,
+                    agrupamentoId,
+                    nome,
+                    numeroProcesso,
+                    email,
+                    telefone,
+                    nif,
+                    grupoRecrutamentoId
+                );
+
                 cmd.Parameters
                     .Add(
                         "@Id",
                         SqlDbType.Int
                     )
-                    .Value = id;
+                    .Value = idProfessor;
 
-                cmd.Parameters
-                    .Add(
-                        "@AgrupamentoId",
-                        SqlDbType.Int
-                    )
-                    .Value = agrupamentoId;
-
-                cmd.Parameters
-                    .Add(
-                        "@Nome",
-                        SqlDbType.NVarChar,
-                        200
-                    )
-                    .Value = nome;
-
-                cmd.Parameters
-                    .Add(
-                        "@Email",
-                        SqlDbType.NVarChar,
-                        150
-                    )
-                    .Value =
-                    string.IsNullOrWhiteSpace(email)
-                        ? (object)DBNull.Value
-                        : email;
-
-                cmd.Parameters
-                    .Add(
-                        "@Telefone",
-                        SqlDbType.NVarChar,
-                        20
-                    )
-                    .Value =
-                    string.IsNullOrWhiteSpace(telefone)
-                        ? (object)DBNull.Value
-                        : telefone;
-
-                cmd.Parameters
-                    .Add(
-                        "@NumeroProcesso",
-                        SqlDbType.NVarChar,
-                        50
-                    )
-                    .Value =
-                    string.IsNullOrWhiteSpace(numeroProcesso)
-                        ? (object)DBNull.Value
-                        : numeroProcesso;
-
-                cmd.Parameters
-                    .Add(
-                        "@GrupoRecrutamentoId",
-                        SqlDbType.Int
-                    )
-                    .Value =
-                    grupoRecrutamentoId.HasValue
-                        ? (object)grupoRecrutamentoId.Value
-                        : DBNull.Value;
-
-                connection.Open();
+                conn.Open();
 
                 return cmd.ExecuteNonQuery();
             }
         }
 
-        public DataRow GetProfessorById(int id)
+        private void AdicionarParametrosProfessor(
+            SqlCommand cmd,
+            int agrupamentoId,
+            string nome,
+            string numeroProcesso,
+            string email,
+            string telefone,
+            string nif,
+            int? grupoRecrutamentoId)
         {
-            int agrupamentoId =
-                GetAgrupamentoIdFromSession();
+            cmd.Parameters
+                .Add(
+                    "@AgrupamentoId",
+                    SqlDbType.Int
+                )
+                .Value = agrupamentoId;
 
+            cmd.Parameters
+                .Add(
+                    "@Nome",
+                    SqlDbType.NVarChar,
+                    200
+                )
+                .Value = nome;
+
+            cmd.Parameters
+                .Add(
+                    "@Email",
+                    SqlDbType.NVarChar,
+                    150
+                )
+                .Value = email;
+
+            cmd.Parameters
+                .Add(
+                    "@Telefone",
+                    SqlDbType.NVarChar,
+                    20
+                )
+                .Value = telefone;
+
+            cmd.Parameters
+                .Add(
+                    "@NIF",
+                    SqlDbType.NVarChar,
+                    9
+                )
+                .Value = nif;
+
+            cmd.Parameters
+                .Add(
+                    "@NumeroProcesso",
+                    SqlDbType.NVarChar,
+                    50
+                )
+                .Value = numeroProcesso;
+
+            cmd.Parameters
+                .Add(
+                    "@GrupoRecrutamentoId",
+                    SqlDbType.Int
+                )
+                .Value =
+                grupoRecrutamentoId.HasValue
+                    ? (object)grupoRecrutamentoId.Value
+                    : DBNull.Value;
+        }
+
+        #endregion
+
+        #region Validação de duplicação do NIF
+
+        private bool NifJaExiste(
+            string nif,
+            int? alunoIdIgnorar,
+            int? professorIdIgnorar)
+        {
             const string sql = @"
                 SELECT
-                    Id,
-                    Nome,
-                    Email,
-                    Telefone,
-                    NumeroProcesso,
-                    GrupoRecrutamentoId
-                FROM Professor
-                WHERE Id = @Id
-                  AND AgrupamentoId = @AgrupamentoId;";
+                    CASE
+                        WHEN EXISTS
+                        (
+                            SELECT 1
 
-            var dt = new DataTable();
+                            FROM dbo.Aluno
 
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
-            using (var da =
-                   new SqlDataAdapter(cmd))
+                            WHERE NIF = @NIF
+                              AND
+                              (
+                                  @AlunoIdIgnorar IS NULL
+                                  OR Id <> @AlunoIdIgnorar
+                              )
+                        )
+                        OR EXISTS
+                        (
+                            SELECT 1
+
+                            FROM dbo.Professor
+
+                            WHERE NIF = @NIF
+                              AND
+                              (
+                                  @ProfessorIdIgnorar IS NULL
+                                  OR Id <> @ProfessorIdIgnorar
+                              )
+                        )
+                        THEN 1
+                        ELSE 0
+                    END;";
+
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
             {
                 cmd.Parameters
                     .Add(
-                        "@Id",
-                        SqlDbType.Int
+                        "@NIF",
+                        SqlDbType.NVarChar,
+                        9
                     )
-                    .Value = id;
+                    .Value = nif;
 
                 cmd.Parameters
                     .Add(
-                        "@AgrupamentoId",
+                        "@AlunoIdIgnorar",
                         SqlDbType.Int
                     )
-                    .Value = agrupamentoId;
+                    .Value =
+                    alunoIdIgnorar.HasValue
+                        ? (object)alunoIdIgnorar.Value
+                        : DBNull.Value;
 
-                da.Fill(dt);
-            }
+                cmd.Parameters
+                    .Add(
+                        "@ProfessorIdIgnorar",
+                        SqlDbType.Int
+                    )
+                    .Value =
+                    professorIdIgnorar.HasValue
+                        ? (object)professorIdIgnorar.Value
+                        : DBNull.Value;
 
-            return dt.Rows.Count > 0
-                ? dt.Rows[0]
-                : null;
-        }
+                conn.Open();
 
-        protected void CarregarProfessor(int id)
-        {
-            DataRow professor =
-                GetProfessorById(id);
-
-            if (professor == null)
-            {
-                MostrarAlert(
-                    "Não foi possível encontrar o professor."
-                );
-
-                return;
-            }
-
-            txtNome.Text =
-                professor["Nome"].ToString();
-
-            txtEmail.Text =
-                professor["Email"] == DBNull.Value
-                    ? string.Empty
-                    : professor["Email"].ToString();
-
-            txtTelefone.Text =
-                professor["Telefone"] == DBNull.Value
-                    ? string.Empty
-                    : professor["Telefone"].ToString();
-
-            txtNumeroProcesso.Text =
-                professor["NumeroProcesso"] == DBNull.Value
-                    ? string.Empty
-                    : professor["NumeroProcesso"].ToString();
-
-            if (professor["GrupoRecrutamentoId"] ==
-                DBNull.Value)
-            {
-                if (ddlGrupoRecrutamento.Items.Count > 0)
-                    ddlGrupoRecrutamento.SelectedIndex = 0;
-            }
-            else
-            {
-                string valor =
-                    professor["GrupoRecrutamentoId"]
-                        .ToString();
-
-                if (ddlGrupoRecrutamento
-                        .Items
-                        .FindByValue(valor) != null)
-                {
-                    ddlGrupoRecrutamento.SelectedValue =
-                        valor;
-                }
+                return Convert.ToInt32(
+                    cmd.ExecuteScalar()
+                ) == 1;
             }
         }
+
+        #endregion
+
+        #region Disciplinas e grupos
 
         private void CarregarDisciplinasDoProfessor(
             int professorId)
         {
-            var dt = new DataTable();
+            DataTable tabela =
+                new DataTable();
 
             const string sql = @"
                 SELECT
@@ -666,17 +832,23 @@ namespace AlunoGest.agrupamento
                     d.Nome AS Disciplina,
                     pd.Desde,
                     pd.Ate,
+
                     CASE
                         WHEN pd.Ate IS NULL
                             THEN 'Ativa'
                         ELSE 'Terminada'
                     END AS Estado
-                FROM ProfessorDisciplina pd
-                INNER JOIN Disciplina d
+
+                FROM dbo.ProfessorDisciplina pd
+
+                INNER JOIN dbo.Disciplina d
                     ON pd.DisciplinaId = d.Id
-                INNER JOIN GrupoDisciplinar gd
+
+                INNER JOIN dbo.GrupoDisciplinar gd
                     ON d.GrupoDisciplinarId = gd.Id
+
                 WHERE pd.ProfessorId = @ProfessorId
+
                 ORDER BY
                     CASE
                         WHEN pd.Ate IS NULL THEN 0
@@ -686,12 +858,12 @@ namespace AlunoGest.agrupamento
                     d.Nome,
                     pd.Desde DESC;";
 
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
-            using (var da =
-                   new SqlDataAdapter(cmd))
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter =
+                new SqlDataAdapter(cmd))
             {
                 cmd.Parameters
                     .Add(
@@ -700,41 +872,55 @@ namespace AlunoGest.agrupamento
                     )
                     .Value = professorId;
 
-                da.Fill(dt);
+                adapter.Fill(tabela);
             }
 
-            gridDisciplinasProfessor.DataSource = dt;
+            gridDisciplinasProfessor.DataSource =
+                tabela;
+
             gridDisciplinasProfessor.DataBind();
         }
 
         private void CarregarGrupoRecrutamento()
         {
-            var dt = new DataTable();
+            DataTable tabela =
+                new DataTable();
 
             const string sql = @"
-                SELECT Id, Nome
-                FROM GrupoRecrutamento
+                SELECT
+                    Id,
+                    Nome
+
+                FROM dbo.GrupoRecrutamento
+
                 WHERE Ativo = 1
+
                 ORDER BY Nome;";
 
-            using (var connection =
-                   new SqlConnection(connectionString))
-            using (var cmd =
-                   new SqlCommand(sql, connection))
-            using (var da =
-                   new SqlDataAdapter(cmd))
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            using (SqlDataAdapter adapter =
+                new SqlDataAdapter(cmd))
             {
-                da.Fill(dt);
+                adapter.Fill(tabela);
             }
 
-            ddlGrupoRecrutamento.DataSource = dt;
-            ddlGrupoRecrutamento.DataTextField = "Nome";
-            ddlGrupoRecrutamento.DataValueField = "Id";
+            ddlGrupoRecrutamento.DataSource =
+                tabela;
+
+            ddlGrupoRecrutamento.DataTextField =
+                "Nome";
+
+            ddlGrupoRecrutamento.DataValueField =
+                "Id";
+
             ddlGrupoRecrutamento.DataBind();
 
             ddlGrupoRecrutamento.Items.Insert(
                 0,
-                new System.Web.UI.WebControls.ListItem(
+                new ListItem(
                     "-- selecionar --",
                     string.Empty
                 )
@@ -748,7 +934,9 @@ namespace AlunoGest.agrupamento
         private Guid CriarContaProfessor()
         {
             string usernameBase =
-                CriarConta.GerarUsername(txtNome.Text);
+                CriarConta.GerarUsername(
+                    txtNome.Text
+                );
 
             string username =
                 CriarConta.GarantirUsernameUnico(
@@ -769,10 +957,10 @@ namespace AlunoGest.agrupamento
                 "Professor"
             );
 
-            MembershipUser user =
+            MembershipUser utilizador =
                 Membership.GetUser(username);
 
-            if (user == null)
+            if (utilizador == null)
             {
                 throw new InvalidOperationException(
                     "A conta do professor foi criada, " +
@@ -788,113 +976,150 @@ namespace AlunoGest.agrupamento
                 "http://localhost/login.aspx"
             );
 
-            return (Guid)user.ProviderUserKey;
-        }
-
-        private static readonly HashSet<string>
-            PalavrasIgnorar =
-                new HashSet<string>
-                {
-                    "de",
-                    "da",
-                    "do",
-                    "das",
-                    "dos",
-                    "e",
-                    "a",
-                    "o"
-                };
-
-        private string NormalizarTexto(string texto)
-        {
-            if (string.IsNullOrWhiteSpace(texto))
-                return string.Empty;
-
-            texto = texto.ToLowerInvariant();
-
-            texto = texto
-                .Replace("á", "a")
-                .Replace("à", "a")
-                .Replace("ã", "a")
-                .Replace("â", "a")
-                .Replace("é", "e")
-                .Replace("ê", "e")
-                .Replace("í", "i")
-                .Replace("ó", "o")
-                .Replace("ô", "o")
-                .Replace("õ", "o")
-                .Replace("ú", "u")
-                .Replace("ç", "c");
-
-            texto = texto
-                .Replace("-", string.Empty)
-                .Replace("_", string.Empty)
-                .Replace(".", string.Empty)
-                .Replace(",", string.Empty);
-
-            return texto;
-        }
-
-        private string GerarUsernameProfessor(string nome)
-        {
-            if (string.IsNullOrWhiteSpace(nome))
-            {
-                throw new ArgumentException(
-                    "Nome do professor inválido."
-                );
-            }
-
-            string[] partes =
-                nome.Split(
-                    new[] { ' ' },
-                    StringSplitOptions.RemoveEmptyEntries
-                );
-
-            var palavrasValidas =
-                new List<string>();
-
-            foreach (string parte in partes)
-            {
-                string palavraNormalizada =
-                    NormalizarTexto(parte);
-
-                if (!PalavrasIgnorar.Contains(
-                        palavraNormalizada))
-                {
-                    palavrasValidas.Add(
-                        palavraNormalizada
-                    );
-                }
-            }
-
-            if (palavrasValidas.Count == 0)
-            {
-                throw new InvalidOperationException(
-                    "Não foi possível gerar o username " +
-                    "a partir do nome."
-                );
-            }
-
-            string primeiro =
-                palavrasValidas.First();
-
-            string ultimo =
-                palavrasValidas.Last();
-
-            int numeroAleatorio =
-                new Random().Next(1000, 9999);
-
-            return string.Format(
-                "{0}.{1}.{2}",
-                primeiro,
-                ultimo,
-                numeroAleatorio
-            );
+            return (Guid)utilizador.ProviderUserKey;
         }
 
         #endregion
 
-        public void MostrarAlert(string mensagem)
+        #region Sessão e agrupamento
+
+        private int GetAgrupamentoIdFromSession()
+        {
+            object sessionUserId =
+                Session["UserId"];
+
+            if (sessionUserId == null)
+            {
+                throw new InvalidOperationException(
+                    "A sessão terminou. Inicie sessão novamente."
+                );
+            }
+
+            Guid userId;
+
+            if (!Guid.TryParse(
+                    sessionUserId.ToString(),
+                    out userId))
+            {
+                throw new InvalidOperationException(
+                    "O utilizador guardado na sessão é inválido."
+                );
+            }
+
+            const string sql = @"
+                SELECT Id
+
+                FROM dbo.Agrupamento
+
+                WHERE UserId = @UserId
+                  AND Ativo = 1;";
+
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            {
+                cmd.Parameters
+                    .Add(
+                        "@UserId",
+                        SqlDbType.UniqueIdentifier
+                    )
+                    .Value = userId;
+
+                conn.Open();
+
+                object resultado =
+                    cmd.ExecuteScalar();
+
+                if (resultado == null ||
+                    resultado == DBNull.Value)
+                {
+                    throw new InvalidOperationException(
+                        "Não foi encontrado um agrupamento " +
+                        "associado ao utilizador autenticado."
+                    );
+                }
+
+                return Convert.ToInt32(resultado);
+            }
+        }
+
+        #endregion
+
+        #region Formulário e utilidades
+
+        private void ActivarControlos(
+            bool ativo)
+        {
+            txtNome.Enabled = ativo;
+            txtEmail.Enabled = ativo;
+            txtTelefone.Enabled = ativo;
+            txtNIF.Enabled = ativo;
+            txtNumeroProcesso.Enabled = ativo;
+            ddlGrupoRecrutamento.Enabled = ativo;
+
+            buttonGuardar.Visible = ativo;
+        }
+
+        private void LimparFormulario()
+        {
+            txtNome.Text = string.Empty;
+            txtEmail.Text = string.Empty;
+            txtTelefone.Text = string.Empty;
+            txtNIF.Text = string.Empty;
+            txtNumeroProcesso.Text = string.Empty;
+
+            if (ddlGrupoRecrutamento.Items.Count > 0)
+            {
+                ddlGrupoRecrutamento.SelectedIndex = 0;
+            }
+        }
+
+        private void FecharFormulario()
+        {
+            LimparFormulario();
+
+            ViewState["op"] = null;
+
+            gridProfessores.SelectedIndex = -1;
+
+            controlos.Visible = false;
+            painelDisciplinasProfessor.Visible = false;
+
+            gridDisciplinasProfessor.DataSource = null;
+            gridDisciplinasProfessor.DataBind();
+        }
+
+        private bool ProfessorSelecionado(
+            out int idProfessor)
+        {
+            idProfessor = 0;
+
+            if (gridProfessores.SelectedDataKey == null ||
+                gridProfessores.SelectedDataKey.Value == null)
+            {
+                return false;
+            }
+
+            return int.TryParse(
+                gridProfessores.SelectedDataKey
+                    .Value
+                    .ToString(),
+                out idProfessor
+            );
+        }
+
+        private string ValorTexto(
+            object valor)
+        {
+            return valor == null ||
+                   valor == DBNull.Value
+                ? string.Empty
+                : valor.ToString();
+        }
+
+        private void MostrarAlert(
+            string mensagem)
         {
             string mensagemSegura =
                 mensagem
@@ -919,25 +1144,6 @@ namespace AlunoGest.agrupamento
             );
         }
 
-        protected void buttonDisciplinasProfessor_Click(
-            object sender,
-            EventArgs e)
-        {
-            if (gridProfessores.SelectedRow == null)
-            {
-                MostrarAlert(
-                    "Selecione o professor."
-                );
-
-                return;
-            }
-
-            Session["ProfessorId"] =
-                gridProfessores.SelectedDataKey.Value;
-
-            Response.Redirect(
-                "~/agrupamento/professor_disciplinas.aspx"
-            );
-        }
+        #endregion
     }
 }

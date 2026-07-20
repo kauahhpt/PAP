@@ -9,7 +9,6 @@
     ID="Title"
     ContentPlaceHolderID="titleContent"
     runat="server">
-
     A minha conta
 
 </asp:Content>
@@ -25,18 +24,11 @@
             width: 100%;
             max-width: 850px;
             margin: 0 auto;
-
             background: #ffffff;
-
             padding: 28px;
-
             border-radius: 14px;
-
             border: 1px solid rgba(15, 23, 42, 0.08);
-
-            box-shadow:
-                0 4px 18px rgba(15, 23, 42, 0.08);
-
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
             text-align: left;
         }
 
@@ -44,134 +36,93 @@
             margin-bottom: 25px;
         }
 
-        .perfil-header h1 {
-            margin: 0 0 5px 0;
+            .perfil-header h1 {
+                margin: 0 0 5px 0;
+                font-size: 28px;
+                font-weight: 800;
+                color: #1f2937;
+            }
 
-            font-size: 28px;
-
-            font-weight: 800;
-
-            color: #1f2937;
-        }
-
-        .perfil-header p {
-            margin: 0;
-
-            color: #64748b;
-
-            font-size: 14px;
-        }
+            .perfil-header p {
+                margin: 0;
+                color: #64748b;
+                font-size: 14px;
+            }
 
         .foto-area {
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             margin: 25px 0;
         }
 
         .foto-perfil {
             width: 150px !important;
             height: 150px !important;
-
             min-width: 150px;
             min-height: 150px;
-
             max-width: 150px !important;
             max-height: 150px !important;
-
             object-fit: cover;
-
             border-radius: 50%;
-
             border: 4px solid #2563eb;
-
-            box-shadow:
-                0 5px 15px rgba(15, 23, 42, 0.12);
-
+            box-shadow: 0 5px 15px rgba(15, 23, 42, 0.12);
             display: block;
         }
 
         .info-grid {
             display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 16px;
-
             margin-bottom: 25px;
         }
 
         .info-item {
             padding: 15px 17px;
-
             background: #f8fafc;
-
             border: 1px solid #e2e8f0;
-
             border-radius: 10px;
         }
 
         .info-label {
             display: block;
-
             margin-bottom: 4px;
-
             color: #64748b;
-
             font-size: 12px;
-
             font-weight: 700;
-
             text-transform: uppercase;
-
             letter-spacing: 0.04em;
         }
 
         .info-value {
             color: #1f2937;
-
             font-size: 15px;
-
             font-weight: 600;
-
             word-break: break-word;
         }
 
         .perfil-section {
             padding-top: 25px;
-
             margin-top: 25px;
-
             border-top: 1px solid #e2e8f0;
         }
 
-        .perfil-section h2 {
-            margin: 0 0 5px 0;
-
-            color: #1f2937;
-
-            font-size: 20px;
-
-            font-weight: 700;
-        }
+            .perfil-section h2 {
+                margin: 0 0 5px 0;
+                color: #1f2937;
+                font-size: 20px;
+                font-weight: 700;
+            }
 
         .section-description {
             margin-bottom: 20px;
-
             color: #64748b;
-
             font-size: 14px;
         }
 
         .form-label {
             font-weight: 600;
-
             color: #334155;
         }
 
@@ -181,11 +132,8 @@
 
         .botoes-area {
             display: flex;
-
             align-items: center;
-
             gap: 10px;
-
             margin-top: 20px;
         }
 
@@ -200,7 +148,6 @@
 
             .botoes-area {
                 flex-direction: column;
-
                 align-items: stretch;
             }
         }
@@ -219,8 +166,7 @@
 
         <div class="perfil-header">
 
-            <h1>
-                A minha conta
+            <h1>A minha conta
             </h1>
 
             <p>
@@ -235,7 +181,6 @@
             runat="server"
             Visible="false"
             CssClass="alert alert-info primeiro-acesso">
-
             Este é o primeiro acesso.
             Por segurança, escolha um novo utilizador e uma nova palavra-passe antes de continuar.
 
@@ -263,8 +208,7 @@
 
             <div class="info-item">
 
-                <span class="info-label">
-                    Nome completo
+                <span class="info-label">Nome completo
                 </span>
 
                 <div class="info-value">
@@ -280,8 +224,7 @@
 
             <div class="info-item">
 
-                <span class="info-label">
-                    Número de processo
+                <span class="info-label">Número de processo
                 </span>
 
                 <div class="info-value">
@@ -291,14 +234,43 @@
                         runat="server" />
 
                 </div>
+                <div class="info-item">
+
+                    <span class="info-label">Número de telemóvel
+                    </span>
+
+                    <div class="info-value">
+
+                        <asp:Label
+                            ID="LblTelefone"
+                            runat="server" />
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">NIF
+                    </span>
+
+                    <div class="info-value">
+
+                        <asp:Label
+                            ID="LblNIF"
+                            runat="server" />
+
+                    </div>
+
+                </div>
 
             </div>
 
 
             <div class="info-item">
 
-                <span class="info-label">
-                    Utilizador
+                <span class="info-label">Utilizador
                 </span>
 
                 <div class="info-value">
@@ -314,8 +286,7 @@
 
             <div class="info-item">
 
-                <span class="info-label">
-                    Email
+                <span class="info-label">Email
                 </span>
 
                 <div class="info-value">
@@ -334,8 +305,7 @@
 
         <section class="perfil-section">
 
-            <h2>
-                Alterar fotografia de perfil
+            <h2>Alterar fotografia de perfil
             </h2>
 
             <p class="section-description">
@@ -366,8 +336,7 @@
 
         <section class="perfil-section">
 
-            <h2>
-                Alterar credenciais
+            <h2>Alterar credenciais
             </h2>
 
             <p class="section-description">

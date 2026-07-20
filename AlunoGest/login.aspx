@@ -405,6 +405,104 @@
             }
     </style>
 
+    <style>
+        .password-recovery-area {
+    margin-top: 11px;
+    text-align: center;
+}
+
+.password-recovery-link {
+    display: inline-block;
+    padding: 2px 4px;
+
+    color: #7b8ba3;
+
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        text-decoration-color 0.2s ease;
+}
+
+.password-recovery-link:hover {
+    color: #2457d6;
+    text-decoration: underline;
+}
+
+.password-recovery-link:focus {
+    color: #2457d6;
+    outline: none;
+    text-decoration: underline;
+}
+
+/* =====================================================
+   MOSTRAR/OCULTAR PALAVRA-PASSE
+===================================================== */
+
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-input-wrapper .login-input {
+    padding-right: 52px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #64748b;
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.password-toggle:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.password-toggle:focus {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.password-toggle svg {
+    width: 21px;
+    height: 21px;
+
+    pointer-events: none;
+}
+
+.password-toggle .icon-hidden {
+    display: none;
+}
+    </style>
+
 </head>
 
 
@@ -505,7 +603,10 @@
                             FailureText="Nome de utilizador ou palavra-passe incorretos."
                             OnLoggedIn="loginUtilizador_LoggedIn">
 
+
+
                             <LayoutTemplate>
+
 
                                 <asp:Literal
                                     ID="FailureText"
@@ -557,12 +658,74 @@
 
                                     </asp:Label>
 
-                                    <asp:TextBox
-                                        ID="Password"
-                                        runat="server"
-                                        CssClass="login-input"
-                                        TextMode="Password"
-                                        placeholder="Introduza a sua palavra-passe" />
+                                    <div class="password-input-wrapper">
+
+    <asp:TextBox
+        ID="Password"
+        runat="server"
+        ClientIDMode="Static"
+        CssClass="login-input"
+        TextMode="Password"
+        autocomplete="current-password"
+        placeholder="Introduza a sua palavra-passe" />
+
+    <button
+        type="button"
+        class="password-toggle"
+        aria-label="Mostrar palavra-passe"
+        aria-pressed="false"
+        title="Mostrar palavra-passe">
+
+        <!-- Olho aberto -->
+
+        <svg
+            class="eye-open"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true">
+
+            <path
+                d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12" />
+
+            <circle
+                cx="12"
+                cy="12"
+                r="3" />
+
+        </svg>
+
+        <!-- Olho fechado -->
+
+        <svg
+            class="eye-closed icon-hidden"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true">
+
+            <path d="M3 3l18 18" />
+
+            <path
+                d="M10.6 10.7a2 2 0 0 0 2.7 2.7" />
+
+            <path
+                d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18 18 0 0 1-2.1 3.2" />
+
+            <path
+                d="M6.6 6.6C3.6 8.5 2 12 2 12s3.5 8 10 8a10.5 10.5 0 0 0 5.4-1.5" />
+
+        </svg>
+
+    </button>
+
+</div>
 
                                     <asp:RequiredFieldValidator
                                         ID="PasswordRequired"
@@ -598,7 +761,24 @@
 
                             </LayoutTemplate>
 
+
+
                         </asp:Login>
+
+                        <div class="password-recovery-area">
+
+                            <asp:HyperLink
+                                ID="LnkRecuperarPassword"
+                                runat="server"
+                                NavigateUrl="~/recuperar_password.aspx"
+                                CssClass="password-recovery-link">
+
+<span class="password-recovery-icon">↻</span>
+Esqueci-me da palavra-passe
+
+                            </asp:HyperLink>
+
+                        </div>
 
                     </div>
 
@@ -626,5 +806,93 @@
     </form>
 
 </body>
+    <script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
+            var botao =
+                document.querySelector(
+                    ".password-toggle"
+                );
+
+            var campo =
+                document.getElementById(
+                    "Password"
+                );
+
+            if (!botao || !campo) {
+                return;
+            }
+
+            botao.addEventListener(
+                "click",
+                function () {
+
+                    var estaOculta =
+                        campo.type === "password";
+
+                    campo.type =
+                        estaOculta
+                            ? "text"
+                            : "password";
+
+                    var olhoAberto =
+                        botao.querySelector(
+                            ".eye-open"
+                        );
+
+                    var olhoFechado =
+                        botao.querySelector(
+                            ".eye-closed"
+                        );
+
+                    if (estaOculta) {
+                        olhoAberto.classList.add(
+                            "icon-hidden"
+                        );
+
+                        olhoFechado.classList.remove(
+                            "icon-hidden"
+                        );
+                    }
+                    else {
+                        olhoAberto.classList.remove(
+                            "icon-hidden"
+                        );
+
+                        olhoFechado.classList.add(
+                            "icon-hidden"
+                        );
+                    }
+
+                    var texto =
+                        estaOculta
+                            ? "Ocultar palavra-passe"
+                            : "Mostrar palavra-passe";
+
+                    botao.setAttribute(
+                        "aria-label",
+                        texto
+                    );
+
+                    botao.setAttribute(
+                        "title",
+                        texto
+                    );
+
+                    botao.setAttribute(
+                        "aria-pressed",
+                        estaOculta
+                            ? "true"
+                            : "false"
+                    );
+
+                    campo.focus();
+                }
+            );
+
+        }
+    );
+    </script>
 </html>

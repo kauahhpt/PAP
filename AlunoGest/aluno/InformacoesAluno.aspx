@@ -193,57 +193,103 @@
 
         </div>
 
-        <div class="info-grid">
+       <div class="info-grid">
 
-            <div class="info-item">
+    <!-- NOME COMPLETO -->
 
-                <span class="info-label">
-                    Nome completo
-                </span>
+    <div class="info-item">
 
-                <div class="info-value">
+        <span class="info-label">
+            Nome completo
+        </span>
 
-                    <asp:Label
-                        ID="LblNomeCompleto"
-                        runat="server" />
+        <div class="info-value">
 
-                </div>
-
-            </div>
-
-            <div class="info-item">
-
-                <span class="info-label">
-                    Número de processo
-                </span>
-
-                <div class="info-value">
-
-                    <asp:Label
-                        ID="LblNumeroProcesso"
-                        runat="server" />
-
-                </div>
-
-            </div>
-
-            <div class="info-item">
-
-                <span class="info-label">
-                    Utilizador
-                </span>
-
-                <div class="info-value">
-
-                    <asp:Label
-                        ID="LblUsername"
-                        runat="server" />
-
-                </div>
-
-            </div>
+            <asp:Label
+                ID="LblNomeCompleto"
+                runat="server" />
 
         </div>
+
+    </div>
+
+
+    <!-- NÚMERO DE PROCESSO -->
+
+    <div class="info-item">
+
+        <span class="info-label">
+            Número de processo
+        </span>
+
+        <div class="info-value">
+
+            <asp:Label
+                ID="LblNumeroProcesso"
+                runat="server" />
+
+        </div>
+
+    </div>
+
+
+    <!-- UTILIZADOR -->
+
+    <div class="info-item">
+
+        <span class="info-label">
+            Utilizador
+        </span>
+
+        <div class="info-value">
+
+            <asp:Label
+                ID="LblUsername"
+                runat="server" />
+
+        </div>
+
+    </div>
+
+
+    <!-- TELEFONE -->
+
+    <div class="info-item">
+
+        <span class="info-label">
+            Número de telemóvel
+        </span>
+
+        <div class="info-value">
+
+            <asp:Label
+                ID="LblTelefone"
+                runat="server" />
+
+        </div>
+
+    </div>
+
+
+    <!-- NIF -->
+
+    <div class="info-item">
+
+        <span class="info-label">
+            NIF
+        </span>
+
+        <div class="info-value">
+
+            <asp:Label
+                ID="LblNIF"
+                runat="server" />
+
+        </div>
+
+    </div>
+
+</div>
 
         <section class="perfil-section">
 

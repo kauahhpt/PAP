@@ -60,6 +60,24 @@ namespace AlunoGest.professor
         protected global::System.Web.UI.WebControls.Label LblNumeroProcesso;
 
         /// <summary>
+        /// Controle LblTelefone.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblTelefone;
+
+        /// <summary>
+        /// Controle LblNIF.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblNIF;
+
+        /// <summary>
         /// Controle LblUsername.
         /// </summary>
         /// <remarks>
