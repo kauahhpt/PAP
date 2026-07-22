@@ -107,6 +107,13 @@
                             Text="Alunos"
                             CssClass="dropdown-item" />
                     </li>
+                    <li>
+                        <asp:HyperLink
+                            NavigateUrl="~/agrupamento/encarregados.aspx"
+                            runat="server"
+                            Text="Encarregados"
+                            CssClass="dropdown-item" />
+                    </li>
 
 <%--                    <li>
                         <asp:HyperLink

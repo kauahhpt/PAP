@@ -1,4 +1,4 @@
-//------------------------------------------------------------------------------
+﻿//------------------------------------------------------------------------------
 // <gerado automaticamente>
 //     Esse código foi gerado por uma ferramenta.
 //
@@ -7,11 +7,11 @@
 // </gerado automaticamente>
 //------------------------------------------------------------------------------
 
-namespace AlunoGest.aluno
+namespace AlunoGest.encarregado
 {
 
 
-    public partial class MasterAluno1
+    public partial class modeloEncarregado
     {
 
         /// <summary>
@@ -24,13 +24,40 @@ namespace AlunoGest.aluno
         protected global::System.Web.UI.WebControls.ContentPlaceHolder headContent;
 
         /// <summary>
-        /// Controle formAluno.
+        /// Controle formEncarregado.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm formAluno;
+        protected global::System.Web.UI.HtmlControls.HtmlForm formEncarregado;
+
+        /// <summary>
+        /// Controle LnkHome.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink LnkHome;
+
+        /// <summary>
+        /// Controle LnkEducandos.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink LnkEducandos;
+
+        /// <summary>
+        /// Controle LnkCalendario.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink LnkCalendario;
 
         /// <summary>
         /// Controle LnkMensagens.
@@ -51,13 +78,40 @@ namespace AlunoGest.aluno
         protected global::System.Web.UI.WebControls.Label LblMensagensNaoLidas;
 
         /// <summary>
-        /// Controle LblAluno.
+        /// Controle LnkMinhaConta.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblAluno;
+        protected global::System.Web.UI.WebControls.HyperLink LnkMinhaConta;
+
+        /// <summary>
+        /// Controle LblSelecionarEducando.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblSelecionarEducando;
+
+        /// <summary>
+        /// Controle DdlEducando.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList DdlEducando;
+
+        /// <summary>
+        /// Controle LblEncarregado.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblEncarregado;
 
         /// <summary>
         /// Controle LoginStatus1.

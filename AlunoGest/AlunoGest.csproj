@@ -76,8 +76,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Administrador\pedidos_agrupamento.aspx" />
     <Content Include="agrupamento\Alunos.aspx" />
     <Content Include="agrupamento\dashboard.aspx" />
+    <Content Include="agrupamento\encarregados.aspx" />
     <Content Include="agrupamento\escolas.aspx" />
     <Content Include="agrupamento\professores.aspx" />
     <Content Include="agrupamento\professor_disciplinas.aspx" />
@@ -107,14 +109,20 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="Administrador\criarconta.aspx" />
+    <Content Include="criarconta.aspx" />
     <Content Include="css\master.css" />
     <Content Include="definir_password.aspx" />
+    <Content Include="encarregado\Calendario.aspx" />
+    <Content Include="encarregado\dashboard.aspx" />
+    <Content Include="encarregado\Educandos.aspx" />
+    <Content Include="encarregado\Mensagens.aspx" />
+    <Content Include="encarregado\MinhaConta.aspx" />
     <Content Include="Foto.jpg" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
     <Content Include="professor\Home.aspx" />
     <Content Include="professor\conta.aspx" />
+    <Content Include="professor\Mensagens.aspx" />
     <Content Include="professor\MinhasTurmas.aspx" />
     <Content Include="professor\turma.aspx" />
     <Content Include="recuperar_password.aspx" />
@@ -152,6 +160,7 @@
     <Content Include="aluno\MasterAluno1.Master" />
     <Content Include="professor\ModeloProfessor.Master" />
     <Content Include="Administrador\Web.config" />
+    <Content Include="encarregado\modeloEncarregado.Master" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -167,6 +176,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administrador\pedidos_agrupamento.aspx.cs">
+      <DependentUpon>pedidos_agrupamento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administrador\pedidos_agrupamento.aspx.designer.cs">
+      <DependentUpon>pedidos_agrupamento.aspx</DependentUpon>
+    </Compile>
     <Compile Include="agrupamento\Alunos.aspx.cs">
       <DependentUpon>Alunos.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -180,6 +196,13 @@
     </Compile>
     <Compile Include="agrupamento\dashboard.aspx.designer.cs">
       <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="agrupamento\encarregados.aspx.cs">
+      <DependentUpon>encarregados.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="agrupamento\encarregados.aspx.designer.cs">
+      <DependentUpon>encarregados.aspx</DependentUpon>
     </Compile>
     <Compile Include="agrupamento\escolas.aspx.cs">
       <DependentUpon>escolas.aspx</DependentUpon>
@@ -286,11 +309,11 @@
     <Compile Include="aluno\MInhaTurma.aspx.designer.cs">
       <DependentUpon>MInhaTurma.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Administrador\criarconta.aspx.cs">
+    <Compile Include="criarconta.aspx.cs">
       <DependentUpon>criarconta.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Administrador\criarconta.aspx.designer.cs">
+    <Compile Include="criarconta.aspx.designer.cs">
       <DependentUpon>criarconta.aspx</DependentUpon>
     </Compile>
     <Compile Include="definir_password.aspx.cs">
@@ -299,6 +322,48 @@
     </Compile>
     <Compile Include="definir_password.aspx.designer.cs">
       <DependentUpon>definir_password.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="encarregado\Calendario.aspx.cs">
+      <DependentUpon>Calendario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="encarregado\Calendario.aspx.designer.cs">
+      <DependentUpon>Calendario.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="encarregado\dashboard.aspx.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="encarregado\dashboard.aspx.designer.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="encarregado\Educandos.aspx.cs">
+      <DependentUpon>Educandos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="encarregado\Educandos.aspx.designer.cs">
+      <DependentUpon>Educandos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="encarregado\Mensagens.aspx.cs">
+      <DependentUpon>Mensagens.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="encarregado\Mensagens.aspx.designer.cs">
+      <DependentUpon>Mensagens.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="encarregado\MinhaConta.aspx.cs">
+      <DependentUpon>MinhaConta.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="encarregado\MinhaConta.aspx.designer.cs">
+      <DependentUpon>MinhaConta.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="encarregado\modeloEncarregado.Master.cs">
+      <DependentUpon>modeloEncarregado.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="encarregado\modeloEncarregado.Master.designer.cs">
+      <DependentUpon>modeloEncarregado.Master</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -331,6 +396,13 @@
     <Compile Include="professor\conta.aspx.designer.cs">
       <DependentUpon>conta.aspx</DependentUpon>
     </Compile>
+    <Compile Include="professor\Mensagens.aspx.cs">
+      <DependentUpon>Mensagens.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="professor\Mensagens.aspx.designer.cs">
+      <DependentUpon>Mensagens.aspx</DependentUpon>
+    </Compile>
     <Compile Include="professor\MinhasTurmas.aspx.cs">
       <DependentUpon>MinhasTurmas.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -360,6 +432,7 @@
     <Compile Include="recuperar_password.aspx.designer.cs">
       <DependentUpon>recuperar_password.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Services\MensagemDiretaService.cs" />
     <Compile Include="Util\CriarConta.cs" />
     <Compile Include="Util\PasswordResetManager.cs" />
     <Compile Include="Util\ValidadorNIF.cs" />

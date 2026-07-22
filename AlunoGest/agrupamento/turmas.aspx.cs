@@ -235,12 +235,6 @@ namespace AlunoGest.agrupamento
                     + "&modo=criar&anoLetivoId=" + anoLetivoId);
             }
         }
-
-        protected void buttonVoltar_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("~/agrupamento/escolas.aspx");
-        }
-
         protected void gridTurmas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int idEscola = GetIdEscola();

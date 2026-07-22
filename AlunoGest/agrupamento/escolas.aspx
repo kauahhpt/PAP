@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/agrupamento/modeloAgrupamento.Master"
     AutoEventWireup="true" CodeBehind="escolas.aspx.cs" Inherits="AlunoGest.agrupamento.escolas"
-    MaintainScrollPositionOnPostback="true"%>
+    MaintainScrollPositionOnPostback="true" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="headContent" runat="server">
 </asp:Content>
@@ -63,6 +63,14 @@
                     <asp:Button Text="Gerir turmas" runat="server" ID="buttonTurmas"
                         CssClass="btn btn-outline-primary d-inline-block ms-4"
                         OnClick="buttonTurmas_Click" CausesValidation="false" />
+
+                    <asp:Button
+                        ID="buttonVoltar"
+                        runat="server"
+                        Text="Voltar"
+                        CssClass="btn btn-outline-secondary d-inline-block ms-4"
+                        CausesValidation="false"
+                        PostBackUrl="~/agrupamento/dashboard.aspx" />
                 </div>
 
 

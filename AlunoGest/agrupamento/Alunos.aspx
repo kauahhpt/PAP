@@ -12,13 +12,13 @@
     runat="server">
 
     <style>
-
         .validation-message {
-    margin-top: 5px;
-    color: #dc3545;
-    font-size: 12px;
-    font-weight: 600;
-}
+            margin-top: 5px;
+            color: #dc3545;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         .pagina-alunos {
             padding-bottom: 40px;
         }
@@ -27,17 +27,17 @@
             margin-bottom: 25px;
         }
 
-        .cabecalho-pagina h1 {
-            margin-bottom: 5px;
-            color: #1f2937;
-            font-size: 30px;
-            font-weight: 800;
-        }
+            .cabecalho-pagina h1 {
+                margin-bottom: 5px;
+                color: #1f2937;
+                font-size: 30px;
+                font-weight: 800;
+            }
 
-        .cabecalho-pagina p {
-            margin: 0;
-            color: #64748b;
-        }
+            .cabecalho-pagina p {
+                margin: 0;
+                color: #64748b;
+            }
 
         .formulario-card {
             border: 1px solid #dbe3ed;
@@ -170,20 +170,27 @@
                 OnClick="ButtonEditar_Click"
                 CausesValidation="false" />
 
+            <asp:Button
+                ID="buttonVoltar"
+                runat="server"
+                Text="Voltar"
+                CssClass="btn btn-outline-secondary d-inline-block ms-4"
+                CausesValidation="false"
+                PostBackUrl="~/agrupamento/dashboard.aspx" />
+
         </div>
 
         <!-- FORMULÁRIO -->
 
         <div
-            ID="Controlos"
+            id="Controlos"
             runat="server"
-            Visible="false"
+            visible="false"
             class="formulario-card mb-4">
 
             <div class="card-body p-4">
 
-                <h2 class="formulario-titulo">
-                    Dados do aluno
+                <h2 class="formulario-titulo">Dados do aluno
                 </h2>
 
                 <!-- NOME -->
@@ -193,7 +200,6 @@
                     <label
                         for="<%= TxtNomeCompleto.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
-
                         Nome completo
 
                     </label>
@@ -226,7 +232,6 @@
                     <label
                         for="<%= TxtNumeroProcesso.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
-
                         N.º processo
 
                     </label>
@@ -259,7 +264,6 @@
                     <label
                         for="<%= TxtNIF.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
-
                         NIF
 
                     </label>
@@ -306,7 +310,6 @@
                     <label
                         for="<%= TxtEmail.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
-
                         Email
 
                     </label>
@@ -350,7 +353,6 @@
                     <label
                         for="<%= TxtTelefone.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
-
                         Telefone
 
                     </label>
@@ -407,7 +409,6 @@
                             <label
                                 class="form-check-label"
                                 for="ChkAtivo">
-
                                 Aluno ativo
 
                             </label>

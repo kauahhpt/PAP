@@ -49,7 +49,43 @@ namespace AlunoGest.aluno
         }
 
         #region Pesquisa de alunos
+        private Guid UserIdAtual
+        {
+            get
+            {
+                Guid userId;
 
+                if (Session["UserId"] != null &&
+                    Guid.TryParse(
+                        Session["UserId"].ToString(),
+                        out userId))
+                {
+                    return userId;
+                }
+
+                MembershipUser utilizador =
+                    Membership.GetUser(
+                        User.Identity.Name,
+                        false
+                    );
+
+                if (utilizador == null ||
+                    utilizador.ProviderUserKey == null ||
+                    !Guid.TryParse(
+                        utilizador.ProviderUserKey.ToString(),
+                        out userId))
+                {
+                    throw new InvalidOperationException(
+                        "Não foi possível identificar o utilizador."
+                    );
+                }
+
+                Session["UserId"] =
+                    userId;
+
+                return userId;
+            }
+        }
         [WebMethod(EnableSession = true)]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         public static List<SugestaoAluno> PesquisarAlunos(
@@ -715,8 +751,8 @@ namespace AlunoGest.aluno
         }
 
         protected void BtnEnviarMensagem_Click(
-            object sender,
-            EventArgs e)
+    object sender,
+    EventArgs e)
         {
             string texto =
                 TxtMensagem.Text.Trim();
@@ -754,8 +790,7 @@ namespace AlunoGest.aluno
                         conversaId))
                 {
                     MostrarMensagem(
-                        "Só podes conversar com alunos " +
-                        "que já aceitaram a amizade.",
+                        "Só podes conversar com alunos que já aceitaram a amizade.",
                         true
                     );
 
@@ -763,18 +798,18 @@ namespace AlunoGest.aluno
                 }
 
                 const string sql = @"
-                    INSERT INTO dbo.MensagemAlunoPrivada
-                    (
-                        DeAlunoId,
-                        ParaAlunoId,
-                        Texto
-                    )
-                    VALUES
-                    (
-                        @DeAlunoId,
-                        @ParaAlunoId,
-                        @Texto
-                    );";
+            INSERT INTO dbo.MensagemAlunoPrivada
+            (
+                DeAlunoId,
+                ParaAlunoId,
+                Texto
+            )
+            VALUES
+            (
+                @DeAlunoId,
+                @ParaAlunoId,
+                @Texto
+            );";
 
                 Executar(
                     sql,
@@ -783,7 +818,7 @@ namespace AlunoGest.aluno
                     Param("@Texto", texto)
                 );
             }
-            else
+            else if (HdnTipoConversa.Value == "grupo")
             {
                 if (!AlunoEstaNoGrupo(
                         conversaId))
@@ -797,18 +832,18 @@ namespace AlunoGest.aluno
                 }
 
                 const string sql = @"
-                    INSERT INTO dbo.MensagemAlunoGrupo
-                    (
-                        GrupoId,
-                        DeAlunoId,
-                        Texto
-                    )
-                    VALUES
-                    (
-                        @GrupoId,
-                        @DeAlunoId,
-                        @Texto
-                    );";
+            INSERT INTO dbo.MensagemAlunoGrupo
+            (
+                GrupoId,
+                DeAlunoId,
+                Texto
+            )
+            VALUES
+            (
+                @GrupoId,
+                @DeAlunoId,
+                @Texto
+            );";
 
                 Executar(
                     sql,
@@ -816,6 +851,52 @@ namespace AlunoGest.aluno
                     Param("@DeAlunoId", AlunoId),
                     Param("@Texto", texto)
                 );
+            }
+            else if (HdnTipoConversa.Value == "escolar")
+            {
+                string nomeProfessor;
+
+                if (!ConversaEscolarPermitida(
+                        conversaId,
+                        out nomeProfessor))
+                {
+                    MostrarMensagem(
+                        "Já não tens acesso a esta conversa escolar.",
+                        true
+                    );
+
+                    return;
+                }
+
+                const string sql = @"
+            INSERT INTO dbo.MensagemDireta
+            (
+                ConversaId,
+                RemetenteUserId,
+                Texto
+            )
+            VALUES
+            (
+                @ConversaId,
+                @RemetenteUserId,
+                @Texto
+            );";
+
+                Executar(
+                    sql,
+                    Param("@ConversaId", conversaId),
+                    Param("@RemetenteUserId", UserIdAtual),
+                    Param("@Texto", texto)
+                );
+            }
+            else
+            {
+                MostrarMensagem(
+                    "O tipo de conversa é inválido.",
+                    true
+                );
+
+                return;
             }
 
             TxtMensagem.Text =
@@ -1025,138 +1106,247 @@ namespace AlunoGest.aluno
         private void CarregarConversas()
         {
             const string sql = @"
-                SELECT
-                    'amigo' AS Tipo,
-                    amigo.Id,
-                    amigo.NomeCompleto AS Nome,
-                    N'privado' AS TipoTexto,
-                    COALESCE(
-                        ultima.Texto,
-                        N'Sem mensagens'
-                    ) AS UltimaMensagem,
-                    ultima.CriadoEm AS DataUltima,
+        SELECT
+            'amigo' AS Tipo,
+            amigo.Id,
+            amigo.NomeCompleto AS Nome,
+            N'privado' AS TipoTexto,
 
-                    (
-                        SELECT COUNT(1)
+            COALESCE(
+                ultima.Texto,
+                N'Sem mensagens'
+            ) AS UltimaMensagem,
 
-                        FROM dbo.MensagemAlunoPrivada mpNaoLida
+            ultima.CriadoEm AS DataUltima,
 
-                        LEFT JOIN dbo.ConversaAlunoLeitura leitura
-                            ON leitura.AlunoId = @AlunoId
-                           AND leitura.TipoConversa = N'amigo'
-                           AND leitura.ConversaId = amigo.Id
+            (
+                SELECT COUNT(1)
 
-                        WHERE mpNaoLida.DeAlunoId = amigo.Id
-                          AND mpNaoLida.ParaAlunoId = @AlunoId
-                          AND
-                          (
-                              leitura.LidaEm IS NULL
-                              OR mpNaoLida.CriadoEm > leitura.LidaEm
-                          )
-                    ) AS NaoLidas
+                FROM dbo.MensagemAlunoPrivada mpNaoLida
 
-                FROM dbo.AmizadeAluno am
+                LEFT JOIN dbo.ConversaAlunoLeitura leitura
+                    ON leitura.AlunoId = @AlunoId
+                   AND leitura.TipoConversa = N'amigo'
+                   AND leitura.ConversaId = amigo.Id
 
-                INNER JOIN dbo.Aluno amigo
-                    ON amigo.Id =
-                        CASE
-                            WHEN am.SolicitanteAlunoId = @AlunoId
-                                THEN am.DestinatarioAlunoId
-                            ELSE am.SolicitanteAlunoId
-                        END
+                WHERE mpNaoLida.DeAlunoId = amigo.Id
+                  AND mpNaoLida.ParaAlunoId = @AlunoId
 
-                OUTER APPLY
-                (
-                    SELECT TOP 1
-                        Texto,
-                        CriadoEm
-
-                    FROM dbo.MensagemAlunoPrivada mp
-
-                    WHERE
-                        (
-                            mp.DeAlunoId = @AlunoId
-                            AND mp.ParaAlunoId = amigo.Id
-                        )
-
-                        OR
-
-                        (
-                            mp.DeAlunoId = amigo.Id
-                            AND mp.ParaAlunoId = @AlunoId
-                        )
-
-                    ORDER BY mp.CriadoEm DESC
-                ) ultima
-
-                WHERE am.Estado = N'Aceite'
-                  AND @AlunoId IN
+                  AND
                   (
-                      am.SolicitanteAlunoId,
-                      am.DestinatarioAlunoId
+                      leitura.LidaEm IS NULL
+                      OR mpNaoLida.CriadoEm > leitura.LidaEm
                   )
+            ) AS NaoLidas
 
-                UNION ALL
+        FROM dbo.AmizadeAluno am
 
-                SELECT
-                    'grupo' AS Tipo,
-                    g.Id,
-                    g.Nome,
-                    N'grupo' AS TipoTexto,
-                    COALESCE(
-                        ultima.Texto,
-                        N'Sem mensagens'
-                    ) AS UltimaMensagem,
-                    ultima.CriadoEm AS DataUltima,
+        INNER JOIN dbo.Aluno amigo
+            ON amigo.Id =
+                CASE
+                    WHEN am.SolicitanteAlunoId = @AlunoId
+                        THEN am.DestinatarioAlunoId
+                    ELSE am.SolicitanteAlunoId
+                END
 
-                    (
-                        SELECT COUNT(1)
+        OUTER APPLY
+        (
+            SELECT TOP 1
+                Texto,
+                CriadoEm
 
-                        FROM dbo.MensagemAlunoGrupo mgNaoLida
+            FROM dbo.MensagemAlunoPrivada mp
 
-                        LEFT JOIN dbo.ConversaAlunoLeitura leitura
-                            ON leitura.AlunoId = @AlunoId
-                           AND leitura.TipoConversa = N'grupo'
-                           AND leitura.ConversaId = g.Id
-
-                        WHERE mgNaoLida.GrupoId = g.Id
-                          AND mgNaoLida.DeAlunoId <> @AlunoId
-                          AND
-                          (
-                              leitura.LidaEm IS NULL
-                              OR mgNaoLida.CriadoEm > leitura.LidaEm
-                          )
-                    ) AS NaoLidas
-
-                FROM dbo.GrupoAlunoMembro gm
-
-                INNER JOIN dbo.GrupoAluno g
-                    ON g.Id = gm.GrupoId
-
-                OUTER APPLY
+            WHERE
                 (
-                    SELECT TOP 1
-                        Texto,
-                        CriadoEm
+                    mp.DeAlunoId = @AlunoId
+                    AND mp.ParaAlunoId = amigo.Id
+                )
 
-                    FROM dbo.MensagemAlunoGrupo mg
+                OR
 
-                    WHERE mg.GrupoId = g.Id
+                (
+                    mp.DeAlunoId = amigo.Id
+                    AND mp.ParaAlunoId = @AlunoId
+                )
 
-                    ORDER BY mg.CriadoEm DESC
-                ) ultima
+            ORDER BY
+                mp.CriadoEm DESC,
+                mp.Id DESC
+        ) ultima
 
-                WHERE gm.AlunoId = @AlunoId
-                  AND gm.Estado = N'Aceite'
+        WHERE am.Estado = N'Aceite'
 
-                ORDER BY
-                    DataUltima DESC,
-                    Nome;";
+          AND @AlunoId IN
+          (
+              am.SolicitanteAlunoId,
+              am.DestinatarioAlunoId
+          )
+
+
+        UNION ALL
+
+
+        SELECT
+            'grupo' AS Tipo,
+            g.Id,
+            g.Nome,
+            N'grupo' AS TipoTexto,
+
+            COALESCE(
+                ultima.Texto,
+                N'Sem mensagens'
+            ) AS UltimaMensagem,
+
+            ultima.CriadoEm AS DataUltima,
+
+            (
+                SELECT COUNT(1)
+
+                FROM dbo.MensagemAlunoGrupo mgNaoLida
+
+                LEFT JOIN dbo.ConversaAlunoLeitura leitura
+                    ON leitura.AlunoId = @AlunoId
+                   AND leitura.TipoConversa = N'grupo'
+                   AND leitura.ConversaId = g.Id
+
+                WHERE mgNaoLida.GrupoId = g.Id
+                  AND mgNaoLida.DeAlunoId <> @AlunoId
+
+                  AND
+                  (
+                      leitura.LidaEm IS NULL
+                      OR mgNaoLida.CriadoEm > leitura.LidaEm
+                  )
+            ) AS NaoLidas
+
+        FROM dbo.GrupoAlunoMembro gm
+
+        INNER JOIN dbo.GrupoAluno g
+            ON g.Id = gm.GrupoId
+
+        OUTER APPLY
+        (
+            SELECT TOP 1
+                Texto,
+                CriadoEm
+
+            FROM dbo.MensagemAlunoGrupo mg
+
+            WHERE mg.GrupoId = g.Id
+
+            ORDER BY
+                mg.CriadoEm DESC,
+                mg.Id DESC
+        ) ultima
+
+        WHERE gm.AlunoId = @AlunoId
+          AND gm.Estado = N'Aceite'
+
+
+        UNION ALL
+
+
+        SELECT
+            'escolar' AS Tipo,
+            conversa.Id,
+            professor.Nome,
+            N'professor' AS TipoTexto,
+
+            COALESCE(
+                ultima.Texto,
+                N'Sem mensagens'
+            ) AS UltimaMensagem,
+
+            ultima.CriadoEm AS DataUltima,
+
+            (
+                SELECT COUNT(1)
+
+                FROM dbo.MensagemDireta mensagemNaoLida
+
+                WHERE mensagemNaoLida.ConversaId =
+                      conversa.Id
+
+                  AND mensagemNaoLida.RemetenteUserId <>
+                      @UserIdAtual
+
+                  AND mensagemNaoLida.LidaEm IS NULL
+            ) AS NaoLidas
+
+        FROM dbo.ConversaDireta conversa
+
+        INNER JOIN dbo.Professor professor
+            ON professor.UserId =
+                CASE
+                    WHEN conversa.Utilizador1Id =
+                         @UserIdAtual
+                        THEN conversa.Utilizador2Id
+                    ELSE conversa.Utilizador1Id
+                END
+
+        OUTER APPLY
+        (
+            SELECT TOP 1
+                mensagem.Texto,
+                mensagem.CriadoEm
+
+            FROM dbo.MensagemDireta mensagem
+
+            WHERE mensagem.ConversaId =
+                  conversa.Id
+
+            ORDER BY
+                mensagem.CriadoEm DESC,
+                mensagem.Id DESC
+        ) ultima
+
+        WHERE conversa.Ativa = 1
+
+          AND
+          (
+              conversa.Utilizador1Id =
+                  @UserIdAtual
+
+              OR conversa.Utilizador2Id =
+                  @UserIdAtual
+          )
+
+          AND professor.Ativo = 1
+
+          AND EXISTS
+          (
+              SELECT 1
+
+              FROM dbo.AlunoTurma alunoTurma
+
+              INNER JOIN dbo.TurmaDisciplina turmaDisciplina
+                  ON turmaDisciplina.TurmaId =
+                     alunoTurma.TurmaId
+
+              INNER JOIN dbo.TurmaDisciplinaProfessor atribuicao
+                  ON atribuicao.TurmaDisciplinaId =
+                     turmaDisciplina.Id
+
+              WHERE alunoTurma.AlunoId =
+                    @AlunoId
+
+                AND atribuicao.ProfessorId =
+                    professor.Id
+
+                AND alunoTurma.Ate IS NULL
+                AND atribuicao.Ate IS NULL
+          )
+
+        ORDER BY
+            DataUltima DESC,
+            Nome;";
 
             DataTable dt =
                 ObterTabela(
                     sql,
-                    Param("@AlunoId", AlunoId)
+                    Param("@AlunoId", AlunoId),
+                    Param("@UserIdAtual", UserIdAtual)
                 );
 
             if (dt.Columns["Ativa"] == null)
@@ -1235,49 +1425,51 @@ namespace AlunoGest.aluno
                     "privado";
 
                 const string sql = @"
-                    SELECT TOP 100
+            SELECT TOP 100
 
-                        CASE
-                            WHEN m.DeAlunoId = @AlunoId
-                                THEN CAST(1 AS bit)
-                            ELSE CAST(0 AS bit)
-                        END AS Minha,
+                CASE
+                    WHEN m.DeAlunoId = @AlunoId
+                        THEN CAST(1 AS bit)
+                    ELSE CAST(0 AS bit)
+                END AS Minha,
 
-                        autor.NomeCompleto AS Autor,
-                        m.Texto,
-                        m.CriadoEm
+                autor.NomeCompleto AS Autor,
+                m.Texto,
+                m.CriadoEm
 
-                    FROM dbo.MensagemAlunoPrivada m
+            FROM dbo.MensagemAlunoPrivada m
 
-                    INNER JOIN dbo.Aluno autor
-                        ON autor.Id = m.DeAlunoId
+            INNER JOIN dbo.Aluno autor
+                ON autor.Id = m.DeAlunoId
 
-                    WHERE
-                        (
-                            m.DeAlunoId = @AlunoId
-                            AND m.ParaAlunoId = @OutroAlunoId
-                        )
+            WHERE
+                (
+                    m.DeAlunoId = @AlunoId
+                    AND m.ParaAlunoId = @OutroAlunoId
+                )
 
-                        OR
+                OR
 
-                        (
-                            m.DeAlunoId = @OutroAlunoId
-                            AND m.ParaAlunoId = @AlunoId
-                        )
+                (
+                    m.DeAlunoId = @OutroAlunoId
+                    AND m.ParaAlunoId = @AlunoId
+                )
 
-                    ORDER BY m.CriadoEm;";
+            ORDER BY m.CriadoEm;";
 
                 dt =
                     ObterTabela(
                         sql,
                         Param("@AlunoId", AlunoId),
-                        Param(
-                            "@OutroAlunoId",
-                            conversaId
-                        )
+                        Param("@OutroAlunoId", conversaId)
                     );
+
+                MarcarConversaComoLida(
+                    "amigo",
+                    conversaId
+                );
             }
-            else
+            else if (HdnTipoConversa.Value == "grupo")
             {
                 if (!AlunoEstaNoGrupo(
                         conversaId))
@@ -1294,26 +1486,26 @@ namespace AlunoGest.aluno
                     "grupo";
 
                 const string sql = @"
-                    SELECT TOP 100
+            SELECT TOP 100
 
-                        CASE
-                            WHEN m.DeAlunoId = @AlunoId
-                                THEN CAST(1 AS bit)
-                            ELSE CAST(0 AS bit)
-                        END AS Minha,
+                CASE
+                    WHEN m.DeAlunoId = @AlunoId
+                        THEN CAST(1 AS bit)
+                    ELSE CAST(0 AS bit)
+                END AS Minha,
 
-                        autor.NomeCompleto AS Autor,
-                        m.Texto,
-                        m.CriadoEm
+                autor.NomeCompleto AS Autor,
+                m.Texto,
+                m.CriadoEm
 
-                    FROM dbo.MensagemAlunoGrupo m
+            FROM dbo.MensagemAlunoGrupo m
 
-                    INNER JOIN dbo.Aluno autor
-                        ON autor.Id = m.DeAlunoId
+            INNER JOIN dbo.Aluno autor
+                ON autor.Id = m.DeAlunoId
 
-                    WHERE m.GrupoId = @GrupoId
+            WHERE m.GrupoId = @GrupoId
 
-                    ORDER BY m.CriadoEm;";
+            ORDER BY m.CriadoEm;";
 
                 dt =
                     ObterTabela(
@@ -1321,6 +1513,94 @@ namespace AlunoGest.aluno
                         Param("@AlunoId", AlunoId),
                         Param("@GrupoId", conversaId)
                     );
+
+                MarcarConversaComoLida(
+                    "grupo",
+                    conversaId
+                );
+            }
+            else if (HdnTipoConversa.Value == "escolar")
+            {
+                string nomeProfessor;
+
+                if (!ConversaEscolarPermitida(
+                        conversaId,
+                        out nomeProfessor))
+                {
+                    HdnTipoConversa.Value =
+                        string.Empty;
+
+                    HdnConversaId.Value =
+                        string.Empty;
+
+                    return;
+                }
+
+                LblConversaAtual.Text =
+                    nomeProfessor;
+
+                LblTipoConversa.Text =
+                    "professor";
+
+                const string sql = @"
+            SELECT
+                mensagens.Minha,
+                mensagens.Autor,
+                mensagens.Texto,
+                mensagens.CriadoEm
+
+            FROM
+            (
+                SELECT TOP 100
+
+                    CASE
+                        WHEN m.RemetenteUserId =
+                             @UserIdAtual
+                            THEN CAST(1 AS BIT)
+                        ELSE CAST(0 AS BIT)
+                    END AS Minha,
+
+                    CASE
+                        WHEN m.RemetenteUserId =
+                             @UserIdAtual
+                            THEN N'Você'
+                        ELSE @NomeProfessor
+                    END AS Autor,
+
+                    m.Texto,
+                    m.CriadoEm,
+                    m.Id
+
+                FROM dbo.MensagemDireta m
+
+                WHERE m.ConversaId =
+                      @ConversaId
+
+                ORDER BY
+                    m.CriadoEm DESC,
+                    m.Id DESC
+
+            ) AS mensagens
+
+            ORDER BY
+                mensagens.CriadoEm,
+                mensagens.Id;";
+
+                dt =
+                    ObterTabela(
+                        sql,
+                        Param("@UserIdAtual", UserIdAtual),
+                        Param("@NomeProfessor", nomeProfessor),
+                        Param("@ConversaId", conversaId)
+                    );
+
+                MarcarConversaEscolarComoLida(
+                    conversaId
+                );
+            }
+            else
+            {
+                return;
             }
 
             RepeaterMensagens.DataSource =
@@ -1331,14 +1611,8 @@ namespace AlunoGest.aluno
             PainelSemMensagens.Visible =
                 dt.Rows.Count == 0;
 
-            MarcarConversaComoLida(
-                HdnTipoConversa.Value,
-                conversaId
-            );
-
             CarregarConversas();
         }
-
         #endregion
 
         #region Métodos de apoio às conversas
@@ -1961,5 +2235,110 @@ namespace AlunoGest.aluno
         }
 
         #endregion
+
+        private bool ConversaEscolarPermitida(
+    int conversaId,
+    out string nomeProfessor)
+        {
+            nomeProfessor =
+                string.Empty;
+
+            const string sql = @"
+        SELECT TOP 1
+            professor.Nome
+
+        FROM dbo.ConversaDireta conversa
+
+        INNER JOIN dbo.Professor professor
+            ON professor.UserId =
+                CASE
+                    WHEN conversa.Utilizador1Id =
+                         @UserIdAtual
+                        THEN conversa.Utilizador2Id
+                    ELSE conversa.Utilizador1Id
+                END
+
+        WHERE conversa.Id =
+              @ConversaId
+
+          AND conversa.Ativa = 1
+
+          AND
+          (
+              conversa.Utilizador1Id =
+                  @UserIdAtual
+
+              OR conversa.Utilizador2Id =
+                  @UserIdAtual
+          )
+
+          AND professor.Ativo = 1
+
+          AND EXISTS
+          (
+              SELECT 1
+
+              FROM dbo.AlunoTurma alunoTurma
+
+              INNER JOIN dbo.TurmaDisciplina turmaDisciplina
+                  ON turmaDisciplina.TurmaId =
+                     alunoTurma.TurmaId
+
+              INNER JOIN dbo.TurmaDisciplinaProfessor atribuicao
+                  ON atribuicao.TurmaDisciplinaId =
+                     turmaDisciplina.Id
+
+              WHERE alunoTurma.AlunoId =
+                    @AlunoId
+
+                AND atribuicao.ProfessorId =
+                    professor.Id
+
+                AND alunoTurma.Ate IS NULL
+                AND atribuicao.Ate IS NULL
+          );";
+
+            object resultado =
+                Escalar(
+                    sql,
+                    Param("@ConversaId", conversaId),
+                    Param("@UserIdAtual", UserIdAtual),
+                    Param("@AlunoId", AlunoId)
+                );
+
+            if (resultado == null ||
+                resultado == DBNull.Value)
+            {
+                return false;
+            }
+
+            nomeProfessor =
+                resultado.ToString().Trim();
+
+            return true;
+        }
+
+
+        private void MarcarConversaEscolarComoLida(
+            int conversaId)
+        {
+            const string sql = @"
+        UPDATE dbo.MensagemDireta
+
+        SET LidaEm = SYSDATETIME()
+
+        WHERE ConversaId = @ConversaId
+
+          AND RemetenteUserId <>
+              @UserIdAtual
+
+          AND LidaEm IS NULL;";
+
+            Executar(
+                sql,
+                Param("@ConversaId", conversaId),
+                Param("@UserIdAtual", UserIdAtual)
+            );
+        }
     }
 }

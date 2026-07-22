@@ -27,7 +27,8 @@ namespace AlunoGest
             "administrador",
             "aluno",
             "professor",
-            "agrupamento"
+            "agrupamento",
+            "encarregado"
         };
 
             foreach (string role in rolesNecessarias)
@@ -37,6 +38,8 @@ namespace AlunoGest
                     Roles.CreateRole(role);
                 }
             }
+
+
 
         }
         protected void Session_Start(object sender, EventArgs e)

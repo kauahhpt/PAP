@@ -72,7 +72,13 @@
                 </asp:GridView>
             </div>
         </div>
-
+        <asp:Button
+    ID="buttonVoltar"
+    runat="server"
+    Text="Voltar"
+    CssClass="btn btn-outline-secondary d-inline-block ms-4"
+    CausesValidation="false"
+    PostBackUrl="~/agrupamento/professores.aspx" />
     </div>
 
 </asp:Content>

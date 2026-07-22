@@ -20,17 +20,17 @@
             margin-bottom: 25px;
         }
 
-        .cabecalho-pagina h1 {
-            margin-bottom: 5px;
-            color: #1f2937;
-            font-size: 30px;
-            font-weight: 800;
-        }
+            .cabecalho-pagina h1 {
+                margin-bottom: 5px;
+                color: #1f2937;
+                font-size: 30px;
+                font-weight: 800;
+            }
 
-        .cabecalho-pagina p {
-            margin: 0;
-            color: #64748b;
-        }
+            .cabecalho-pagina p {
+                margin: 0;
+                color: #64748b;
+            }
 
         .formulario-professor {
             margin-top: 35px;
@@ -170,18 +170,25 @@
                 CausesValidation="false"
                 OnClick="buttonDisciplinasProfessor_Click" />
 
+            <asp:Button
+                ID="buttonVoltar"
+                runat="server"
+                Text="Voltar"
+                CssClass="btn btn-outline-secondary d-inline-block ms-4"
+                CausesValidation="false"
+                PostBackUrl="~/agrupamento/dashboard.aspx" />
+
         </div>
 
         <!-- FORMULÁRIO -->
 
         <div
-            ID="controlos"
+            id="controlos"
             runat="server"
-            Visible="false"
+            visible="false"
             class="formulario-professor">
 
-            <h2 class="titulo-formulario">
-                Dados do professor
+            <h2 class="titulo-formulario">Dados do professor
             </h2>
 
             <!-- NOME -->
@@ -191,7 +198,6 @@
                 <label
                     for="<%= txtNome.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
-
                     Nome
 
                 </label>
@@ -224,7 +230,6 @@
                 <label
                     for="<%= txtEmail.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
-
                     Email
 
                 </label>
@@ -268,7 +273,6 @@
                 <label
                     for="<%= txtTelefone.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
-
                     Telefone
 
                 </label>
@@ -313,7 +317,6 @@
                 <label
                     for="<%= txtNIF.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
-
                     NIF
 
                 </label>
@@ -358,7 +361,6 @@
                 <label
                     for="<%= txtNumeroProcesso.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
-
                     Número de processo
 
                 </label>
@@ -391,7 +393,6 @@
                 <label
                     for="<%= ddlGrupoRecrutamento.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
-
                     Grupo de recrutamento
 
                 </label>
@@ -440,13 +441,12 @@
         <!-- DISCIPLINAS -->
 
         <div
-            ID="painelDisciplinasProfessor"
+            id="painelDisciplinasProfessor"
             runat="server"
             class="mt-5"
-            Visible="false">
+            visible="false">
 
-            <h3>
-                Disciplinas que o professor pode lecionar
+            <h3>Disciplinas que o professor pode lecionar
             </h3>
 
             <div class="table-responsive">

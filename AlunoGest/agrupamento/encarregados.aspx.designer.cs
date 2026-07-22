@@ -11,250 +11,340 @@ namespace AlunoGest.agrupamento
 {
 
 
-    public partial class dashboard
+    public partial class Encarregados
     {
 
         /// <summary>
-        /// Controle LblAgrupamento.
+        /// Controle LblMensagem.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblAgrupamento;
+        protected global::System.Web.UI.WebControls.Label LblMensagem;
 
         /// <summary>
-        /// Controle LblAnoLetivo.
+        /// Controle GridEncarregados.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblAnoLetivo;
+        protected global::System.Web.UI.WebControls.GridView GridEncarregados;
 
         /// <summary>
-        /// Controle LnkEstatisticaEscolas.
+        /// Controle ButtonCriar.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkEstatisticaEscolas;
+        protected global::System.Web.UI.WebControls.Button ButtonCriar;
 
         /// <summary>
-        /// Controle LblTotalEscolas.
+        /// Controle ButtonEditar.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTotalEscolas;
+        protected global::System.Web.UI.WebControls.Button ButtonEditar;
 
         /// <summary>
-        /// Controle LnkEstatisticaTurmas.
+        /// Controle ButtonGerirEducandos.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkEstatisticaTurmas;
+        protected global::System.Web.UI.WebControls.Button ButtonGerirEducandos;
 
         /// <summary>
-        /// Controle LblTotalTurmas.
+        /// Controle buttonVoltar.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTotalTurmas;
+        protected global::System.Web.UI.WebControls.Button buttonVoltar;
 
         /// <summary>
-        /// Controle LnkEstatisticaAlunos.
+        /// Controle PnlFormulario.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkEstatisticaAlunos;
+        protected global::System.Web.UI.WebControls.Panel PnlFormulario;
 
         /// <summary>
-        /// Controle LblTotalAlunos.
+        /// Controle ValidationSummaryEncarregado.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTotalAlunos;
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummaryEncarregado;
 
         /// <summary>
-        /// Controle LnkEstatisticaProfessores.
+        /// Controle TxtNomeCompleto.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkEstatisticaProfessores;
+        protected global::System.Web.UI.WebControls.TextBox TxtNomeCompleto;
 
         /// <summary>
-        /// Controle LblTotalProfessores.
+        /// Controle RfvNomeCompleto.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTotalProfessores;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvNomeCompleto;
 
         /// <summary>
-        /// Controle LnkEstatisticaEncarregados.
+        /// Controle TxtNIF.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkEstatisticaEncarregados;
+        protected global::System.Web.UI.WebControls.TextBox TxtNIF;
 
         /// <summary>
-        /// Controle LblTotalEncarregados.
+        /// Controle RfvNIF.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTotalEncarregados;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvNIF;
 
         /// <summary>
-        /// Controle PnlAtencaoNecessaria.
+        /// Controle RevNIF.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PnlAtencaoNecessaria;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator RevNIF;
 
         /// <summary>
-        /// Controle LnkAlunosSemEncarregado.
+        /// Controle TxtEmail.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkAlunosSemEncarregado;
+        protected global::System.Web.UI.WebControls.TextBox TxtEmail;
 
         /// <summary>
-        /// Controle LblAlunosSemEncarregado.
+        /// Controle RfvEmail.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblAlunosSemEncarregado;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvEmail;
 
         /// <summary>
-        /// Controle LnkAlunosSemTurma.
+        /// Controle RevEmail.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkAlunosSemTurma;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator RevEmail;
 
         /// <summary>
-        /// Controle LblAlunosSemTurma.
+        /// Controle TxtTelefone.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblAlunosSemTurma;
+        protected global::System.Web.UI.WebControls.TextBox TxtTelefone;
 
         /// <summary>
-        /// Controle LnkProfessoresSemDisciplina.
+        /// Controle RfvTelefone.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkProfessoresSemDisciplina;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvTelefone;
 
         /// <summary>
-        /// Controle LblProfessoresSemDisciplina.
+        /// Controle RevTelefone.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblProfessoresSemDisciplina;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator RevTelefone;
 
         /// <summary>
-        /// Controle LnkTurmasSemAlunos.
+        /// Controle ChkAtivo.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink LnkTurmasSemAlunos;
+        protected global::System.Web.UI.WebControls.CheckBox ChkAtivo;
 
         /// <summary>
-        /// Controle LblTurmasSemAlunos.
+        /// Controle PnlAssociacaoInicial.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTurmasSemAlunos;
+        protected global::System.Web.UI.WebControls.Panel PnlAssociacaoInicial;
 
         /// <summary>
-        /// Controle LblTotalUtilizadores.
+        /// Controle DdlAlunoInicial.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblTotalUtilizadores;
+        protected global::System.Web.UI.WebControls.DropDownList DdlAlunoInicial;
 
         /// <summary>
-        /// Controle LblResumoEscolas.
+        /// Controle RfvAlunoInicial.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblResumoEscolas;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvAlunoInicial;
 
         /// <summary>
-        /// Controle LblResumoTurmas.
+        /// Controle TxtParentescoInicial.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblResumoTurmas;
+        protected global::System.Web.UI.WebControls.TextBox TxtParentescoInicial;
 
         /// <summary>
-        /// Controle LblResumoAlunos.
+        /// Controle ChkPrincipalInicial.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblResumoAlunos;
+        protected global::System.Web.UI.WebControls.CheckBox ChkPrincipalInicial;
 
         /// <summary>
-        /// Controle LblResumoProfessores.
+        /// Controle ButtonGuardar.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblResumoProfessores;
+        protected global::System.Web.UI.WebControls.Button ButtonGuardar;
 
         /// <summary>
-        /// Controle LblResumoEncarregados.
+        /// Controle ButtonCancelar.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblResumoEncarregados;
+        protected global::System.Web.UI.WebControls.Button ButtonCancelar;
+
+        /// <summary>
+        /// Controle PnlEducandos.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PnlEducandos;
+
+        /// <summary>
+        /// Controle LblEncarregadoSelecionado.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblEncarregadoSelecionado;
+
+        /// <summary>
+        /// Controle ValidationSummaryAssociacao.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummaryAssociacao;
+
+        /// <summary>
+        /// Controle DdlAlunoAssociar.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList DdlAlunoAssociar;
+
+        /// <summary>
+        /// Controle RfvAlunoAssociar.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RfvAlunoAssociar;
+
+        /// <summary>
+        /// Controle TxtParentesco.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtParentesco;
+
+        /// <summary>
+        /// Controle ChkPrincipal.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox ChkPrincipal;
+
+        /// <summary>
+        /// Controle ButtonAssociarAluno.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonAssociarAluno;
+
+        /// <summary>
+        /// Controle GridEducandos.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GridEducandos;
+
+        /// <summary>
+        /// Controle ButtonFecharEducandos.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonFecharEducandos;
     }
 }

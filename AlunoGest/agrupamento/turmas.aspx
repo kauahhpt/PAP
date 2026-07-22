@@ -162,11 +162,13 @@
                     CssClass="btn btn-primary d-inline-block"
                     OnClick="buttonCriarTurma_Click" />
 
-                <asp:Button ID="buttonVoltar" runat="server"
+                <asp:Button
+                    ID="buttonVoltar"
+                    runat="server"
                     Text="Voltar"
-                    CssClass="btn btn-warning d-inline-block ms-4"
-                    OnClick="buttonVoltar_Click"
-                    CausesValidation="false" />
+                    CssClass="btn btn-outline-secondary d-inline-block ms-4"
+                    CausesValidation="false"
+                    PostBackUrl="~/agrupamento/escolas.aspx" />
             </div>
         </div>
 

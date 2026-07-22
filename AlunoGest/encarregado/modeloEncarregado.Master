@@ -1,0 +1,621 @@
+﻿<%@ Master
+    Language="C#"
+    AutoEventWireup="true"
+    CodeBehind="modeloEncarregado.Master.cs"
+    Inherits="AlunoGest.encarregado.modeloEncarregado" %>
+
+<!DOCTYPE html>
+
+<html lang="pt-PT">
+
+<head runat="server">
+
+    <meta
+        http-equiv="Content-Type"
+        content="text/html; charset=utf-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1" />
+
+    <title>Inovar Inovado
+    </title>
+
+    <link
+        runat="server"
+        href="~/Content/bootstrap.min.css"
+        rel="stylesheet" />
+
+    <link
+        runat="server"
+        href="~/css/master.css"
+        rel="stylesheet" />
+
+    <style>
+        /* =====================================================
+   CONTADOR DE MENSAGENS
+===================================================== */
+
+        .mensagens-link {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .mensagens-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #1f2937;
+            font-family: "Nunito", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        *,
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
+
+        form.page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* =====================================================
+           BARRA SUPERIOR
+        ===================================================== */
+
+        .topbar {
+            min-height: 70px;
+            background: linear-gradient( 135deg, #1e3a5f, #265c91 );
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.18);
+        }
+
+        .brand {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-style: italic;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+            .brand:hover {
+                color: #ffffff;
+            }
+
+        .navbar-nav {
+            align-items: center;
+            gap: 4px;
+        }
+
+            .navbar-nav .nav-link {
+                padding: 9px 13px !important;
+                border-radius: 8px;
+                color: #dbeafe;
+                font-size: 14px;
+                font-weight: 600;
+                transition: background 0.2s, color 0.2s;
+            }
+
+                .navbar-nav .nav-link:hover {
+                    background: rgba(255, 255, 255, 0.12);
+                    color: #ffffff;
+                }
+
+
+        /* =====================================================
+           ÁREA DO ENCARREGADO
+        ===================================================== */
+
+        .guardian-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+        }
+
+        .guardian-information {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.25;
+        }
+
+        .guardian-name {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .guardian-role {
+            color: #bfdbfe;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           SELETOR DO EDUCANDO
+        ===================================================== */
+
+        .student-selector-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .student-selector-label {
+            margin: 0;
+            color: #dbeafe;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .student-selector {
+            min-width: 190px;
+            max-width: 260px;
+            padding: 7px 31px 7px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 8px;
+            background-color: #ffffff;
+            color: #1f2937;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+            .student-selector:focus {
+                border-color: #93c5fd;
+                box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.22);
+                outline: none;
+            }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        .logout-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            background: transparent;
+            color: #ffffff !important;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+            .logout-button:hover {
+                border-color: #ffffff;
+                background: rgba(255, 255, 255, 0.13);
+            }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+
+        /* =====================================================
+           CONTEÚDO
+        ===================================================== */
+
+        main {
+            flex: 1;
+            width: 100%;
+            min-height: calc(100vh - 128px);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+
+        /* =====================================================
+           RODAPÉ
+        ===================================================== */
+
+        footer {
+            min-height: 58px;
+            padding: 8px 15px;
+            border-top: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+            footer a {
+                color: #475569;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    color: #1f2937;
+                    text-decoration: underline;
+                }
+
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media (max-width: 1199px) {
+
+            .guardian-area {
+                gap: 10px;
+            }
+
+            .student-selector {
+                min-width: 155px;
+                max-width: 190px;
+            }
+
+            .student-selector-label {
+                display: none;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+
+            .navbar-collapse {
+                padding-top: 14px;
+                padding-bottom: 10px;
+            }
+
+            .navbar-nav {
+                align-items: stretch;
+                gap: 3px;
+            }
+
+                .navbar-nav .nav-link {
+                    padding: 10px 12px !important;
+                }
+
+            .guardian-area {
+                width: 100%;
+                align-items: stretch;
+                flex-direction: column;
+                margin-top: 12px;
+                margin-left: 0;
+                padding-top: 13px;
+                border-top: 1px solid rgba(255, 255, 255, 0.15);
+            }
+
+            .guardian-information {
+                align-items: flex-start;
+            }
+
+            .student-selector-area {
+                width: 100%;
+            }
+
+            .student-selector-label {
+                display: block;
+            }
+
+            .student-selector {
+                flex: 1;
+                max-width: none;
+            }
+
+            .logout-button {
+                width: fit-content;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .main-container {
+                padding: 16px 10px;
+            }
+
+            .brand {
+                font-size: 1.1rem;
+            }
+
+            .student-selector-area {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .student-selector {
+                width: 100%;
+            }
+
+            .logout-button {
+                width: 100%;
+            }
+
+            footer {
+                text-align: center;
+            }
+        }
+    </style>
+
+
+    <asp:ContentPlaceHolder
+        ID="headContent"
+        runat="server">
+    </asp:ContentPlaceHolder>
+
+</head>
+
+<body>
+
+    <form
+        id="formEncarregado"
+        runat="server"
+        class="page-container">
+
+
+        <!-- ==================================================
+             BARRA DE NAVEGAÇÃO
+        =================================================== -->
+
+        <nav
+            class="
+                navbar
+                navbar-expand-lg
+                navbar-dark
+                topbar
+                px-3
+                px-lg-4">
+
+
+            <!-- LOGÓTIPO -->
+
+            <a
+                class="brand navbar-brand"
+                href="<%= ResolveUrl(
+                    "~/encarregado/dashboard.aspx"
+                ) %>">Inovar Inovado
+
+            </a>
+
+
+            <!-- BOTÃO MOBILE -->
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menuEncarregado"
+                aria-controls="menuEncarregado"
+                aria-expanded="false"
+                aria-label="Abrir menu">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <!-- CONTEÚDO DO MENU -->
+
+            <div
+                class="collapse navbar-collapse"
+                id="menuEncarregado">
+
+
+                <!-- LINKS -->
+
+                <div class="navbar-nav ms-lg-4">
+
+                    <asp:HyperLink
+                        ID="LnkHome"
+                        runat="server"
+                        NavigateUrl="~/encarregado/dashboard.aspx"
+                        Text="Home"
+                        CssClass="nav-link" />
+                    <asp:HyperLink
+                        ID="LnkEducandos"
+                        runat="server"
+                        NavigateUrl="~/encarregado/Educandos.aspx"
+                        Text="Educandos"
+                        CssClass="nav-link" />
+
+                    <asp:HyperLink
+                        ID="LnkCalendario"
+                        runat="server"
+                        NavigateUrl="~/encarregado/Calendario.aspx"
+                        Text="Calendário"
+                        CssClass="nav-link" />
+
+                    <asp:HyperLink
+                        ID="LnkMensagens"
+                        runat="server"
+                        NavigateUrl="~/encarregado/Mensagens.aspx"
+                        CssClass="nav-link mensagens-link">
+
+                        <span>Chat
+                        </span>
+
+                        <asp:Label
+                            ID="LblMensagensNaoLidas"
+                            runat="server"
+                            Text="0"
+                            Visible="false"
+                            CssClass="mensagens-badge" />
+
+                    </asp:HyperLink>
+
+
+                    <asp:HyperLink
+                        ID="LnkMinhaConta"
+                        runat="server"
+                        NavigateUrl="~/encarregado/MinhaConta.aspx"
+                        Text="Minha Conta"
+                        CssClass="nav-link" />
+
+
+                </div>
+
+
+                <!-- ÁREA DO ENCARREGADO -->
+
+                <div class="guardian-area">
+
+
+                    <!-- SELEÇÃO DO EDUCANDO -->
+
+                    <div class="student-selector-area">
+
+                        <asp:Label
+                            ID="LblSelecionarEducando"
+                            runat="server"
+                            AssociatedControlID="DdlEducando"
+                            CssClass="student-selector-label"
+                            Text="Educando:" />
+
+                        <asp:DropDownList
+                            ID="DdlEducando"
+                            runat="server"
+                            CssClass="student-selector"
+                            AutoPostBack="true">
+
+                            <asp:ListItem
+                                Text="Selecione o educando..."
+                                Value="" />
+
+                        </asp:DropDownList>
+
+                    </div>
+
+
+                    <!-- NOME DO ENCARREGADO -->
+
+                    <div class="guardian-information">
+
+                        <asp:Label
+                            ID="LblEncarregado"
+                            runat="server"
+                            CssClass="guardian-name" />
+
+                        <span class="guardian-role">Encarregado de Educação
+                        </span>
+
+                    </div>
+
+
+                    <!-- LOGOUT -->
+
+                    <asp:LoginStatus
+                        ID="LoginStatus1"
+                        runat="server"
+                        CssClass="logout-button"
+                        LogoutAction="RedirectToLoginPage"
+                        LogoutText="Terminar sessão"
+                        LoginText="Iniciar sessão"
+                        OnLoggedOut="LoginStatus1_LoggedOut" />
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+        <!-- ==================================================
+             CONTEÚDO PRINCIPAL
+        =================================================== -->
+
+        <main>
+
+            <div class="main-container">
+
+                <asp:ContentPlaceHolder
+                    ID="mainContent"
+                    runat="server">
+                </asp:ContentPlaceHolder>
+
+            </div>
+
+        </main>
+
+
+        <!-- ==================================================
+             RODAPÉ
+        =================================================== -->
+
+        <footer
+            class="
+                d-flex
+                flex-column
+                align-items-center
+                justify-content-center">
+
+            <p style="margin: 0;">
+                &copy; 2026 Inovar Inovado —
+                Todos os direitos reservados
+
+            </p>
+
+            <p style="margin: 0;">
+
+                <a href="#">Política de Privacidade
+                </a>
+
+                |
+
+                <a href="#">Termos de Utilização
+                </a>
+
+                |
+
+                <a href="#">Contactos
+                </a>
+
+            </p>
+
+        </footer>
+
+    </form>
+
+
+    <script
+        src="<%= ResolveUrl(
+            "~/Scripts/bootstrap.bundle.min.js"
+        ) %>">
+    </script>
+
+</body>
+
+</html>

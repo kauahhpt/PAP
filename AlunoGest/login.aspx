@@ -407,100 +407,81 @@
 
     <style>
         .password-recovery-area {
-    margin-top: 11px;
-    text-align: center;
-}
+            margin-top: 11px;
+            text-align: center;
+        }
 
-.password-recovery-link {
-    display: inline-block;
-    padding: 2px 4px;
+        .password-recovery-link {
+            display: inline-block;
+            padding: 2px 4px;
+            color: #7b8ba3;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease, text-decoration-color 0.2s ease;
+        }
 
-    color: #7b8ba3;
+            .password-recovery-link:hover {
+                color: #2457d6;
+                text-decoration: underline;
+            }
 
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
+            .password-recovery-link:focus {
+                color: #2457d6;
+                outline: none;
+                text-decoration: underline;
+            }
 
-    transition:
-        color 0.2s ease,
-        text-decoration-color 0.2s ease;
-}
-
-.password-recovery-link:hover {
-    color: #2457d6;
-    text-decoration: underline;
-}
-
-.password-recovery-link:focus {
-    color: #2457d6;
-    outline: none;
-    text-decoration: underline;
-}
-
-/* =====================================================
+        /* =====================================================
    MOSTRAR/OCULTAR PALAVRA-PASSE
 ===================================================== */
 
-.password-input-wrapper {
-    position: relative;
-}
+        .password-input-wrapper {
+            position: relative;
+        }
 
-.password-input-wrapper .login-input {
-    padding-right: 52px;
-}
+            .password-input-wrapper .login-input {
+                padding-right: 52px;
+            }
 
-.password-toggle {
-    position: absolute;
-    top: 50%;
-    right: 9px;
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 9px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transform: translateY(-50%);
+            transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
 
-    width: 36px;
-    height: 36px;
+            .password-toggle:hover {
+                background: #eff6ff;
+                color: #2563eb;
+            }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+            .password-toggle:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+            }
 
-    padding: 0;
+            .password-toggle svg {
+                width: 21px;
+                height: 21px;
+                pointer-events: none;
+            }
 
-    border: none;
-    border-radius: 8px;
-
-    background: transparent;
-    color: #64748b;
-
-    cursor: pointer;
-
-    transform: translateY(-50%);
-
-    transition:
-        color 0.2s ease,
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.password-toggle:hover {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.password-toggle:focus {
-    outline: none;
-
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.14);
-}
-
-.password-toggle svg {
-    width: 21px;
-    height: 21px;
-
-    pointer-events: none;
-}
-
-.password-toggle .icon-hidden {
-    display: none;
-}
+            .password-toggle .icon-hidden {
+                display: none;
+            }
     </style>
 
 </head>
@@ -513,6 +494,7 @@
         runat="server">
 
         <div class="login-page">
+
 
 
             <!-- ==================================================
@@ -660,72 +642,72 @@
 
                                     <div class="password-input-wrapper">
 
-    <asp:TextBox
-        ID="Password"
-        runat="server"
-        ClientIDMode="Static"
-        CssClass="login-input"
-        TextMode="Password"
-        autocomplete="current-password"
-        placeholder="Introduza a sua palavra-passe" />
+                                        <asp:TextBox
+                                            ID="Password"
+                                            runat="server"
+                                            ClientIDMode="Static"
+                                            CssClass="login-input"
+                                            TextMode="Password"
+                                            autocomplete="current-password"
+                                            placeholder="Introduza a sua palavra-passe" />
 
-    <button
-        type="button"
-        class="password-toggle"
-        aria-label="Mostrar palavra-passe"
-        aria-pressed="false"
-        title="Mostrar palavra-passe">
+                                        <button
+                                            type="button"
+                                            class="password-toggle"
+                                            aria-label="Mostrar palavra-passe"
+                                            aria-pressed="false"
+                                            title="Mostrar palavra-passe">
 
-        <!-- Olho aberto -->
+                                            <!-- Olho aberto -->
 
-        <svg
-            class="eye-open"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true">
+                                            <svg
+                                                class="eye-open"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                aria-hidden="true">
 
-            <path
-                d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12" />
+                                                <path
+                                                    d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12" />
 
-            <circle
-                cx="12"
-                cy="12"
-                r="3" />
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="3" />
 
-        </svg>
+                                            </svg>
 
-        <!-- Olho fechado -->
+                                            <!-- Olho fechado -->
 
-        <svg
-            class="eye-closed icon-hidden"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true">
+                                            <svg
+                                                class="eye-closed icon-hidden"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                aria-hidden="true">
 
-            <path d="M3 3l18 18" />
+                                                <path d="M3 3l18 18" />
 
-            <path
-                d="M10.6 10.7a2 2 0 0 0 2.7 2.7" />
+                                                <path
+                                                    d="M10.6 10.7a2 2 0 0 0 2.7 2.7" />
 
-            <path
-                d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18 18 0 0 1-2.1 3.2" />
+                                                <path
+                                                    d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18 18 0 0 1-2.1 3.2" />
 
-            <path
-                d="M6.6 6.6C3.6 8.5 2 12 2 12s3.5 8 10 8a10.5 10.5 0 0 0 5.4-1.5" />
+                                                <path
+                                                    d="M6.6 6.6C3.6 8.5 2 12 2 12s3.5 8 10 8a10.5 10.5 0 0 0 5.4-1.5" />
 
-        </svg>
+                                            </svg>
 
-    </button>
+                                        </button>
 
-</div>
+                                    </div>
 
                                     <asp:RequiredFieldValidator
                                         ID="PasswordRequired"
@@ -783,14 +765,12 @@ Esqueci-me da palavra-passe
                     </div>
 
                     <div class="admin-access">
-
                         <asp:HyperLink
-                            ID="lnkAdministracao"
+                            ID="lnkCriarAgrupamento"
                             runat="server"
-                            NavigateUrl="~/administrador/criarconta.aspx"
+                            NavigateUrl="~/criarconta.aspx"
                             CssClass="admin-access-link"
-                            Text="Acesso administrativo" />
-
+                            Text="Criar conta de agrupamento" />
                     </div>
 
                     <div class="login-footer">
@@ -806,7 +786,7 @@ Esqueci-me da palavra-passe
     </form>
 
 </body>
-    <script>
+<script>
     document.addEventListener(
         "DOMContentLoaded",
         function () {
@@ -894,5 +874,5 @@ Esqueci-me da palavra-passe
 
         }
     );
-    </script>
+</script>
 </html>

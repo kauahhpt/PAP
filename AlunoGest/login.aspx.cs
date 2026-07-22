@@ -13,9 +13,7 @@ namespace AlunoGest
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
-
         protected void loginUtilizador_LoggedIn(object sender, EventArgs e)
         {
             string username = loginUtilizador.UserName;
@@ -34,7 +32,12 @@ namespace AlunoGest
             // Administrador da plataforma
             if (Roles.IsUserInRole(username, "administrador"))
             {
-                Response.Redirect("~/administrador/criarconta.aspx");
+                Response.Redirect("~/administrador/pedidos_agrupamento.aspx");
+                return;
+            }
+            if (Roles.IsUserInRole(username, "encarregado"))
+            {
+                Response.Redirect("~/encarregado/dashboard.aspx");
                 return;
             }
 

@@ -7,209 +7,182 @@
 // </gerado automaticamente>
 //------------------------------------------------------------------------------
 
-namespace AlunoGest.agrupamento
+namespace AlunoGest.encarregado
 {
 
 
-    public partial class escolas
+    public partial class Mensagens
     {
 
         /// <summary>
-        /// Controle lblMensagem.
+        /// Controle LblEducandoSelecionado.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMensagem;
+        protected global::System.Web.UI.WebControls.Label LblEducandoSelecionado;
 
         /// <summary>
-        /// Controle gridEscolas.
+        /// Controle LblMensagem.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gridEscolas;
+        protected global::System.Web.UI.WebControls.Label LblMensagem;
 
         /// <summary>
-        /// Controle buttonVer.
+        /// Controle PnlSemEducando.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonVer;
+        protected global::System.Web.UI.WebControls.Panel PnlSemEducando;
 
         /// <summary>
-        /// Controle buttonCriar.
+        /// Controle PnlConteudo.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonCriar;
+        protected global::System.Web.UI.WebControls.Panel PnlConteudo;
 
         /// <summary>
-        /// Controle buttonEditar.
+        /// Controle LabelProfessor.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonEditar;
+        protected global::System.Web.UI.WebControls.Label LabelProfessor;
 
         /// <summary>
-        /// Controle buttonSalas.
+        /// Controle DdlProfessores.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonSalas;
+        protected global::System.Web.UI.WebControls.DropDownList DdlProfessores;
 
         /// <summary>
-        /// Controle buttonTurmas.
+        /// Controle BtnIniciarConversa.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonTurmas;
+        protected global::System.Web.UI.WebControls.Button BtnIniciarConversa;
 
         /// <summary>
-        /// Controle buttonVoltar.
+        /// Controle RepeaterConversas.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonVoltar;
+        protected global::System.Web.UI.WebControls.Repeater RepeaterConversas;
 
         /// <summary>
-        /// Controle ddlNivelEnsino.
+        /// Controle PnlSemConversas.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlNivelEnsino;
+        protected global::System.Web.UI.WebControls.Panel PnlSemConversas;
 
         /// <summary>
-        /// Controle buttonCriarTurma.
+        /// Controle LblConversaAtual.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonCriarTurma;
+        protected global::System.Web.UI.WebControls.Label LblConversaAtual;
 
         /// <summary>
-        /// Controle controlos.
+        /// Controle LblContextoConversa.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl controlos;
+        protected global::System.Web.UI.WebControls.Label LblContextoConversa;
 
         /// <summary>
-        /// Controle txtNome.
+        /// Controle LblTipoConversa.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNome;
+        protected global::System.Web.UI.WebControls.Label LblTipoConversa;
 
         /// <summary>
-        /// Controle rfvNome.
+        /// Controle HdnConversaId.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNome;
+        protected global::System.Web.UI.WebControls.HiddenField HdnConversaId;
 
         /// <summary>
-        /// Controle txtCodigoMEC.
+        /// Controle HdnProfessorUserId.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCodigoMEC;
+        protected global::System.Web.UI.WebControls.HiddenField HdnProfessorUserId;
 
         /// <summary>
-        /// Controle chkAtiva.
+        /// Controle ChatBox.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAtiva;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ChatBox;
 
         /// <summary>
-        /// Controle txtMorada.
+        /// Controle RepeaterMensagens.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtMorada;
+        protected global::System.Web.UI.WebControls.Repeater RepeaterMensagens;
 
         /// <summary>
-        /// Controle txtCodigoPostal.
+        /// Controle PnlSemMensagens.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCodigoPostal;
+        protected global::System.Web.UI.WebControls.Panel PnlSemMensagens;
 
         /// <summary>
-        /// Controle txtLocalidade.
+        /// Controle TxtMensagem.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLocalidade;
+        protected global::System.Web.UI.WebControls.TextBox TxtMensagem;
 
         /// <summary>
-        /// Controle txtEmail.
+        /// Controle BtnEnviarMensagem.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmail;
-
-        /// <summary>
-        /// Controle txtTelefone.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTelefone;
-
-        /// <summary>
-        /// Controle buttonGuardar.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonGuardar;
-
-        /// <summary>
-        /// Controle buttonCancelar.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button buttonCancelar;
+        protected global::System.Web.UI.WebControls.Button BtnEnviarMensagem;
     }
 }
