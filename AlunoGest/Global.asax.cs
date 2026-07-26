@@ -36,6 +36,7 @@ namespace AlunoGest
                 if (!Roles.RoleExists(role))
                 {
                     Roles.CreateRole(role);
+
                 }
             }
 

@@ -68,6 +68,11 @@
             .campo-label {
                 text-align: left !important;
             }
+
+            .botoes-listagem .btn {
+                width: 100%;
+                margin: 0 0 9px !important;
+            }
         }
     </style>
 
@@ -152,7 +157,7 @@
 
         <!-- BOTÕES DA LISTAGEM -->
 
-        <div class="mb-4">
+        <div class="mb-4 botoes-listagem">
 
             <asp:Button
                 ID="ButtonCriar"
@@ -169,6 +174,15 @@
                 CssClass="btn btn-secondary ms-2"
                 OnClick="ButtonEditar_Click"
                 CausesValidation="false" />
+
+            <asp:Button
+                ID="ButtonReenviarCredenciais"
+                runat="server"
+                Text="Reenviar credenciais"
+                CssClass="btn btn-outline-success ms-2"
+                CausesValidation="false"
+                OnClick="ButtonReenviarCredenciais_Click"
+                OnClientClick="return confirm('Será gerada uma nova palavra-passe e a anterior deixará de funcionar. Pretende continuar?');" />
 
             <asp:Button
                 ID="buttonVoltar"
@@ -190,10 +204,7 @@
 
             <div class="card-body p-4">
 
-                <h2 class="formulario-titulo">Dados do aluno
-                </h2>
-
-                <!-- NOME -->
+                <h2 class="formulario-titulo">Dados do aluno</h2>
 
                 <div class="row mb-3">
 
@@ -201,7 +212,6 @@
                         for="<%= TxtNomeCompleto.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
                         Nome completo
-
                     </label>
 
                     <div class="col-sm-7">
@@ -225,15 +235,12 @@
 
                 </div>
 
-                <!-- NÚMERO DE PROCESSO -->
-
                 <div class="row mb-3">
 
                     <label
                         for="<%= TxtNumeroProcesso.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
                         N.º processo
-
                     </label>
 
                     <div class="col-sm-5">
@@ -257,15 +264,12 @@
 
                 </div>
 
-                <!-- NIF -->
-
                 <div class="row mb-3">
 
                     <label
                         for="<%= TxtNIF.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
                         NIF
-
                     </label>
 
                     <div class="col-sm-5">
@@ -297,13 +301,9 @@
                             Display="Dynamic"
                             ValidationGroup="aluno" />
 
-
-
                     </div>
 
                 </div>
-
-                <!-- EMAIL -->
 
                 <div class="row mb-3">
 
@@ -311,7 +311,6 @@
                         for="<%= TxtEmail.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
                         Email
-
                     </label>
 
                     <div class="col-sm-7">
@@ -342,11 +341,13 @@
                             Display="Dynamic"
                             ValidationGroup="aluno" />
 
+                        <span class="nif-ajuda">
+                            As credenciais de acesso serão enviadas para este email.
+                        </span>
+
                     </div>
 
                 </div>
-
-                <!-- TELEFONE -->
 
                 <div class="row mb-3">
 
@@ -354,7 +355,6 @@
                         for="<%= TxtTelefone.ClientID %>"
                         class="col-sm-3 col-form-label text-end campo-label">
                         Telefone
-
                     </label>
 
                     <div class="col-sm-5">
@@ -390,8 +390,6 @@
 
                 </div>
 
-                <!-- ESTADO -->
-
                 <div class="row mb-3">
 
                     <div class="col-sm-3"></div>
@@ -410,7 +408,6 @@
                                 class="form-check-label"
                                 for="ChkAtivo">
                                 Aluno ativo
-
                             </label>
 
                         </div>
@@ -418,8 +415,6 @@
                     </div>
 
                 </div>
-
-                <!-- BOTÕES -->
 
                 <div class="row">
 
@@ -461,7 +456,8 @@
 
                     <div>
 
-                        <h2 class="formulario-titulo mb-1">Alunos sem encarregado de educação
+                        <h2 class="formulario-titulo mb-1">
+                            Alunos sem encarregado de educação
                         </h2>
 
                         <p class="text-muted mb-0">
@@ -532,4 +528,3 @@
     </div>
 
 </asp:Content>
-

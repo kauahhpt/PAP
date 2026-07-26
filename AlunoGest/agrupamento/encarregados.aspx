@@ -416,6 +416,15 @@
                 CausesValidation="false" />
 
             <asp:Button
+                ID="ButtonReenviarCredenciais"
+                runat="server"
+                Text="Reenviar credenciais"
+                CssClass="btn btn-outline-success ms-2"
+                CausesValidation="false"
+                OnClick="ButtonReenviarCredenciais_Click"
+                OnClientClick="return confirm('Será gerada uma nova palavra-passe e a anterior deixará de funcionar. Pretende continuar?');" />
+
+            <asp:Button
                 ID="ButtonGerirEducandos"
                 runat="server"
                 Text="Gerir educandos"

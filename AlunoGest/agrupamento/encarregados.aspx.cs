@@ -124,9 +124,7 @@ namespace AlunoGest.agrupamento
             );
         }
 
-        protected void ButtonEditar_Click(
-            object sender,
-            EventArgs e)
+        protected void ButtonEditar_Click(object sender,EventArgs e)
         {
             LimparMensagem();
 
@@ -165,6 +163,170 @@ namespace AlunoGest.agrupamento
             PnlEducandos.Visible = false;
 
             RfvAlunoInicial.Enabled = false;
+        }
+
+        protected void ButtonReenviarCredenciais_Click(
+    object sender,
+    EventArgs e)
+        {
+            LimparMensagem();
+
+            int encarregadoId;
+
+            if (!EncarregadoSelecionado(
+                    out encarregadoId))
+            {
+                MostrarMensagem(
+                    "Selecione um encarregado de educação."
+                );
+
+                return;
+            }
+
+            EncarregadoDados encarregado =
+                GetEncarregadoById(
+                    encarregadoId
+                );
+
+            if (encarregado == null)
+            {
+                MostrarMensagem(
+                    "Não foi possível encontrar o encarregado selecionado."
+                );
+
+                GetEncarregados();
+                return;
+            }
+
+            if (!encarregado.Ativo)
+            {
+                MostrarMensagem(
+                    "O encarregado selecionado está inativo. " +
+                    "Ative a conta antes de reenviar as credenciais."
+                );
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    encarregado.Email))
+            {
+                MostrarMensagem(
+                    "O encarregado não possui um email válido. " +
+                    "Edite o registo antes de reenviar as credenciais."
+                );
+
+                return;
+            }
+
+            bool passwordRedefinida =
+                false;
+
+            try
+            {
+                MembershipUser utilizador =
+                    Membership.GetUser(
+                        encarregado.UserId,
+                        false
+                    );
+
+                if (utilizador == null)
+                {
+                    throw new InvalidOperationException(
+                        "Não foi possível encontrar a conta de acesso " +
+                        "associada ao encarregado."
+                    );
+                }
+
+                string emailAtual =
+                    encarregado.Email
+                        .Trim()
+                        .ToLowerInvariant();
+
+                /*
+                 * Confirma que o email corrigido não está
+                 * associado a outra conta do Membership.
+                 */
+                if (EmailJaExisteNoMembership(
+                        emailAtual,
+                        encarregado.UserId))
+                {
+                    throw new InvalidOperationException(
+                        "O email atual já está associado a outra conta."
+                    );
+                }
+
+                /*
+                 * Sincroniza o email atual da tabela
+                 * EncarregadoEducacao com o Membership.
+                 */
+                utilizador.Email =
+                    emailAtual;
+
+                utilizador.IsApproved =
+                    true;
+
+                Membership.UpdateUser(
+                    utilizador
+                );
+
+                /*
+                 * Gera e aplica uma nova palavra-passe.
+                 * A palavra-passe anterior deixa de funcionar.
+                 */
+                string novaPassword =
+                    CriarConta.RedefinirPassword(
+                        utilizador.UserName
+                    );
+
+                passwordRedefinida =
+                    true;
+
+                string urlLogin =
+                    Request.Url.GetLeftPart(
+                        UriPartial.Authority
+                    ) +
+                    ResolveUrl("~/login.aspx");
+
+                CriarConta
+                    .EnviarEmailCredenciaisRedefinidas(
+                        emailAtual,
+                        encarregado.NomeCompleto,
+                        utilizador.UserName,
+                        novaPassword,
+                        urlLogin
+                    );
+
+                MostrarMensagem(
+                    "Foi gerada uma nova palavra-passe e as credenciais " +
+                    "foram enviadas para " + emailAtual + ".",
+                    false
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(
+                    "Erro ao reenviar credenciais do encarregado: " +
+                    ex
+                );
+
+                if (passwordRedefinida)
+                {
+                    MostrarMensagem(
+                        "A palavra-passe foi redefinida, mas não foi possível " +
+                        "enviar o email. Confirme o endereço e a configuração " +
+                        "SMTP e volte a clicar em Reenviar credenciais. " +
+                        ex.Message
+                    );
+                }
+                else
+                {
+                    MostrarMensagem(
+                        "Não foi possível reenviar as credenciais. " +
+                        ex.Message
+                    );
+                }
+            }
         }
 
         protected void ButtonGerirEducandos_Click(
