@@ -55,7 +55,7 @@ namespace AlunoGest.professor
             if (turmaId > 0)
             {
                 Response.Redirect(
-                    "~/professor/Home.aspx?turma=" +
+                    "~/professor/dashboard.aspx?turma=" +
                     turmaId
                 );
             }
@@ -1387,6 +1387,43 @@ namespace AlunoGest.professor
                 return;
             }
 
+            if (TxtTitulo.Text.Trim().Length > 200)
+            {
+                MostrarMensagem(
+                    "O título não pode ultrapassar 200 caracteres.",
+                    true
+                );
+
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(
+                    TxtDescricaoEvento.Text) &&
+                TxtDescricaoEvento.Text.Trim().Length > 500)
+            {
+                MostrarMensagem(
+                    "A descrição não pode ultrapassar 500 caracteres.",
+                    true
+                );
+
+                return;
+            }
+
+            string visibilidade =
+                DdlVisibilidade.SelectedValue;
+
+            if (visibilidade != "Alunos" &&
+                visibilidade != "Encarregados" &&
+                visibilidade != "Ambos")
+            {
+                MostrarMensagem(
+                    "Escolha uma visibilidade válida.",
+                    true
+                );
+
+                return;
+            }
+
             DateTime dataHora;
 
             if (!DateTime.TryParse(
@@ -1436,7 +1473,7 @@ namespace AlunoGest.professor
                 }
 
                 MostrarMensagem(
-                    "Evento guardado.",
+                    "Evento guardado com sucesso.",
                     false
                 );
 
@@ -1473,24 +1510,33 @@ namespace AlunoGest.professor
             if (turmaId > 0)
             {
                 const string sql = @"
-                    SELECT
-                        Id,
-                        Tipo,
-                        Titulo,
-                        DataHora
+            SELECT
+                Id,
+                Tipo,
+                Titulo,
+                Descricao,
+                DataHora,
+                Visibilidade
 
-                    FROM dbo.Evento
+            FROM dbo.Evento
 
-                    WHERE TurmaId = @TurmaId
+            WHERE TurmaId = @TurmaId
 
-                    ORDER BY DataHora DESC;";
+            ORDER BY DataHora DESC;";
 
                 using (SqlConnection conn =
-                    new SqlConnection(_connectionString))
+                    new SqlConnection(
+                        _connectionString
+                    ))
                 using (SqlCommand cmd =
-                    new SqlCommand(sql, conn))
+                    new SqlCommand(
+                        sql,
+                        conn
+                    ))
                 using (SqlDataAdapter adapter =
-                    new SqlDataAdapter(cmd))
+                    new SqlDataAdapter(
+                        cmd
+                    ))
                 {
                     cmd.Parameters
                         .Add(
@@ -1499,7 +1545,9 @@ namespace AlunoGest.professor
                         )
                         .Value = turmaId;
 
-                    adapter.Fill(tabela);
+                    adapter.Fill(
+                        tabela
+                    );
                 }
             }
 
@@ -1511,10 +1559,21 @@ namespace AlunoGest.professor
             List<object> eventos =
                 new List<object>();
 
-            foreach (DataRow row in tabela.Rows)
+            foreach (DataRow row
+                in tabela.Rows)
             {
                 string tipo =
                     row["Tipo"].ToString();
+
+                string descricao =
+                    row["Descricao"] == DBNull.Value
+                        ? string.Empty
+                        : row["Descricao"].ToString();
+
+                string visibilidade =
+                    row["Visibilidade"] == DBNull.Value
+                        ? "Ambos"
+                        : row["Visibilidade"].ToString();
 
                 string cor;
 
@@ -1535,10 +1594,13 @@ namespace AlunoGest.professor
                     new
                     {
                         id =
-                            row["Id"],
+                            Convert.ToInt32(
+                                row["Id"]
+                            ),
 
                         title =
-                            row["Titulo"].ToString(),
+                            row["Titulo"]
+                                .ToString(),
 
                         start =
                             Convert.ToDateTime(
@@ -1549,14 +1611,31 @@ namespace AlunoGest.professor
                             ),
 
                         color =
-                            cor
+                            cor,
+
+                        extendedProps =
+                            new
+                            {
+                                descricao =
+                                    descricao,
+
+                                tipo =
+                                    tipo,
+
+                                visibilidade =
+                                    ObterTextoVisibilidade(
+                                        visibilidade
+                                    )
+                            }
                     }
                 );
             }
 
             HdnEvents.Value =
                 new JavaScriptSerializer()
-                    .Serialize(eventos);
+                    .Serialize(
+                        eventos
+                    );
         }
 
 
@@ -1585,8 +1664,14 @@ namespace AlunoGest.professor
             int turmaId =
                 TurmaSelecionada;
 
-            if (!ProfessorTemTurma(turmaId))
+            if (!ProfessorTemTurma(
+                    turmaId))
             {
+                MostrarMensagem(
+                    "Não tem permissão para gerir esta turma.",
+                    true
+                );
+
                 return;
             }
 
@@ -1633,32 +1718,41 @@ namespace AlunoGest.professor
             DateTime dataHora)
         {
             const string sql = @"
-                INSERT INTO dbo.Evento
-                (
-                    AlunoId,
-                    TurmaId,
-                    Titulo,
-                    Tipo,
-                    DataHora
-                )
-                VALUES
-                (
-                    NULL,
-                    @TurmaId,
-                    @Titulo,
-                    @Tipo,
-                    @DataHora
-                );
+        INSERT INTO dbo.Evento
+        (
+            AlunoId,
+            TurmaId,
+            Titulo,
+            Descricao,
+            Tipo,
+            DataHora,
+            Visibilidade
+        )
+        VALUES
+        (
+            NULL,
+            @TurmaId,
+            @Titulo,
+            @Descricao,
+            @Tipo,
+            @DataHora,
+            @Visibilidade
+        );
 
-                SELECT CAST(
-                    SCOPE_IDENTITY()
-                    AS int
-                );";
+        SELECT CAST(
+            SCOPE_IDENTITY()
+            AS INT
+        );";
 
             using (SqlConnection conn =
-                new SqlConnection(_connectionString))
+                new SqlConnection(
+                    _connectionString
+                ))
             using (SqlCommand cmd =
-                new SqlCommand(sql, conn))
+                new SqlCommand(
+                    sql,
+                    conn
+                ))
             {
                 ParametrosEvento(
                     cmd,
@@ -1681,20 +1775,27 @@ namespace AlunoGest.professor
             DateTime dataHora)
         {
             const string sql = @"
-                UPDATE dbo.Evento
+        UPDATE dbo.Evento
 
-                SET
-                    Titulo = @Titulo,
-                    Tipo = @Tipo,
-                    DataHora = @DataHora
+        SET
+            Titulo = @Titulo,
+            Descricao = @Descricao,
+            Tipo = @Tipo,
+            DataHora = @DataHora,
+            Visibilidade = @Visibilidade
 
-                WHERE Id = @Id
-                  AND TurmaId = @TurmaId;";
+        WHERE Id = @Id
+          AND TurmaId = @TurmaId;";
 
             using (SqlConnection conn =
-                new SqlConnection(_connectionString))
+                new SqlConnection(
+                    _connectionString
+                ))
             using (SqlCommand cmd =
-                new SqlCommand(sql, conn))
+                new SqlCommand(
+                    sql,
+                    conn
+                ))
             {
                 ParametrosEvento(
                     cmd,
@@ -1711,7 +1812,15 @@ namespace AlunoGest.professor
 
                 conn.Open();
 
-                cmd.ExecuteNonQuery();
+                int linhasAlteradas =
+                    cmd.ExecuteNonQuery();
+
+                if (linhasAlteradas == 0)
+                {
+                    throw new InvalidOperationException(
+                        "O evento não foi encontrado nesta turma."
+                    );
+                }
             }
         }
 
@@ -1734,7 +1843,23 @@ namespace AlunoGest.professor
                     SqlDbType.NVarChar,
                     200
                 )
-                .Value = TxtTitulo.Text.Trim();
+                .Value =
+                TxtTitulo.Text.Trim();
+
+            cmd.Parameters
+                .Add(
+                    "@Descricao",
+                    SqlDbType.NVarChar,
+                    500
+                )
+                .Value =
+                string.IsNullOrWhiteSpace(
+                    TxtDescricaoEvento.Text
+                )
+                    ? (object)DBNull.Value
+                    : TxtDescricaoEvento
+                        .Text
+                        .Trim();
 
             cmd.Parameters
                 .Add(
@@ -1742,7 +1867,8 @@ namespace AlunoGest.professor
                     SqlDbType.NVarChar,
                     50
                 )
-                .Value = DdlTipo.SelectedValue;
+                .Value =
+                DdlTipo.SelectedValue;
 
             cmd.Parameters
                 .Add(
@@ -1750,6 +1876,15 @@ namespace AlunoGest.professor
                     SqlDbType.DateTime
                 )
                 .Value = dataHora;
+
+            cmd.Parameters
+                .Add(
+                    "@Visibilidade",
+                    SqlDbType.NVarChar,
+                    20
+                )
+                .Value =
+                DdlVisibilidade.SelectedValue;
         }
 
 
@@ -1758,21 +1893,28 @@ namespace AlunoGest.professor
             int turmaId)
         {
             const string sql = @"
-                SELECT
-                    Id,
-                    Tipo,
-                    Titulo,
-                    DataHora
+        SELECT
+            Id,
+            Tipo,
+            Titulo,
+            Descricao,
+            DataHora,
+            Visibilidade
 
-                FROM dbo.Evento
+        FROM dbo.Evento
 
-                WHERE Id = @Id
-                  AND TurmaId = @TurmaId;";
+        WHERE Id = @Id
+          AND TurmaId = @TurmaId;";
 
             using (SqlConnection conn =
-                new SqlConnection(_connectionString))
+                new SqlConnection(
+                    _connectionString
+                ))
             using (SqlCommand cmd =
-                new SqlCommand(sql, conn))
+                new SqlCommand(
+                    sql,
+                    conn
+                ))
             {
                 cmd.Parameters
                     .Add(
@@ -1795,17 +1937,39 @@ namespace AlunoGest.professor
                 {
                     if (!reader.Read())
                     {
+                        MostrarMensagem(
+                            "O evento não foi encontrado.",
+                            true
+                        );
+
                         return;
                     }
 
                     HdnEventoId.Value =
-                        reader["Id"].ToString();
+                        reader["Id"]
+                            .ToString();
 
-                    DdlTipo.SelectedValue =
-                        reader["Tipo"].ToString();
+                    string tipo =
+                        reader["Tipo"]
+                            .ToString();
+
+                    if (DdlTipo.Items
+                        .FindByValue(tipo) != null)
+                    {
+                        DdlTipo.SelectedValue =
+                            tipo;
+                    }
 
                     TxtTitulo.Text =
-                        reader["Titulo"].ToString();
+                        reader["Titulo"]
+                            .ToString();
+
+                    TxtDescricaoEvento.Text =
+                        reader["Descricao"] ==
+                        DBNull.Value
+                            ? string.Empty
+                            : reader["Descricao"]
+                                .ToString();
 
                     TxtDataHora.Text =
                         Convert.ToDateTime(
@@ -1814,6 +1978,29 @@ namespace AlunoGest.professor
                         .ToString(
                             "yyyy-MM-ddTHH:mm"
                         );
+
+                    string visibilidade =
+                        reader["Visibilidade"] ==
+                        DBNull.Value
+                            ? "Ambos"
+                            : reader["Visibilidade"]
+                                .ToString();
+
+                    if (DdlVisibilidade.Items
+                        .FindByValue(
+                            visibilidade
+                        ) != null)
+                    {
+                        DdlVisibilidade
+                            .SelectedValue =
+                            visibilidade;
+                    }
+                    else
+                    {
+                        DdlVisibilidade
+                            .SelectedValue =
+                            "Ambos";
+                    }
                 }
             }
         }
@@ -1824,7 +2011,9 @@ namespace AlunoGest.professor
             int turmaId)
         {
             using (SqlConnection conn =
-                new SqlConnection(_connectionString))
+                new SqlConnection(
+                    _connectionString
+                ))
             {
                 conn.Open();
 
@@ -1837,16 +2026,18 @@ namespace AlunoGest.professor
                         conn,
                         transacao,
                         @"
-                            DELETE ee
+                    DELETE entrega
 
-                            FROM dbo.EventoEntrega ee
+                    FROM dbo.EventoEntrega entrega
 
-                            INNER JOIN dbo.Evento ev
-                                ON ev.Id = ee.EventoId
+                    INNER JOIN dbo.Evento evento
+                        ON evento.Id =
+                           entrega.EventoId
 
-                            WHERE ev.Id = @Id
-                              AND ev.TurmaId = @TurmaId;
-                        ",
+                    WHERE evento.Id = @Id
+                      AND evento.TurmaId =
+                          @TurmaId;
+                ",
                         eventoId,
                         turmaId
                     );
@@ -1855,9 +2046,10 @@ namespace AlunoGest.professor
                         conn,
                         transacao,
                         @"
-                            DELETE FROM dbo.EventoAnexo
-                            WHERE EventoId = @Id;
-                        ",
+                    DELETE FROM dbo.EventoAnexo
+
+                    WHERE EventoId = @Id;
+                ",
                         eventoId,
                         turmaId
                     );
@@ -1866,10 +2058,11 @@ namespace AlunoGest.professor
                         conn,
                         transacao,
                         @"
-                            DELETE FROM dbo.Evento
-                            WHERE Id = @Id
-                              AND TurmaId = @TurmaId;
-                        ",
+                    DELETE FROM dbo.Evento
+
+                    WHERE Id = @Id
+                      AND TurmaId = @TurmaId;
+                ",
                         eventoId,
                         turmaId
                     );
@@ -1888,7 +2081,9 @@ namespace AlunoGest.professor
         private void GuardarAnexoProfessor(
             int eventoId)
         {
-            if (FileAnexo.PostedFile.ContentLength >
+            if (FileAnexo
+                    .PostedFile
+                    .ContentLength >
                 10 * 1024 * 1024)
             {
                 throw new InvalidOperationException(
@@ -1911,7 +2106,8 @@ namespace AlunoGest.professor
                 );
 
             string nome =
-                Guid.NewGuid().ToString("N") +
+                Guid.NewGuid()
+                    .ToString("N") +
                 "_" +
                 original;
 
@@ -1923,23 +2119,28 @@ namespace AlunoGest.professor
             );
 
             const string sql = @"
-                INSERT INTO dbo.EventoAnexo
-                (
-                    EventoId,
-                    NomeFicheiro,
-                    CaminhoFicheiro
-                )
-                VALUES
-                (
-                    @EventoId,
-                    @Nome,
-                    @Caminho
-                );";
+        INSERT INTO dbo.EventoAnexo
+        (
+            EventoId,
+            NomeFicheiro,
+            CaminhoFicheiro
+        )
+        VALUES
+        (
+            @EventoId,
+            @Nome,
+            @Caminho
+        );";
 
             using (SqlConnection conn =
-                new SqlConnection(_connectionString))
+                new SqlConnection(
+                    _connectionString
+                ))
             using (SqlCommand cmd =
-                new SqlCommand(sql, conn))
+                new SqlCommand(
+                    sql,
+                    conn
+                ))
             {
                 cmd.Parameters
                     .Add(
@@ -2341,6 +2542,37 @@ namespace AlunoGest.professor
 
         #region Utilidades
 
+        protected string ObterTextoVisibilidade(
+            object valor)
+        {
+            string visibilidade =
+                valor == null ||
+                valor == DBNull.Value
+                    ? "Ambos"
+                    : valor
+                        .ToString()
+                        .Trim();
+
+            if (string.Equals(
+                    visibilidade,
+                    "Alunos",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return "Apenas alunos";
+            }
+
+            if (string.Equals(
+                    visibilidade,
+                    "Encarregados",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return "Apenas encarregados";
+            }
+
+            return "Alunos e encarregados";
+        }
+
+
         private void LimparEvento()
         {
             HdnEventoId.Value =
@@ -2352,8 +2584,18 @@ namespace AlunoGest.professor
             TxtDataHora.Text =
                 string.Empty;
 
+            TxtDescricaoEvento.Text =
+                string.Empty;
+
             DdlTipo.SelectedIndex =
                 0;
+
+            if (DdlVisibilidade.Items
+                .FindByValue("Ambos") != null)
+            {
+                DdlVisibilidade.SelectedValue =
+                    "Ambos";
+            }
         }
 
 

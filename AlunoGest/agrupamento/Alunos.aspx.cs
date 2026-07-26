@@ -38,6 +38,7 @@ namespace AlunoGest.agrupamento
 
                 LimparMensagem();
                 GetAlunos();
+                GetAlunosSemEncarregado();
             }
         }
 
@@ -84,8 +85,8 @@ namespace AlunoGest.agrupamento
         }
 
         protected void ButtonGuardar_Click(
-            object sender,
-            EventArgs e)
+       object sender,
+       EventArgs e)
         {
             LimparMensagem();
 
@@ -131,19 +132,6 @@ namespace AlunoGest.agrupamento
                 MostrarMensagem(mensagemNif);
                 return;
             }
-
-            //ResultadoValidacaoNifApi resultadoApi =
-            //    ValidadorNif.ValidarNaApi(nif);
-
-            //if (resultadoApi.Estado !=
-            //    EstadoValidacaoNifApi.Valido)
-            //{
-            //    MostrarMensagem(
-            //        resultadoApi.Mensagem
-            //    );
-
-            //    return;
-            //}
 
             try
             {
@@ -256,6 +244,8 @@ namespace AlunoGest.agrupamento
                 }
 
                 GetAlunos();
+                GetAlunosSemEncarregado();
+
                 LimparFormulario();
 
                 GridAlunos.SelectedIndex = -1;
@@ -911,6 +901,104 @@ namespace AlunoGest.agrupamento
             LblMensagem.Visible = false;
             LblMensagem.Text = string.Empty;
             LblMensagem.CssClass = string.Empty;
+        }
+
+        #endregion
+
+        #region Listagem e leitura (alunos sem encarregado)
+
+        private void GetAlunosSemEncarregado()
+        {
+            int agrupamentoId;
+
+            if (!TryGetAgrupamentoId(
+                    out agrupamentoId))
+            {
+                Response.Redirect(
+                    "~/login.aspx"
+                );
+
+                return;
+            }
+
+            DataTable tabela =
+                new DataTable();
+
+            const string sql = @"
+        SELECT
+            aluno.Id,
+            aluno.NomeCompleto,
+            aluno.NumeroProcesso,
+            aluno.NIF,
+            aluno.Email,
+            aluno.Telefone,
+            aluno.Ativo
+
+        FROM dbo.Aluno aluno
+
+        WHERE aluno.AgrupamentoId =
+                @AgrupamentoId
+
+          AND NOT EXISTS
+          (
+              SELECT 1
+
+              FROM dbo.AlunoEncarregado
+                  alunoEncarregado
+
+              INNER JOIN dbo.EncarregadoEducacao
+                  encarregado
+
+                  ON encarregado.Id =
+                      alunoEncarregado
+                          .EncarregadoEducacaoId
+
+              WHERE alunoEncarregado.AlunoId =
+                        aluno.Id
+
+                AND alunoEncarregado.Ativo = 1
+                AND encarregado.Ativo = 1
+          )
+
+        ORDER BY
+            aluno.NomeCompleto;";
+
+            using (SqlConnection conn =
+                new SqlConnection(
+                    _connectionString
+                ))
+            using (SqlCommand cmd =
+                new SqlCommand(
+                    sql,
+                    conn
+                ))
+            using (SqlDataAdapter adapter =
+                new SqlDataAdapter(
+                    cmd
+                ))
+            {
+                cmd.Parameters
+                    .Add(
+                        "@AgrupamentoId",
+                        SqlDbType.Int
+                    )
+                    .Value = agrupamentoId;
+
+                adapter.Fill(
+                    tabela
+                );
+            }
+
+            GridAlunosSemEncarregado.DataSource =
+                tabela;
+
+            GridAlunosSemEncarregado.DataBind();
+
+            LblTotalAlunosSemEncarregado.Text =
+                tabela.Rows.Count == 1
+                    ? "1 aluno"
+                    : tabela.Rows.Count +
+                      " alunos";
         }
 
         #endregion

@@ -302,7 +302,7 @@
 
                     <asp:HyperLink
                         runat="server"
-                        NavigateUrl="~/professor/Home.aspx"
+                        NavigateUrl="~/professor/dashboard.aspx"
                         Text="Home"
                         CssClass="nav-link" />
 

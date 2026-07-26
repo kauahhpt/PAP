@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -584,11 +584,23 @@ namespace AlunoGest.encarregado
                     ev.Id,
                     ev.Titulo,
                     ev.Tipo,
+                    ev.Descricao,
                     ev.DataHora
 
                 FROM dbo.Evento ev
 
-                WHERE ev.DataHora >= SYSDATETIME()
+                /*
+                 * Usamos a data, e não a hora exata,
+                 * para que uma reunião que aconteceu mais cedo
+                 * no mesmo dia continue visível no dashboard.
+                 */
+                WHERE CONVERT(
+                          date,
+                          ev.DataHora
+                      ) >= CONVERT(
+                          date,
+                          SYSDATETIME()
+                      )
 
                   AND
                   (

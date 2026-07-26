@@ -1,4 +1,4 @@
-﻿<%@ Page
+<%@ Page
     Title="Dashboard"
     Language="C#"
     MasterPageFile="~/encarregado/modeloEncarregado.Master"
@@ -427,10 +427,11 @@
             width: 100%;
 
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .eventos-grid th {
-            padding: 12px 13px;
+            padding: 12px 16px;
 
             border-bottom: 1px solid #e5e7eb;
 
@@ -439,21 +440,40 @@
 
             font-size: 11px;
             font-weight: 800;
-            text-align: left;
+            text-align: left !important;
             text-transform: uppercase;
 
             letter-spacing: 0.04em;
         }
 
         .eventos-grid td {
-            padding: 13px;
+            padding: 14px 16px;
 
             border-bottom: 1px solid #edf0f5;
 
             color: #334155;
 
             font-size: 13px;
+            text-align: left !important;
             vertical-align: middle;
+        }
+
+        .coluna-evento-titulo {
+            width: 31%;
+            padding-left: 22px !important;
+        }
+
+        .coluna-evento-tipo {
+            width: 12%;
+        }
+
+        .coluna-evento-informacao {
+            width: 40%;
+        }
+
+        .coluna-evento-data {
+            width: 17%;
+            padding-right: 22px !important;
         }
 
         .eventos-grid tr:last-child td {
@@ -461,9 +481,13 @@
         }
 
         .evento-titulo {
+            display: block;
+
             color: #1f2937;
 
             font-weight: 700;
+            line-height: 1.45;
+            text-align: left;
         }
 
         .evento-tipo {
@@ -483,6 +507,16 @@
 
         .evento-data {
             white-space: nowrap;
+        }
+
+        .evento-descricao {
+            max-width: none;
+
+            color: #64748b;
+
+            line-height: 1.45;
+            text-align: left !important;
+            white-space: pre-line;
         }
 
         .empty-eventos {
@@ -541,9 +575,23 @@
         }
 
         .proximo-evento-tipo {
+            display: block;
+
             color: #64748b;
 
             font-size: 12px;
+        }
+
+        .proximo-evento-descricao {
+            display: block;
+
+            margin-top: 5px;
+
+            color: #64748b;
+
+            font-size: 12px;
+            line-height: 1.45;
+            white-space: pre-line;
         }
 
 
@@ -959,7 +1007,10 @@
 
                                 <Columns>
 
-                                    <asp:TemplateField HeaderText="Título">
+                                    <asp:TemplateField
+                                        HeaderText="Título"
+                                        HeaderStyle-CssClass="coluna-evento-titulo"
+                                        ItemStyle-CssClass="coluna-evento-titulo">
 
                                         <ItemTemplate>
 
@@ -974,7 +1025,10 @@
                                     </asp:TemplateField>
 
 
-                                    <asp:TemplateField HeaderText="Tipo">
+                                    <asp:TemplateField
+                                        HeaderText="Tipo"
+                                        HeaderStyle-CssClass="coluna-evento-tipo"
+                                        ItemStyle-CssClass="coluna-evento-tipo">
 
                                         <ItemTemplate>
 
@@ -990,10 +1044,19 @@
 
 
                                     <asp:BoundField
+                                        DataField="Descricao"
+                                        HeaderText="Informação"
+                                        NullDisplayText="—"
+                                        HeaderStyle-CssClass="coluna-evento-informacao"
+                                        ItemStyle-CssClass="evento-descricao coluna-evento-informacao" />
+
+
+                                    <asp:BoundField
                                         DataField="DataHora"
                                         HeaderText="Data"
                                         DataFormatString="{0:dd/MM/yyyy HH:mm}"
-                                        ItemStyle-CssClass="evento-data" />
+                                        HeaderStyle-CssClass="coluna-evento-data"
+                                        ItemStyle-CssClass="evento-data coluna-evento-data" />
 
                                 </Columns>
 
@@ -1001,8 +1064,8 @@
 
                                     <div class="empty-eventos">
 
-                                        Não existem eventos futuros
-                                        para o educando selecionado.
+                                        Não existem acontecimentos para hoje
+                                        ou para os próximos dias.
 
                                     </div>
 
@@ -1067,6 +1130,16 @@
                                         <%# Eval("Tipo") %>
 
                                     </span>
+
+                                    <asp:Panel
+                                        ID="PnlDescricaoProximoEvento"
+                                        runat="server"
+                                        CssClass="proximo-evento-descricao"
+                                        Visible='<%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("Descricao"))) %>'>
+
+                                        <%# Eval("Descricao") %>
+
+                                    </asp:Panel>
 
                                 </article>
 

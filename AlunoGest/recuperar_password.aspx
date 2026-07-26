@@ -305,9 +305,9 @@
                     </h1>
 
                     <p>
-                        Introduza o nome de utilizador e o email
-                        associados à sua conta. Será enviado um
-                        link válido durante 30 minutos.
+                        Introduza o email associado à sua conta.
+                        Será enviado um link de recuperação válido
+                        durante 30 minutos.
                     </p>
 
                 </header>
@@ -322,42 +322,9 @@
                         runat="server"
                         ValidationGroup="recuperar"
                         CssClass="alert alert-warning validation-summary"
-                        HeaderText="Verifique os seguintes campos:"
+                        HeaderText="Verifique o campo indicado:"
                         DisplayMode="BulletList"
                         ShowSummary="true" />
-
-
-                    <!-- NOME DE UTILIZADOR -->
-
-                    <div class="mb-3">
-
-                        <asp:Label
-                            ID="LblUsername"
-                            runat="server"
-                            AssociatedControlID="textUsername"
-                            CssClass="form-label"
-                            Text="Nome de utilizador" />
-
-                        <asp:TextBox
-                            ID="textUsername"
-                            runat="server"
-                            CssClass="form-control"
-                            MaxLength="100"
-                            placeholder="Introduza o seu nome de utilizador"
-                            autocomplete="username" />
-
-                        <asp:RequiredFieldValidator
-                            ID="RfvUsername"
-                            runat="server"
-                            ControlToValidate="textUsername"
-                            ValidationGroup="recuperar"
-                            Display="Dynamic"
-                            EnableClientScript="true"
-                            SetFocusOnError="true"
-                            CssClass="text-danger small validation-message"
-                            ErrorMessage="O nome de utilizador é obrigatório." />
-
-                    </div>
 
 
                     <!-- EMAIL -->
@@ -435,8 +402,8 @@
                     <div class="security-note">
 
                         Por segurança, a mensagem apresentada será
-                        a mesma independentemente de o nome de utilizador
-                        e o email estarem ou não registados.
+                        a mesma independentemente de o email estar
+                        ou não registado no sistema.
 
                     </div>
 

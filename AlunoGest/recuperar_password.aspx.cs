@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Web;
+using System.Web.Security;
 using AlunoGest.Util;
 
 namespace AlunoGest
@@ -36,31 +37,52 @@ namespace AlunoGest
                 return;
             }
 
-            string username =
-                textUsername.Text.Trim();
-
             string email =
                 textEmail.Text.Trim();
 
             try
             {
-                string token =
-                    PasswordResetManager
-                        .GenerateAndStoreToken(
-                            username,
-                            email,
-                            Request.UserHostAddress
-                        );
-
-                if (!string.IsNullOrWhiteSpace(token))
-                {
-                    string link =
-                        CriarLinkRecuperacao(token);
-
-                    EnviarEmailRecuperacao(
-                        email,
-                        link
+                /*
+                 * Como o email é único, o utilizador já não
+                 * precisa de indicar o username.
+                 *
+                 * O username é obtido internamente através
+                 * do ASP.NET Membership.
+                 */
+                string username =
+                    Membership.GetUserNameByEmail(
+                        email
                     );
+
+                /*
+                 * Não informamos se a conta existe ou não.
+                 * Isto evita que alguém utilize esta página
+                 * para descobrir emails registados.
+                 */
+                if (!string.IsNullOrWhiteSpace(
+                        username))
+                {
+                    string token =
+                        PasswordResetManager
+                            .GenerateAndStoreToken(
+                                username,
+                                email,
+                                Request.UserHostAddress
+                            );
+
+                    if (!string.IsNullOrWhiteSpace(
+                            token))
+                    {
+                        string link =
+                            CriarLinkRecuperacao(
+                                token
+                            );
+
+                        EnviarEmailRecuperacao(
+                            email,
+                            link
+                        );
+                    }
                 }
 
                 MostrarMensagemGenerica();
@@ -80,6 +102,7 @@ namespace AlunoGest
             }
         }
 
+
         private string CriarLinkRecuperacao(
             string token)
         {
@@ -93,10 +116,13 @@ namespace AlunoGest
                     "~/definir_password.aspx"
                 );
 
-            return enderecoBase +
-                   pagina +
-                   "?token=" +
-                   HttpUtility.UrlEncode(token);
+            return
+                enderecoBase +
+                pagina +
+                "?token=" +
+                HttpUtility.UrlEncode(
+                    token
+                );
         }
 
 
@@ -118,7 +144,9 @@ namespace AlunoGest
                         "Inovar"
                     );
 
-                mail.To.Add(email);
+                mail.To.Add(
+                    new MailAddress(email)
+                );
 
                 mail.Subject =
                     "Recuperação de palavra-passe";
@@ -147,6 +175,7 @@ namespace AlunoGest
                         </p>
 
                         <p style='margin:28px 0;'>
+
                             <a
                                 href='{0}'
                                 style='display:inline-block;
@@ -160,6 +189,7 @@ namespace AlunoGest
                                 Definir nova palavra-passe
 
                             </a>
+
                         </p>
 
                         <p>
@@ -238,4 +268,4 @@ namespace AlunoGest
 
         #endregion
     }
-}
+}   

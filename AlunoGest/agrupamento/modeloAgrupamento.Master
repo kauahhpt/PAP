@@ -40,11 +40,11 @@
         }
 
         main {
-            flex: 1; /* ocupa o espaço restante, empurrando o footer para baixo */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
 
         footer {
             background-color: #808080;

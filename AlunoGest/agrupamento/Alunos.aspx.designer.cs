@@ -211,5 +211,23 @@ namespace AlunoGest.agrupamento
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonCancelar;
+
+        /// <summary>
+        /// Controle LblTotalAlunosSemEncarregado.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblTotalAlunosSemEncarregado;
+
+        /// <summary>
+        /// Controle GridAlunosSemEncarregado.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GridAlunosSemEncarregado;
     }
 }
