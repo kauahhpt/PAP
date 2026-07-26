@@ -451,6 +451,85 @@
 
         </div>
 
+        <!-- ALUNOS SEM ENCARREGADO DE EDUCAÇÃO -->
+
+        <div class="formulario-card mb-4">
+
+            <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+
+                        <h2 class="formulario-titulo mb-1">Alunos sem encarregado de educação
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Alunos que ainda não possuem um encarregado
+                            de educação ativo associado.
+                        </p>
+
+                    </div>
+
+                    <asp:Label
+                        ID="LblTotalAlunosSemEncarregado"
+                        runat="server"
+                        CssClass="badge bg-warning text-dark fs-6" />
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <asp:GridView
+                        ID="GridAlunosSemEncarregado"
+                        runat="server"
+                        CssClass="table table-striped table-bordered align-middle mb-0"
+                        AutoGenerateColumns="false"
+                        DataKeyNames="Id"
+                        EmptyDataText="Todos os alunos possuem encarregado de educação.">
+
+                        <Columns>
+
+                            <asp:BoundField
+                                DataField="NomeCompleto"
+                                HeaderText="Nome" />
+
+                            <asp:BoundField
+                                DataField="NumeroProcesso"
+                                HeaderText="N.º processo"
+                                NullDisplayText="—" />
+
+                            <asp:BoundField
+                                DataField="NIF"
+                                HeaderText="NIF"
+                                NullDisplayText="—" />
+
+                            <asp:BoundField
+                                DataField="Email"
+                                HeaderText="Email"
+                                NullDisplayText="—" />
+
+                            <asp:BoundField
+                                DataField="Telefone"
+                                HeaderText="Telefone"
+                                NullDisplayText="—" />
+
+                            <asp:CheckBoxField
+                                DataField="Ativo"
+                                HeaderText="Ativo"
+                                ReadOnly="true" />
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </asp:Content>
+

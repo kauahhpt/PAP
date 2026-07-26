@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +29,46 @@ namespace AlunoGest.Util
 
     public static class ValidadorNif
     {
+        #region Prefixos válidos
+
+        /*
+         * Prefixos aceites para o primeiro caractere (pessoas
+         * singulares residentes) e para os dois primeiros
+         * caracteres (categorias específicas, incluindo
+         * não residentes e outras entidades associadas
+         * a pessoas singulares).
+         *
+         * Referência: estrutura de números de identificação
+         * fiscal (NIF) usada em Portugal.
+         */
+
+        private static readonly string[] PrefixosDoisDigitos =
+        {
+            "45", // Não residente sem estabelecimento estável
+            "70", // Herança indivisa
+            "71", // Não residente (pessoa singular)
+            "72", // Não residente (pessoa singular)
+            "74", // Não residente
+            "75", // Não residente
+            "77", // Atribuição oficiosa
+            "78", // Não residente
+            "79", // Não residente
+            "90", // Condomínios / sociedades irregulares
+            "91", // Condomínios / sociedades irregulares
+            "98", // Não residente (pessoa singular)
+            "99"  // Não residente (pessoa singular)
+        };
+
+        private static readonly char[] PrefixosUmDigito =
+        {
+            '1', // Pessoa singular
+            '2', // Pessoa singular
+            '3'  // Pessoa singular
+        };
+
+        #endregion
+
+
         #region Normalização
 
         public static string Normalizar(string nif)
@@ -65,15 +106,11 @@ namespace AlunoGest.Util
                 return false;
             }
 
-            char primeiroDigito = nif[0];
-
-            if (primeiroDigito != '1' &&
-                primeiroDigito != '2' &&
-                primeiroDigito != '3')
+            if (!PrefixoValido(nif))
             {
                 mensagem =
-                    "O NIF não corresponde ao formato esperado " +
-                    "para uma pessoa singular.";
+                    "O NIF não corresponde a um formato válido " +
+                    "(prefixo desconhecido).";
 
                 return false;
             }
@@ -109,6 +146,28 @@ namespace AlunoGest.Util
             }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Verifica se o NIF começa com um prefixo de um dígito
+        /// (pessoa singular residente) ou com um dos prefixos de
+        /// dois dígitos aceites (não residentes e outras entidades
+        /// associadas a pessoas singulares).
+        /// </summary>
+        private static bool PrefixoValido(string nif)
+        {
+            if (PrefixosUmDigito.Contains(nif[0]))
+            {
+                return true;
+            }
+
+            string doisPrimeiros =
+                nif.Substring(0, 2);
+
+            return PrefixosDoisDigitos.Contains(
+                doisPrimeiros
+            );
         }
 
         #endregion

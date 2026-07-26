@@ -120,7 +120,7 @@
     <Content Include="Foto.jpg" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
-    <Content Include="professor\Home.aspx" />
+    <Content Include="professor\dashboard.aspx" />
     <Content Include="professor\conta.aspx" />
     <Content Include="professor\Mensagens.aspx" />
     <Content Include="professor\MinhasTurmas.aspx" />
@@ -382,12 +382,12 @@
     <Compile Include="login.aspx.designer.cs">
       <DependentUpon>login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="professor\Home.aspx.cs">
-      <DependentUpon>Home.aspx</DependentUpon>
+    <Compile Include="professor\dashboard.aspx.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="professor\Home.aspx.designer.cs">
-      <DependentUpon>Home.aspx</DependentUpon>
+    <Compile Include="professor\dashboard.aspx.designer.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="professor\conta.aspx.cs">
       <DependentUpon>conta.aspx</DependentUpon>

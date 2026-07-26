@@ -372,6 +372,17 @@
             min-width: 0;
         }
 
+        .eventos-informativos-card {
+            grid-column: 1 / -1;
+        }
+
+        .evento-informativo-descricao {
+            max-width: 430px;
+            color: #64748b;
+            line-height: 1.45;
+            white-space: pre-line;
+        }
+
         .information-card-header {
             display: flex;
             align-items: center;
@@ -1166,7 +1177,7 @@
                                     CssClass="table table-hover dashboard-table"
                                     GridLines="None"
                                     DataKeyNames="Id"
-                                    EmptyDataText="Ainda não existem eventos da turma."
+                                    EmptyDataText="Ainda não existem trabalhos ou testes da turma."
                                     OnRowCommand="GridEventos_RowCommand">
 
                                     <Columns>
@@ -1196,7 +1207,7 @@
                                                     runat="server"
                                                     Text="Abrir"
                                                     CommandName="AbrirEvento"
-                                                    CommandArgument='<%# Container.DataItemIndex %>'
+                                                    CommandArgument='<%# Eval("Id") %>'
                                                     CssClass="btn btn-primary btn-sm" />
 
                                             </ItemTemplate>
@@ -1266,6 +1277,72 @@
                                     </Columns>
 
                                 </asp:GridView>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- EVENTOS E AVISOS -->
+
+                    <section class="dashboard-card information-card eventos-informativos-card">
+
+                        <div class="dashboard-card-body">
+
+                            <div class="information-card-header">
+
+                                <div class="information-card-icon">
+                                    i
+                                </div>
+
+                                <div>
+
+                                    <h2 class="information-card-title">
+                                        Eventos e avisos
+                                    </h2>
+
+                                    <p class="information-card-description">
+                                        Informações da turma que não necessitam de entrega
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="table-wrapper">
+
+                                <table
+                                    id="TabelaEventosInformativos"
+                                    class="table table-hover dashboard-table"
+                                    style="display: none;">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>Tipo</th>
+                                            <th>Título</th>
+                                            <th>Informação</th>
+                                            <th>Data</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody
+                                        id="CorpoEventosInformativos">
+                                    </tbody>
+
+                                </table>
+
+                                <div
+                                    id="SemEventosInformativos"
+                                    class="text-muted text-center py-3">
+
+                                    Ainda não existem eventos ou avisos da turma.
+
+                                </div>
 
                             </div>
 
@@ -1988,6 +2065,134 @@
                         error
                     );
 
+                }
+
+                var tabelaEventosInformativos =
+                    document.getElementById(
+                        "TabelaEventosInformativos"
+                    );
+
+                var corpoEventosInformativos =
+                    document.getElementById(
+                        "CorpoEventosInformativos"
+                    );
+
+                var semEventosInformativos =
+                    document.getElementById(
+                        "SemEventosInformativos"
+                    );
+
+                var eventosInformativos =
+                    events.filter(
+                        function (evento) {
+
+                            return !(
+                                evento.extendedProps &&
+                                evento.extendedProps.permiteEntrega
+                            );
+
+                        }
+                    );
+
+                if (
+                    tabelaEventosInformativos &&
+                    corpoEventosInformativos &&
+                    semEventosInformativos
+                ) {
+                    corpoEventosInformativos.innerHTML =
+                        "";
+
+                    eventosInformativos.forEach(
+                        function (evento) {
+
+                            var linha =
+                                document.createElement(
+                                    "tr"
+                                );
+
+                            var tipo =
+                                document.createElement(
+                                    "td"
+                                );
+
+                            tipo.textContent =
+                                evento.extendedProps &&
+                                evento.extendedProps.tipo
+                                    ? evento.extendedProps.tipo
+                                    : "Evento";
+
+                            var titulo =
+                                document.createElement(
+                                    "td"
+                                );
+
+                            titulo.textContent =
+                                evento.title || "—";
+
+                            var descricao =
+                                document.createElement(
+                                    "td"
+                                );
+
+                            descricao.className =
+                                "evento-informativo-descricao";
+
+                            descricao.textContent =
+                                evento.extendedProps &&
+                                evento.extendedProps.descricao
+                                    ? evento.extendedProps.descricao
+                                    : "—";
+
+                            var data =
+                                document.createElement(
+                                    "td"
+                                );
+
+                            var dataEvento =
+                                evento.start
+                                    ? new Date(evento.start)
+                                    : null;
+
+                            data.textContent =
+                                dataEvento &&
+                                !isNaN(dataEvento.getTime())
+                                    ? dataEvento.toLocaleString(
+                                        "pt-PT",
+                                        {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit"
+                                        }
+                                    )
+                                    : "—";
+
+                            linha.appendChild(tipo);
+                            linha.appendChild(titulo);
+                            linha.appendChild(descricao);
+                            linha.appendChild(data);
+
+                            corpoEventosInformativos.appendChild(
+                                linha
+                            );
+
+                        }
+                    );
+
+                    if (eventosInformativos.length > 0) {
+                        tabelaEventosInformativos.style.display =
+                            "";
+
+                        semEventosInformativos.style.display =
+                            "none";
+                    } else {
+                        tabelaEventosInformativos.style.display =
+                            "none";
+
+                        semEventosInformativos.style.display =
+                            "";
+                    }
                 }
 
                 var calendar =

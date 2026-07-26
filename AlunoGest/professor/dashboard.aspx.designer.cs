@@ -78,6 +78,15 @@ namespace AlunoGest.professor
         protected global::System.Web.UI.WebControls.TextBox TxtDataHora;
 
         /// <summary>
+        /// Controle DdlVisibilidade.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList DdlVisibilidade;
+
+        /// <summary>
         /// Controle FileAnexo.
         /// </summary>
         /// <remarks>
@@ -85,6 +94,15 @@ namespace AlunoGest.professor
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.FileUpload FileAnexo;
+
+        /// <summary>
+        /// Controle TxtDescricaoEvento.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtDescricaoEvento;
 
         /// <summary>
         /// Controle BtnGuardar.

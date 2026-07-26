@@ -1137,8 +1137,7 @@ namespace AlunoGest.agrupamento
                 );
 
             ClientScript.RegisterStartupScript(
-                GetType(),
-                Guid.NewGuid().ToString(),
+                GetType(),Guid.NewGuid().ToString(),
                 script,
                 true
             );

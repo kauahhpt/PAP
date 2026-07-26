@@ -742,10 +742,10 @@ namespace AlunoGest.agrupamento
             }
             catch (Exception ex)
             {
-               System.Diagnostics.Trace.TraceError(
-                    "Erro ao remover conta incompleta do encarregado: " +
-                    ex
-                );
+                System.Diagnostics.Trace.TraceError(
+                     "Erro ao remover conta incompleta do encarregado: " +
+                     ex
+                 );
             }
         }
 

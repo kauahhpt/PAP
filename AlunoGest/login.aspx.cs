@@ -54,7 +54,7 @@ namespace AlunoGest
             // Professor
             if (Roles.IsUserInRole(username, "professor"))
             {
-                Response.Redirect("~/professor/Home.aspx");
+                Response.Redirect("~/professor/dashboard.aspx");
                 return;
             }
 

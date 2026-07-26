@@ -1082,22 +1082,26 @@ namespace AlunoGest.aluno
             object sender,
             GridViewCommandEventArgs e)
         {
-            int index;
-
-            if (e.CommandName != "AbrirEvento" ||
-                !int.TryParse(
-                    e.CommandArgument.ToString(),
-                    out index) ||
-                index < 0 ||
-                index >= GridEventos.Rows.Count)
+            if (e.CommandName != "AbrirEvento")
             {
                 return;
             }
 
-            int eventoId =
-                Convert.ToInt32(
-                    GridEventos.DataKeys[index].Value
+            int eventoId;
+
+            if (!int.TryParse(
+                    Convert.ToString(
+                        e.CommandArgument
+                    ),
+                    out eventoId))
+            {
+                MostrarMensagem(
+                    "O trabalho ou teste selecionado é inválido.",
+                    true
                 );
+
+                return;
+            }
 
             AbrirEvento(eventoId);
         }
@@ -1105,39 +1109,55 @@ namespace AlunoGest.aluno
         private void CarregarEventos()
         {
             const string sql = @"
-                SELECT
-                    ev.Id,
-                    ev.Tipo,
-                    ev.Titulo,
-                    ev.DataHora,
+        SELECT
+            ev.Id,
+            ev.Tipo,
+            ev.Titulo,
+            ev.Descricao,
+            ev.DataHora,
 
+            CASE
+                WHEN UPPER(LTRIM(RTRIM(ev.Tipo))) IN (N'TRABALHO', N'TESTE')
+                THEN
                     CASE
-                        WHEN EXISTS
-                        (
+                        WHEN EXISTS (
                             SELECT 1
-
                             FROM dbo.EventoEntrega ee
-
                             WHERE ee.EventoId = ev.Id
                               AND ee.AlunoId = @AlunoId
                         )
                         THEN N'Entregue'
-
                         ELSE N'Por entregar'
+                    END
+                ELSE N'Informativo'
+            END AS EstadoEntrega
 
-                    END AS EstadoEntrega
+        FROM dbo.Evento ev
 
-                FROM dbo.Evento ev
+        WHERE
+        (
+            ev.AlunoId = @AlunoId
+            OR
+            (
+                ev.AlunoId IS NULL
+                AND EXISTS (
+                    SELECT 1
+                    FROM dbo.AlunoTurma at2
+                    WHERE at2.AlunoId = @AlunoId
+                      AND at2.TurmaId = ev.TurmaId
+                      AND at2.Ate IS NULL
+                )
+            )
+        )
+        AND (
+            ev.Visibilidade IS NULL
+            OR ev.Visibilidade IN (N'Alunos', N'Ambos')
+        )
 
-                INNER JOIN dbo.AlunoTurma at2
-                    ON at2.TurmaId = ev.TurmaId
-                   AND at2.Ate IS NULL
+        ORDER BY ev.DataHora DESC, ev.Titulo ASC;";
 
-                WHERE at2.AlunoId = @AlunoId
-
-                ORDER BY ev.DataHora DESC;";
-
-            DataTable tabela = new DataTable();
+            DataTable todosEventos =
+                new DataTable();
 
             using (SqlConnection conn =
                 new SqlConnection(_connectionString))
@@ -1146,32 +1166,62 @@ namespace AlunoGest.aluno
             using (SqlDataAdapter adapter =
                 new SqlDataAdapter(cmd))
             {
-                cmd.Parameters.AddWithValue(
-                    "@AlunoId",
-                    AlunoId
-                );
+                cmd.Parameters
+                    .Add(
+                        "@AlunoId",
+                        SqlDbType.Int
+                    )
+                    .Value = AlunoId;
 
-                adapter.Fill(tabela);
+                adapter.Fill(todosEventos);
             }
 
-            GridEventos.DataSource = tabela;
-            GridEventos.DataBind();
+            DataTable trabalhosETestes =
+                todosEventos.Clone();
 
-            List<object> eventos =
-                new List<object>();
-
-            foreach (DataRow row in tabela.Rows)
+            foreach (DataRow row
+                in todosEventos.Rows)
             {
                 string tipo =
-                    row["Tipo"].ToString();
+                    Convert.ToString(
+                        row["Tipo"]
+                    );
+
+                if (TipoPermiteEntrega(tipo))
+                {
+                    trabalhosETestes.ImportRow(row);
+                }
+            }
+
+            GridEventos.DataSource =
+                trabalhosETestes;
+
+            GridEventos.DataBind();
+
+            List<object> eventosCalendario =
+                new List<object>();
+
+            foreach (DataRow row
+                in todosEventos.Rows)
+            {
+                string tipo =
+                    Convert.ToString(
+                        row["Tipo"]
+                    );
 
                 string cor;
 
-                if (tipo == "Teste")
+                if (string.Equals(
+                        tipo,
+                        "Teste",
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     cor = "#1d4ed8";
                 }
-                else if (tipo == "Trabalho")
+                else if (string.Equals(
+                        tipo,
+                        "Trabalho",
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     cor = "#2563eb";
                 }
@@ -1180,54 +1230,87 @@ namespace AlunoGest.aluno
                     cor = "#64748b";
                 }
 
-                eventos.Add(new
-                {
-                    id = row["Id"],
+                eventosCalendario.Add(
+                    new
+                    {
+                        id = row["Id"],
 
-                    title =
-                        row["Titulo"].ToString(),
+                        title =
+                            Convert.ToString(
+                                row["Titulo"]
+                            ),
 
-                    start =
-                        Convert.ToDateTime(
-                            row["DataHora"]
-                        )
-                        .ToString(
-                            "yyyy-MM-ddTHH:mm:ss"
-                        ),
+                        start =
+                            Convert.ToDateTime(
+                                row["DataHora"]
+                            )
+                            .ToString(
+                                "yyyy-MM-ddTHH:mm:ss"
+                            ),
 
-                    color = cor
-                });
+                        color = cor,
+
+                        extendedProps =
+                            new
+                            {
+                                tipo = tipo,
+
+                                descricao =
+                                    row["Descricao"] ==
+                                        DBNull.Value
+                                        ? string.Empty
+                                        : Convert.ToString(
+                                            row["Descricao"]
+                                        ),
+
+                                permiteEntrega =
+                                    TipoPermiteEntrega(tipo)
+                            }
+                    }
+                );
             }
 
             HdnEvents.Value =
                 new JavaScriptSerializer()
-                    .Serialize(eventos);
+                    .Serialize(
+                        eventosCalendario
+                    );
         }
 
-        private void AbrirEvento(int eventoId)
+        private void AbrirEvento(
+            int eventoId)
         {
-            if (!EventoPertenceAoAluno(eventoId))
+            if (!EventoPertenceAoAluno(
+                    eventoId))
             {
                 MostrarMensagem(
                     "Não tens acesso a este evento.",
                     true
                 );
 
+                PainelEntrega.Visible = false;
                 return;
             }
 
             const string sqlEvento = @"
-        SELECT
-            Titulo,
-            Tipo,
-            DataHora,
-            CASE
-                WHEN DataHora >= SYSDATETIME()
-                    THEN CAST(1 AS BIT)
-                ELSE CAST(0 AS BIT)
-            END AS PrazoAberto
-        FROM dbo.Evento
-        WHERE Id = @Id;";
+                SELECT
+                    Titulo,
+                    Tipo,
+                    DataHora,
+
+                    CASE
+                        WHEN DataHora >= SYSDATETIME()
+                            THEN CAST(1 AS BIT)
+                        ELSE CAST(0 AS BIT)
+                    END AS PrazoAberto
+
+                FROM dbo.Evento
+
+                WHERE Id = @Id;";
+
+            string tipoEvento;
+            DateTime dataLimite;
+            bool prazoAberto;
 
             using (SqlConnection conn =
                 new SqlConnection(_connectionString))
@@ -1235,7 +1318,10 @@ namespace AlunoGest.aluno
                 new SqlCommand(sqlEvento, conn))
             {
                 cmd.Parameters
-                    .Add("@Id", SqlDbType.Int)
+                    .Add(
+                        "@Id",
+                        SqlDbType.Int
+                    )
                     .Value = eventoId;
 
                 conn.Open();
@@ -1250,83 +1336,107 @@ namespace AlunoGest.aluno
                             true
                         );
 
+                        PainelEntrega.Visible = false;
                         return;
                     }
 
-                    DateTime dataLimite =
+                    tipoEvento =
+                        Convert.ToString(
+                            reader["Tipo"]
+                        );
+
+                    if (!TipoPermiteEntrega(
+                            tipoEvento))
+                    {
+                        MostrarMensagem(
+                            "Este evento é apenas informativo " +
+                            "e não permite entregas.",
+                            true
+                        );
+
+                        PainelEntrega.Visible = false;
+                        return;
+                    }
+
+                    dataLimite =
                         Convert.ToDateTime(
                             reader["DataHora"]
                         );
 
-                    bool prazoAberto =
+                    prazoAberto =
                         Convert.ToBoolean(
                             reader["PrazoAberto"]
                         );
 
                     LblEventoSelecionado.Text =
-                        reader["Tipo"] +
+                        tipoEvento +
                         ": " +
-                        reader["Titulo"];
-
-                    if (prazoAberto)
-                    {
-                        LblPrazoEntrega.Text =
-                            "Prazo de entrega: " +
-                            dataLimite.ToString(
-                                "dd/MM/yyyy HH:mm"
-                            );
-
-                        LblPrazoEntrega.CssClass =
-                            "badge bg-success d-inline-block mt-2";
-
-                        FileEntrega.Enabled = true;
-                        TxtObservacao.Enabled = true;
-                        BtnEntregar.Enabled = true;
-
-                        BtnEntregar.Text =
-                            "Enviar entrega";
-
-                        BtnEntregar.CssClass =
-                            "btn btn-success";
-                    }
-                    else
-                    {
-                        LblPrazoEntrega.Text =
-                            "Prazo encerrado em " +
-                            dataLimite.ToString(
-                                "dd/MM/yyyy HH:mm"
-                            );
-
-                        LblPrazoEntrega.CssClass =
-                            "badge bg-danger d-inline-block mt-2";
-
-                        FileEntrega.Enabled = false;
-                        TxtObservacao.Enabled = false;
-                        BtnEntregar.Enabled = false;
-
-                        BtnEntregar.Text =
-                            "Prazo encerrado";
-
-                        BtnEntregar.CssClass =
-                            "btn btn-secondary";
-
-                        MostrarMensagem(
-                            "O prazo deste trabalho já terminou. " +
-                            "Ainda podes consultar os dados, " +
-                            "mas não podes enviar uma nova submissão.",
-                            true
+                        Convert.ToString(
+                            reader["Titulo"]
                         );
-                    }
                 }
             }
 
+            if (prazoAberto)
+            {
+                LblPrazoEntrega.Text =
+                    "Prazo de entrega: " +
+                    dataLimite.ToString(
+                        "dd/MM/yyyy HH:mm"
+                    );
+
+                LblPrazoEntrega.CssClass =
+                    "badge bg-success d-inline-block mt-2";
+
+                FileEntrega.Enabled = true;
+                TxtObservacao.Enabled = true;
+                BtnEntregar.Enabled = true;
+
+                BtnEntregar.Text =
+                    "Enviar entrega";
+
+                BtnEntregar.CssClass =
+                    "btn btn-success";
+            }
+            else
+            {
+                LblPrazoEntrega.Text =
+                    "Prazo encerrado em " +
+                    dataLimite.ToString(
+                        "dd/MM/yyyy HH:mm"
+                    );
+
+                LblPrazoEntrega.CssClass =
+                    "badge bg-danger d-inline-block mt-2";
+
+                FileEntrega.Enabled = false;
+                TxtObservacao.Enabled = false;
+                BtnEntregar.Enabled = false;
+
+                BtnEntregar.Text =
+                    "Prazo encerrado";
+
+                BtnEntregar.CssClass =
+                    "btn btn-secondary";
+
+                MostrarMensagem(
+                    "O prazo deste trabalho ou teste já terminou. " +
+                    "Ainda podes consultar os dados, " +
+                    "mas não podes enviar uma nova submissão.",
+                    true
+                );
+            }
+
             const string sqlAnexos = @"
-        SELECT
-            NomeFicheiro,
-            CaminhoFicheiro
-        FROM dbo.EventoAnexo
-        WHERE EventoId = @Id
-        ORDER BY CreatedAt;";
+                SELECT
+                    NomeFicheiro,
+                    CaminhoFicheiro
+
+                FROM dbo.EventoAnexo
+
+                WHERE EventoId = @Id
+
+                ORDER BY CreatedAt;";
 
             DataTable anexos =
                 new DataTable();
@@ -1339,7 +1449,10 @@ namespace AlunoGest.aluno
                 new SqlDataAdapter(cmd))
             {
                 cmd.Parameters
-                    .Add("@Id", SqlDbType.Int)
+                    .Add(
+                        "@Id",
+                        SqlDbType.Int
+                    )
                     .Value = eventoId;
 
                 adapter.Fill(anexos);
@@ -1356,41 +1469,150 @@ namespace AlunoGest.aluno
             TxtObservacao.Text =
                 string.Empty;
 
-            CarregarSubmissoes(eventoId);
-
+            CarregarSubmissoes(
+                eventoId
+            );
 
             PainelEntrega.Visible =
                 true;
         }
 
-        private bool EventoPertenceAoAluno(int eventoId)
+        private bool TipoPermiteEntrega(
+            string tipo)
+        {
+            return
+                string.Equals(
+                    tipo == null
+                        ? string.Empty
+                        : tipo.Trim(),
+                    "Trabalho",
+                    StringComparison.OrdinalIgnoreCase
+                )
+                ||
+                string.Equals(
+                    tipo == null
+                        ? string.Empty
+                        : tipo.Trim(),
+                    "Teste",
+                    StringComparison.OrdinalIgnoreCase
+                );
+        }
+
+        private bool EventoPertenceAoAluno(
+            int eventoId)
         {
             const string sql = @"
                 SELECT COUNT(1)
 
                 FROM dbo.Evento ev
 
-                INNER JOIN dbo.AlunoTurma at2
-                    ON at2.TurmaId = ev.TurmaId
-                   AND at2.Ate IS NULL
-
                 WHERE ev.Id = @EventoId
-                  AND at2.AlunoId = @AlunoId;";
+
+                  AND
+                  (
+                      ev.AlunoId = @AlunoId
+
+                      OR
+
+                      (
+                          ev.AlunoId IS NULL
+
+                          AND EXISTS
+                          (
+                              SELECT 1
+
+                              FROM dbo.AlunoTurma at2
+
+                              WHERE at2.AlunoId = @AlunoId
+                                AND at2.TurmaId = ev.TurmaId
+                                AND at2.Ate IS NULL
+                          )
+                      )
+                  );";
 
             using (SqlConnection conn =
                 new SqlConnection(_connectionString))
             using (SqlCommand cmd =
                 new SqlCommand(sql, conn))
             {
-                cmd.Parameters.AddWithValue(
-                    "@EventoId",
-                    eventoId
-                );
+                cmd.Parameters
+                    .Add(
+                        "@EventoId",
+                        SqlDbType.Int
+                    )
+                    .Value = eventoId;
 
-                cmd.Parameters.AddWithValue(
-                    "@AlunoId",
-                    AlunoId
-                );
+                cmd.Parameters
+                    .Add(
+                        "@AlunoId",
+                        SqlDbType.Int
+                    )
+                    .Value = AlunoId;
+
+                conn.Open();
+
+                return Convert.ToInt32(
+                    cmd.ExecuteScalar()
+                ) > 0;
+            }
+        }
+
+        private bool EventoPermiteEntrega(
+            int eventoId)
+        {
+            const string sql = @"
+                SELECT COUNT(1)
+
+                FROM dbo.Evento ev
+
+                WHERE ev.Id = @EventoId
+
+                  AND UPPER(
+                        LTRIM(
+                            RTRIM(ev.Tipo)
+                        )
+                      ) IN (N'TRABALHO', N'TESTE')
+
+                  AND
+                  (
+                      ev.AlunoId = @AlunoId
+
+                      OR
+
+                      (
+                          ev.AlunoId IS NULL
+
+                          AND EXISTS
+                          (
+                              SELECT 1
+
+                              FROM dbo.AlunoTurma at2
+
+                              WHERE at2.AlunoId = @AlunoId
+                                AND at2.TurmaId = ev.TurmaId
+                                AND at2.Ate IS NULL
+                          )
+                      )
+                  );";
+
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            {
+                cmd.Parameters
+                    .Add(
+                        "@EventoId",
+                        SqlDbType.Int
+                    )
+                    .Value = eventoId;
+
+                cmd.Parameters
+                    .Add(
+                        "@AlunoId",
+                        SqlDbType.Int
+                    )
+                    .Value = AlunoId;
 
                 conn.Open();
 
@@ -1571,10 +1793,22 @@ namespace AlunoGest.aluno
             if (!EventoPertenceAoAluno(eventoId))
             {
                 MostrarMensagem(
-                    "Não tens acesso a este trabalho.",
+                    "Não tens acesso a este trabalho ou teste.",
                     true
                 );
 
+                return;
+            }
+
+            if (!EventoPermiteEntrega(eventoId))
+            {
+                MostrarMensagem(
+                    "Este evento é apenas informativo " +
+                    "e não permite gerir submissões.",
+                    true
+                );
+
+                PainelEntrega.Visible = false;
                 return;
             }
 
@@ -1663,7 +1897,15 @@ namespace AlunoGest.aluno
 
             CASE
                 WHEN ev.DataHora >= SYSDATETIME()
+
+                 AND UPPER(
+                        LTRIM(
+                            RTRIM(ev.Tipo)
+                        )
+                     ) IN (N'TRABALHO', N'TESTE')
+
                     THEN CAST(1 AS BIT)
+
                 ELSE CAST(0 AS BIT)
             END AS PodeEliminar
 
@@ -1731,6 +1973,18 @@ namespace AlunoGest.aluno
                     true
                 );
 
+                return;
+            }
+
+            if (!EventoPermiteEntrega(eventoId))
+            {
+                MostrarMensagem(
+                    "Este evento é apenas informativo " +
+                    "e não permite entregas.",
+                    true
+                );
+
+                PainelEntrega.Visible = false;
                 return;
             }
 
@@ -2191,20 +2445,44 @@ namespace AlunoGest.aluno
         #endregion
 
         #region verifica o prazo de entrega
-        private bool PrazoEntregaAberto(int eventoId)
+        private bool PrazoEntregaAberto(
+            int eventoId)
         {
             const string sql = @"
-        SELECT COUNT(1)
+                SELECT COUNT(1)
 
-        FROM dbo.Evento ev
+                FROM dbo.Evento ev
 
-        INNER JOIN dbo.AlunoTurma at2
-            ON at2.TurmaId = ev.TurmaId
-           AND at2.Ate IS NULL
+                WHERE ev.Id = @EventoId
+                  AND ev.DataHora >= SYSDATETIME()
 
-        WHERE ev.Id = @EventoId
-          AND at2.AlunoId = @AlunoId
-          AND ev.DataHora >= SYSDATETIME();";
+                  AND UPPER(
+                        LTRIM(
+                            RTRIM(ev.Tipo)
+                        )
+                      ) IN (N'TRABALHO', N'TESTE')
+
+                  AND
+                  (
+                      ev.AlunoId = @AlunoId
+
+                      OR
+
+                      (
+                          ev.AlunoId IS NULL
+
+                          AND EXISTS
+                          (
+                              SELECT 1
+
+                              FROM dbo.AlunoTurma at2
+
+                              WHERE at2.AlunoId = @AlunoId
+                                AND at2.TurmaId = ev.TurmaId
+                                AND at2.Ate IS NULL
+                          )
+                      )
+                  );";
 
             using (SqlConnection conn =
                 new SqlConnection(_connectionString))
@@ -2212,11 +2490,17 @@ namespace AlunoGest.aluno
                 new SqlCommand(sql, conn))
             {
                 cmd.Parameters
-                    .Add("@EventoId", SqlDbType.Int)
+                    .Add(
+                        "@EventoId",
+                        SqlDbType.Int
+                    )
                     .Value = eventoId;
 
                 cmd.Parameters
-                    .Add("@AlunoId", SqlDbType.Int)
+                    .Add(
+                        "@AlunoId",
+                        SqlDbType.Int
+                    )
                     .Value = AlunoId;
 
                 conn.Open();
@@ -2226,6 +2510,7 @@ namespace AlunoGest.aluno
                 ) > 0;
             }
         }
+
         #endregion
     }
 }

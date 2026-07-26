@@ -2,7 +2,7 @@
     Language="C#"
     MasterPageFile="~/professor/ModeloProfessor.Master"
     AutoEventWireup="true"
-    CodeBehind="Home.aspx.cs"
+    CodeBehind="dashboard.aspx.cs"
     Inherits="AlunoGest.professor.calendario" %>
 
 <asp:Content
@@ -10,7 +10,6 @@
     ContentPlaceHolderID="titleContent"
     runat="server">
     Feed e Calendário
-
 </asp:Content>
 
 <asp:Content
@@ -28,6 +27,27 @@
         /* =====================================================
            ESTRUTURA GERAL
         ===================================================== */
+        .event-visibility-help {
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .visibility-badge {
+            display: inline-flex;
+            min-width: 96px;
+            padding: 5px 9px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dbe4f0;
+            border-radius: 999px;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
 
         .turma-page {
             width: 100%;
@@ -94,7 +114,6 @@
             font-weight: 600;
         }
 
-
         /* =====================================================
            LAYOUT PRINCIPAL
         ===================================================== */
@@ -111,7 +130,6 @@
         .feed-column {
             min-width: 0;
         }
-
 
         /* =====================================================
            CAIXA PARA ABRIR O MODAL DE PUBLICAÇÃO
@@ -184,7 +202,6 @@
             outline: none;
         }
 
-
         /* =====================================================
            MODAL DE PUBLICAÇÃO
         ===================================================== */
@@ -226,7 +243,6 @@
             resize: vertical;
             min-height: 120px;
         }
-
 
         /* =====================================================
            VISIBILIDADE E DESTINATÁRIOS
@@ -348,8 +364,6 @@
                 cursor: pointer;
             }
 
-
-
         /* =====================================================
            SELECIONAR TODOS OS DESTINATÁRIOS
         ===================================================== */
@@ -362,10 +376,10 @@
             text-align: left;
         }
 
-        .recipient-group-header > span {
-            font-size: 13px;
-            font-weight: 800;
-        }
+            .recipient-group-header > span {
+                font-size: 13px;
+                font-weight: 800;
+            }
 
         .select-all-option {
             display: flex;
@@ -382,15 +396,15 @@
             cursor: pointer;
         }
 
-        .select-all-option:hover {
-            border-color: #2563eb;
-            background: #eef4ff;
-        }
+            .select-all-option:hover {
+                border-color: #2563eb;
+                background: #eef4ff;
+            }
 
-        .select-all-option input[type="checkbox"] {
-            margin: 0;
-            cursor: pointer;
-        }
+            .select-all-option input[type="checkbox"] {
+                margin: 0;
+                cursor: pointer;
+            }
 
         /* =====================================================
            FEED
@@ -459,7 +473,7 @@
             flex: 0 0 44px;
             overflow: hidden;
             border-radius: 50%;
-            background: linear-gradient( 135deg, #123570, #2563eb );
+            background: linear-gradient(135deg, #123570, #2563eb);
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -541,7 +555,6 @@
             text-align: center;
         }
 
-
         /* =====================================================
            CALENDÁRIO
         ===================================================== */
@@ -552,6 +565,13 @@
 
         .calendar-container {
             padding: 16px;
+        }
+
+        .calendar-help {
+            margin: 0;
+            padding: 0 16px 16px;
+            color: #64748b;
+            font-size: 12px;
         }
 
         #calendar {
@@ -585,8 +605,8 @@
 
         .fc .fc-event {
             font-size: 11px;
+            cursor: help;
         }
-
 
         /* =====================================================
            EVENTOS
@@ -602,6 +622,15 @@
             gap: 14px;
         }
 
+        .event-description {
+            grid-column: 1 / -1;
+        }
+
+            .event-description textarea {
+                min-height: 90px;
+                resize: vertical;
+            }
+
         .event-buttons {
             display: flex;
             gap: 8px;
@@ -609,6 +638,18 @@
             margin-top: 16px;
         }
 
+        .event-table-description {
+            max-width: 320px;
+            color: #64748b;
+            line-height: 1.45;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .event-table-description-empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
 
         /* =====================================================
            TABELAS E GESTÃO
@@ -648,13 +689,11 @@
             margin-bottom: 24px;
         }
 
-
         /* =====================================================
            RESPONSIVIDADE
         ===================================================== */
 
         @media (max-width: 1000px) {
-
             .professor-layout,
             .management-grid {
                 grid-template-columns: 1fr;
@@ -666,7 +705,6 @@
         }
 
         @media (max-width: 700px) {
-
             .page-header {
                 flex-direction: column;
             }
@@ -677,6 +715,10 @@
 
             .event-form-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .event-description {
+                grid-column: auto;
             }
 
             .post-header {
@@ -706,7 +748,6 @@
 
 </asp:Content>
 
-
 <asp:Content
     ID="Main"
     ContentPlaceHolderID="mainContent"
@@ -714,54 +755,40 @@
 
     <div class="turma-page">
 
-
         <!-- ==================================================
              CABEÇALHO
         =================================================== -->
 
         <div class="page-header">
-
             <div>
-
-                <h1>Feed e Calendário da Turma
-                </h1>
+                <h1>Feed e Calendário da Turma</h1>
 
                 <div class="page-subtitle">
-
                     <asp:Label
                         ID="LblResumoTurma"
                         runat="server" />
-
                 </div>
-
             </div>
-
         </div>
-
 
         <asp:Label
             ID="LblMensagem"
             runat="server"
             Visible="false" />
 
-
         <!-- ==================================================
              SELEÇÃO DA TURMA
         =================================================== -->
 
         <div class="page-card turma-selector">
-
             <div class="page-card-body">
-
                 <div class="row g-3 align-items-end">
 
                     <div class="col-md-5">
-
                         <label
                             class="form-label"
                             for="<%= DdlTurmas.ClientID %>">
                             Turma
-
                         </label>
 
                         <asp:DropDownList
@@ -770,26 +797,18 @@
                             CssClass="form-select"
                             AutoPostBack="true"
                             OnSelectedIndexChanged="DdlTurmas_SelectedIndexChanged" />
-
                     </div>
 
-
                     <div class="col-md-7">
-
                         <div class="alert alert-info mb-0">
                             Estão a ser apresentadas apenas as informações
                             da turma selecionada.
-
                         </div>
-
                     </div>
 
                 </div>
-
             </div>
-
         </div>
-
 
         <!-- ==================================================
              CONTEÚDO PRINCIPAL
@@ -797,191 +816,251 @@
 
         <div class="professor-layout">
 
-
             <!-- ==================================================
-                 COLUNA PRINCIPAL: CALENDÁRIO
+                 COLUNA PRINCIPAL
             =================================================== -->
 
             <section class="main-column">
 
 
-                <!-- CALENDÁRIO -->
-
                 <div class="page-card calendar-card">
-
                     <div class="page-card-body">
-
                         <div class="section-title">
-
-                            <h2>Calendário da turma
-                            </h2>
+                            <h2>Calendário da turma</h2>
 
                             <p>
                                 Testes, trabalhos e avisos da turma selecionada.
                             </p>
-
                         </div>
-
                     </div>
 
                     <div class="calendar-container">
-
                         <div id="calendar"></div>
-
                     </div>
 
+                    <p class="calendar-help">
+                        Passe o rato sobre um evento para consultar a sua descrição.
+                    </p>
                 </div>
 
 
-                <!-- NOVO EVENTO -->
+<div class="page-card event-form-card">
 
-                <div class="page-card event-form-card">
+    <div class="page-card-body">
 
-                    <div class="page-card-body">
+        <div class="section-title">
 
-                        <div class="section-title">
+            <h2>
+                Novo ou editar evento
+            </h2>
 
-                            <h2>Novo ou editar evento
-                            </h2>
+            <p>
+                Crie testes, trabalhos e avisos.
+            </p>
 
-                            <p>
-                                Crie testes, trabalhos e avisos.
-                            </p>
+        </div>
 
-                        </div>
+        <asp:HiddenField
+            ID="HdnEventoId"
+            runat="server" />
 
-
-                        <asp:HiddenField
-                            ID="HdnEventoId"
-                            runat="server" />
-
-
-                        <div class="event-form-grid">
+        <div class="event-form-grid">
 
 
-                            <div>
+            <div>
 
-                                <label
-                                    class="form-label"
-                                    for="<%= DdlTipo.ClientID %>">
-                                    Tipo
+                <label
+                    class="form-label"
+                    for="<%= DdlTipo.ClientID %>">
 
-                                </label>
+                    Tipo
 
-                                <asp:DropDownList
-                                    ID="DdlTipo"
-                                    runat="server"
-                                    CssClass="form-select">
+                </label>
 
-                                    <asp:ListItem
-                                        Value="Trabalho"
-                                        Text="Trabalho" />
+                <asp:DropDownList
+                    ID="DdlTipo"
+                    runat="server"
+                    CssClass="form-select">
 
-                                    <asp:ListItem
-                                        Value="Teste"
-                                        Text="Teste" />
+                    <asp:ListItem
+                        Value="Trabalho"
+                        Text="Trabalho" />
 
-                                    <asp:ListItem
-                                        Value="Aviso"
-                                        Text="Aviso" />
+                    <asp:ListItem
+                        Value="Teste"
+                        Text="Teste" />
 
-                                </asp:DropDownList>
+                    <asp:ListItem
+                        Value="Aviso"
+                        Text="Aviso" />
 
-                            </div>
+                </asp:DropDownList>
 
-
-                            <div>
-
-                                <label
-                                    class="form-label"
-                                    for="<%= TxtTitulo.ClientID %>">
-                                    Título
-
-                                </label>
-
-                                <asp:TextBox
-                                    ID="TxtTitulo"
-                                    runat="server"
-                                    CssClass="form-control"
-                                    MaxLength="200" />
-
-                            </div>
+            </div>
 
 
-                            <div>
+            <div>
 
-                                <label
-                                    class="form-label"
-                                    for="<%= TxtDataHora.ClientID %>">
-                                    Data e hora
+                <label
+                    class="form-label"
+                    for="<%= TxtTitulo.ClientID %>">
 
-                                </label>
+                    Título
 
-                                <asp:TextBox
-                                    ID="TxtDataHora"
-                                    runat="server"
-                                    CssClass="form-control"
-                                    TextMode="DateTimeLocal" />
+                </label>
 
-                            </div>
+                <asp:TextBox
+                    ID="TxtTitulo"
+                    runat="server"
+                    CssClass="form-control"
+                    MaxLength="200"
+                    placeholder="Indique o título do evento" />
 
-
-                            <div>
-
-                                <label
-                                    class="form-label"
-                                    for="<%= FileAnexo.ClientID %>">
-                                    Anexo do professor
-
-                                </label>
-
-                                <asp:FileUpload
-                                    ID="FileAnexo"
-                                    runat="server"
-                                    CssClass="form-control" />
-
-                            </div>
-
-                        </div>
+            </div>
 
 
-                        <div class="event-buttons">
+            <div>
 
-                            <asp:Button
-                                ID="BtnGuardar"
-                                runat="server"
-                                Text="Guardar evento"
-                                CssClass="btn btn-primary"
-                                OnClick="BtnGuardar_Click" />
+                <label
+                    class="form-label"
+                    for="<%= TxtDataHora.ClientID %>">
 
-                            <asp:Button
-                                ID="BtnLimpar"
-                                runat="server"
-                                Text="Limpar"
-                                CssClass="btn btn-outline-secondary"
-                                OnClick="BtnLimpar_Click"
-                                CausesValidation="false" />
+                    Data e hora
 
-                        </div>
+                </label>
 
-                    </div>
+                <asp:TextBox
+                    ID="TxtDataHora"
+                    runat="server"
+                    CssClass="form-control"
+                    TextMode="DateTimeLocal" />
+
+            </div>
+
+
+            <div>
+
+                <label
+                    class="form-label"
+                    for="<%= DdlVisibilidade.ClientID %>">
+
+                    Visível para
+
+                </label>
+
+                <asp:DropDownList
+                    ID="DdlVisibilidade"
+                    runat="server"
+                    CssClass="form-select">
+
+                    <asp:ListItem
+                        Value="Ambos"
+                        Text="Alunos e encarregados"
+                        Selected="True" />
+
+                    <asp:ListItem
+                        Value="Alunos"
+                        Text="Apenas alunos" />
+
+                    <asp:ListItem
+                        Value="Encarregados"
+                        Text="Apenas encarregados de educação" />
+
+                </asp:DropDownList>
+
+                <div class="event-visibility-help">
+
+                    Os eventos visíveis apenas para encarregados
+                    não aparecem no calendário nem no dashboard
+                    dos alunos.
 
                 </div>
 
-            </section>
+            </div>
 
+
+            <div>
+
+                <label
+                    class="form-label"
+                    for="<%= FileAnexo.ClientID %>">
+
+                    Anexo do professor
+
+                </label>
+
+                <asp:FileUpload
+                    ID="FileAnexo"
+                    runat="server"
+                    CssClass="form-control" />
+
+                <div class="form-text">
+                    Tamanho máximo permitido: 10 MB.
+                </div>
+
+            </div>
+
+
+            <div class="event-description">
+
+                <label
+                    class="form-label"
+                    for="<%= TxtDescricaoEvento.ClientID %>">
+
+                    Descrição
+
+                </label>
+
+                <asp:TextBox
+                    ID="TxtDescricaoEvento"
+                    runat="server"
+                    CssClass="form-control"
+                    TextMode="MultiLine"
+                    Rows="3"
+                    MaxLength="500"
+                    placeholder="Escreva uma pequena descrição do evento..." />
+
+                <div class="form-text">
+                    Máximo de 500 caracteres.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="event-buttons">
+
+            <asp:Button
+                ID="BtnGuardar"
+                runat="server"
+                Text="Guardar evento"
+                CssClass="btn btn-primary"
+                OnClick="BtnGuardar_Click" />
+
+            <asp:Button
+                ID="BtnLimpar"
+                runat="server"
+                Text="Limpar"
+                CssClass="btn btn-outline-secondary"
+                OnClick="BtnLimpar_Click"
+                CausesValidation="false" />
+
+        </div>
+
+    </div>
+
+</div>
+                </section>
 
             <!-- ==================================================
-                 COLUNA SECUNDÁRIA: PUBLICAÇÃO + FEED
+                 COLUNA SECUNDÁRIA
             =================================================== -->
 
             <aside class="feed-column">
 
 
-                <!-- PEQUENA CAIXA PARA CRIAR PUBLICAÇÃO -->
-
                 <div class="page-card share-composer">
-
                     <div class="share-composer-body">
 
                         <div class="share-composer-label">
@@ -994,8 +1073,7 @@
                             data-bs-toggle="modal"
                             data-bs-target="#modalCriarPublicacaoProfessor">
 
-                            <span class="share-plus">+
-                            </span>
+                            <span class="share-plus">+</span>
 
                             <span class="share-placeholder">Em que está a pensar?
                             </span>
@@ -1003,30 +1081,21 @@
                         </button>
 
                     </div>
-
                 </div>
 
 
-                <!-- FEED -->
-
                 <div class="feed-header">
-
                     <div>
-
-                        <h2>Feed da turma
-                        </h2>
+                        <h2>Feed da turma</h2>
 
                         <p>
                             Publicações partilhadas com a turma.
                         </p>
-
                     </div>
 
                     <span class="feed-badge">Atualizações
                     </span>
-
                 </div>
-
 
                 <asp:Repeater
                     ID="RepeaterPublicacoes"
@@ -1035,15 +1104,11 @@
                     <ItemTemplate>
 
                         <article class="page-card post-card">
-
                             <div class="page-card-body">
-
 
                                 <div class="post-header">
 
-
                                     <div class="post-user">
-
 
                                         <div class="post-avatar">
 
@@ -1061,75 +1126,52 @@
 
                                         </div>
 
-
                                         <div>
-
                                             <div class="post-author">
 
                                                 <%# Eval("NomeCompleto") %>
 
                                                 <span class="post-author-type">
-
                                                     <%# Eval("AutorTipo") %>
-
                                                 </span>
 
                                             </div>
 
                                             <div class="post-date">
-
-                                                <%#
-                                                    Eval(
+                                                <%# Eval(
                                                         "CreatedAt",
                                                         "{0:dd/MM/yyyy HH:mm}"
-                                                    )
-                                                %>
+                                                    ) %>
                                             </div>
-
                                         </div>
-
 
                                     </div>
 
-
                                     <span class="post-type">
-
                                         <%# Eval("Tipo") %>
-
                                     </span>
-
 
                                 </div>
 
-
                                 <div class="post-title">
-
                                     <%# Eval("Titulo") %>
                                 </div>
 
-
                                 <div class="post-content">
-
                                     <%# Eval("Conteudo") %>
                                 </div>
 
-
                                 <div class="post-footer">
-
                                     <span>Gostos: <%# Eval("TotalLikes") %>
                                     </span>
-
                                 </div>
 
-
                             </div>
-
                         </article>
 
                     </ItemTemplate>
 
                 </asp:Repeater>
-
 
                 <asp:Panel
                     ID="PainelSemPublicacoes"
@@ -1140,11 +1182,9 @@
 
                 </asp:Panel>
 
-
             </aside>
 
         </div>
-
 
         <!-- ==================================================
              EVENTOS E ENTREGAS
@@ -1153,23 +1193,16 @@
         <div class="management-grid">
 
 
-            <!-- EVENTOS -->
-
             <div class="page-card">
-
                 <div class="page-card-body">
 
                     <div class="section-title">
-
-                        <h2>Eventos da turma
-                        </h2>
+                        <h2>Eventos da turma</h2>
 
                         <p>
                             Consulte, edite ou elimine os eventos publicados.
                         </p>
-
                     </div>
-
 
                     <div class="table-wrapper">
 
@@ -1189,16 +1222,83 @@
                                     DataField="Tipo"
                                     HeaderText="Tipo" />
 
+
+
+                                <asp:TemplateField
+                                    HeaderText="Visibilidade">
+
+                                    <ItemTemplate>
+
+                                        <span class="visibility-badge">
+
+                                            <%# ObterTextoVisibilidade(
+                            Eval("Visibilidade")
+                        ) %>
+
+                                        </span>
+
+                                    </ItemTemplate>
+
+                                </asp:TemplateField>
+
+
                                 <asp:BoundField
                                     DataField="Titulo"
                                     HeaderText="Título" />
+
+
+
+                                <asp:TemplateField
+                                    HeaderText="Descrição">
+
+                                    <ItemTemplate>
+
+                                        <asp:Panel
+                                            runat="server"
+                                            CssClass="event-table-description"
+                                            Visible='<%#
+                        !string.IsNullOrWhiteSpace(
+                            Convert.ToString(
+                                Eval("Descricao")
+                            )
+                        )
+                    %>'>
+
+                                            <%#
+                        Server.HtmlEncode(
+                            Convert.ToString(
+                                Eval("Descricao")
+                            )
+                        )
+                                            %>
+                                        </asp:Panel>
+
+                                        <asp:Label
+                                            runat="server"
+                                            Text="Sem descrição"
+                                            CssClass="event-table-description-empty"
+                                            Visible='<%#
+                        string.IsNullOrWhiteSpace(
+                            Convert.ToString(
+                                Eval("Descricao")
+                            )
+                        )
+                    %>' />
+
+                                    </ItemTemplate>
+
+                                </asp:TemplateField>
+
 
                                 <asp:BoundField
                                     DataField="DataHora"
                                     HeaderText="Data"
                                     DataFormatString="{0:dd/MM/yyyy HH:mm}" />
 
-                                <asp:TemplateField>
+
+
+                                <asp:TemplateField
+                                    HeaderText="Ações">
 
                                     <ItemTemplate>
 
@@ -1206,14 +1306,18 @@
                                             runat="server"
                                             Text="Editar"
                                             CommandName="EditarEvento"
-                                            CommandArgument='<%# Container.DataItemIndex %>'
+                                            CommandArgument='<%#
+                        Container.DataItemIndex
+                    %>'
                                             CssClass="btn btn-outline-primary btn-sm me-1" />
 
                                         <asp:LinkButton
                                             runat="server"
                                             Text="Apagar"
                                             CommandName="ApagarEvento"
-                                            CommandArgument='<%# Container.DataItemIndex %>'
+                                            CommandArgument='<%#
+                        Container.DataItemIndex
+                    %>'
                                             CssClass="btn btn-outline-danger btn-sm"
                                             OnClientClick="return confirm('Apagar este evento?');" />
 
@@ -1228,27 +1332,19 @@
                     </div>
 
                 </div>
-
             </div>
 
 
-            <!-- ENTREGAS -->
-
             <div class="page-card">
-
                 <div class="page-card-body">
 
                     <div class="section-title">
-
-                        <h2>Entregas dos alunos
-                        </h2>
+                        <h2>Entregas dos alunos</h2>
 
                         <p>
                             Consulte e avalie os trabalhos entregues.
                         </p>
-
                     </div>
-
 
                     <div class="table-wrapper">
 
@@ -1279,7 +1375,8 @@
 
                                         <a
                                             href='<%# Eval("CaminhoFicheiro") %>'
-                                            target="_blank">
+                                            target="_blank"
+                                            rel="noopener noreferrer">
 
                                             <%# Eval("NomeFicheiro") %>
 
@@ -1293,7 +1390,8 @@
                                     DataField="Nota"
                                     HeaderText="Nota" />
 
-                                <asp:TemplateField>
+                                <asp:TemplateField
+                                    HeaderText="Ações">
 
                                     <ItemTemplate>
 
@@ -1315,11 +1413,9 @@
                     </div>
 
                 </div>
-
             </div>
 
         </div>
-
 
         <!-- ==================================================
              AVALIAÇÃO
@@ -1334,24 +1430,18 @@
             <div class="page-card-body">
 
                 <div class="section-title">
-
-                    <h2>Avaliar entrega
-                    </h2>
+                    <h2>Avaliar entrega</h2>
 
                     <p>
                         Atribua uma nota e deixe feedback para o aluno.
                     </p>
-
                 </div>
-
 
                 <asp:HiddenField
                     ID="HdnEntregaId"
                     runat="server" />
 
-
                 <div class="row g-3">
-
 
                     <div class="col-md-2">
 
@@ -1359,7 +1449,6 @@
                             class="form-label"
                             for="<%= TxtNota.ClientID %>">
                             Nota
-
                         </label>
 
                         <asp:TextBox
@@ -1370,14 +1459,12 @@
 
                     </div>
 
-
                     <div class="col-md-10">
 
                         <label
                             class="form-label"
                             for="<%= TxtFeedback.ClientID %>">
                             Feedback
-
                         </label>
 
                         <asp:TextBox
@@ -1389,9 +1476,7 @@
 
                     </div>
 
-
                 </div>
-
 
                 <div class="mt-3">
 
@@ -1416,11 +1501,9 @@
 
         </asp:Panel>
 
-
         <asp:HiddenField
             ID="HdnEvents"
             runat="server" />
-
 
         <!-- ==================================================
              MODAL DE CRIAR PUBLICAÇÃO
@@ -1438,13 +1521,11 @@
 
                 <div class="modal-content">
 
-
                     <div class="modal-header">
 
                         <h2
                             class="modal-title"
                             id="modalCriarPublicacaoProfessorTitulo">Criar publicação
-
                         </h2>
 
                         <button
@@ -1456,13 +1537,9 @@
 
                     </div>
 
-
                     <div class="modal-body">
 
                         <div class="publication-form-grid">
-
-
-                            <!-- TIPO -->
 
                             <div>
 
@@ -1470,7 +1547,6 @@
                                     class="form-label"
                                     for="<%= DdlTipoPublicacaoProfessor.ClientID %>">
                                     Tipo
-
                                 </label>
 
                                 <asp:DropDownList
@@ -1498,16 +1574,12 @@
 
                             </div>
 
-
-                            <!-- TÍTULO -->
-
                             <div>
 
                                 <label
                                     class="form-label"
                                     for="<%= TxtTituloPublicacaoProfessor.ClientID %>">
                                     Título
-
                                 </label>
 
                                 <asp:TextBox
@@ -1518,16 +1590,12 @@
 
                             </div>
 
-
-                            <!-- CONTEÚDO -->
-
                             <div>
 
                                 <label
                                     class="form-label"
                                     for="<%= TxtConteudoPublicacaoProfessor.ClientID %>">
                                     Conteúdo
-
                                 </label>
 
                                 <asp:TextBox
@@ -1540,16 +1608,12 @@
 
                             </div>
 
-
-                            <!-- ANEXO -->
-
                             <div>
 
                                 <label
                                     class="form-label"
                                     for="<%= FilePublicacaoProfessor.ClientID %>">
                                     Anexo
-
                                 </label>
 
                                 <asp:FileUpload
@@ -1563,11 +1627,7 @@
 
                             </div>
 
-
-                            <!-- VISIBILIDADE -->
-
                             <div class="audience-card">
-
 
                                 <div class="audience-main-option">
 
@@ -1578,19 +1638,15 @@
 
                                 </div>
 
-
                                 <p class="audience-help">
                                     Ao marcar esta opção, todos os alunos
                                     e professores da turma poderão visualizar
                                     a publicação.
-
                                 </p>
-
 
                                 <div
                                     id="painelDestinatariosProfessor"
                                     class="audience-selector">
-
 
                                     <div class="audience-selector-header">
 
@@ -1604,11 +1660,7 @@
 
                                     </div>
 
-
                                     <div class="row g-3">
-
-
-                                        <!-- ALUNOS -->
 
                                         <div class="col-md-6">
 
@@ -1616,8 +1668,7 @@
 
                                                 <div class="recipient-group-title recipient-group-header">
 
-                                                    <span>Alunos
-                                                    </span>
+                                                    <span>Alunos</span>
 
                                                     <label class="select-all-option">
 
@@ -1655,17 +1706,13 @@
 
                                         </div>
 
-
-                                        <!-- PROFESSORES -->
-
                                         <div class="col-md-6">
 
                                             <div class="recipient-group">
 
                                                 <div class="recipient-group-title recipient-group-header">
 
-                                                    <span>Professores
-                                                    </span>
+                                                    <span>Professores</span>
 
                                                     <label class="select-all-option">
 
@@ -1703,7 +1750,6 @@
 
                                         </div>
 
-
                                     </div>
 
                                 </div>
@@ -1714,7 +1760,6 @@
 
                     </div>
 
-
                     <div class="modal-footer">
 
                         <button
@@ -1722,7 +1767,6 @@
                             class="btn btn-outline-secondary"
                             data-bs-dismiss="modal">
                             Cancelar
-
                         </button>
 
                         <asp:Button
@@ -1734,21 +1778,19 @@
 
                     </div>
 
-
                 </div>
 
             </div>
 
         </div>
-    </div>
 
+    </div>
 
     <!-- ==================================================
          JAVASCRIPT
     =================================================== -->
 
     <script>
-
         document.addEventListener(
             'DOMContentLoaded',
             function () {
@@ -1769,23 +1811,19 @@
                             '<%= HdnEvents.ClientID %>'
                         );
 
-                    var eventos =
-                        [];
+                    var eventos = [];
 
                     try {
-
                         eventos =
                             JSON.parse(
                                 eventsField.value || '[]'
                             );
-
-                    } catch (erro) {
-
+                    }
+                    catch (erro) {
                         console.error(
                             'Não foi possível carregar os eventos:',
                             erro
                         );
-
                     }
 
                     var calendar =
@@ -1820,13 +1858,50 @@
                                 },
 
                                 events:
-                                    eventos
+                                    eventos,
+
+                                eventDidMount:
+                                    function (info) {
+
+                                        var descricao =
+                                            info.event
+                                                .extendedProps
+                                                .descricao || '';
+
+                                        var tipo =
+                                            info.event
+                                                .extendedProps
+                                                .tipo || 'Evento';
+
+                                        var visibilidade =
+                                            info.event
+                                                .extendedProps
+                                                .visibilidade ||
+                                            'Alunos e encarregados';
+
+                                        var texto =
+                                            tipo +
+                                            ': ' +
+                                            info.event.title +
+                                            '\nVisível para: ' +
+                                            visibilidade;
+
+                                        if (descricao) {
+                                            texto +=
+                                                '\n\n' +
+                                                descricao;
+                                        }
+
+                                        info.el.setAttribute(
+                                            'title',
+                                            texto
+                                        );
+                                    }
                             }
                         );
 
                     calendar.render();
                 }
-
 
                 /* =============================================
                    VISIBILIDADE DA PUBLICAÇÃO
@@ -1850,23 +1925,19 @@
                     function atualizarDestinatarios() {
 
                         if (checkboxTurma.checked) {
-
                             painelDestinatarios
                                 .classList
                                 .add(
                                     'is-hidden'
                                 );
-
-                        } else {
-
+                        }
+                        else {
                             painelDestinatarios
                                 .classList
                                 .remove(
                                     'is-hidden'
                                 );
-
                         }
-
                     }
 
                     checkboxTurma.addEventListener(
@@ -1877,9 +1948,8 @@
                     atualizarDestinatarios();
                 }
 
-
                 /* =============================================
-                   SELECIONAR TODOS OS ALUNOS OU PROFESSORES
+                   SELECIONAR TODOS
                 ============================================== */
 
                 var seletoresTodos =
@@ -1913,17 +1983,25 @@
                         }
 
                         function atualizarEstadoPrincipal() {
+
                             var checkboxes =
                                 obterCheckboxes();
 
                             if (checkboxes.length === 0) {
-                                seletorTodos.checked = false;
-                                seletorTodos.indeterminate = false;
-                                seletorTodos.disabled = true;
+                                seletorTodos.checked =
+                                    false;
+
+                                seletorTodos.indeterminate =
+                                    false;
+
+                                seletorTodos.disabled =
+                                    true;
+
                                 return;
                             }
 
-                            seletorTodos.disabled = false;
+                            seletorTodos.disabled =
+                                false;
 
                             var quantidadeSelecionada =
                                 checkboxes.filter(
@@ -1972,7 +2050,6 @@
 
             }
         );
-
     </script>
 
 </asp:Content>

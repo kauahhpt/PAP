@@ -217,43 +217,41 @@ namespace AlunoGest.encarregado
              *    onde o Evento.AlunoId está vazio.
              */
             const string sql = @"
-                SELECT
-                    ev.Id,
-                    ev.Titulo,
-                    ev.Tipo,
-                    ev.DataHora,
+    SELECT
+        ev.Id,
+        ev.Titulo,
+        ev.Tipo,
+        ev.DataHora,
 
-                    CASE
-                        WHEN ev.AlunoId = @AlunoId
-                            THEN N'Pessoal'
+        CASE
+            WHEN ev.AlunoId = @AlunoId
+                THEN N'Pessoal'
+            ELSE N'Turma'
+        END AS Origem
 
-                        ELSE N'Turma'
-                    END AS Origem
+    FROM dbo.Evento ev
 
-                FROM dbo.Evento ev
+    WHERE
+    (
+        ev.AlunoId = @AlunoId
+        OR
+        (
+            ev.AlunoId IS NULL
+            AND EXISTS (
+                SELECT 1
+                FROM dbo.AlunoTurma at2
+                WHERE at2.AlunoId = @AlunoId
+                  AND at2.TurmaId = ev.TurmaId
+                  AND at2.Ate IS NULL
+            )
+        )
+    )
+    AND (
+        ev.Visibilidade IS NULL
+        OR ev.Visibilidade IN (N'Encarregados', N'Ambos')
+    )
 
-                WHERE
-                    ev.AlunoId = @AlunoId
-
-                    OR
-                    (
-                        ev.AlunoId IS NULL
-
-                        AND EXISTS
-                        (
-                            SELECT 1
-
-                            FROM dbo.AlunoTurma at2
-
-                            WHERE at2.AlunoId = @AlunoId
-                              AND at2.TurmaId = ev.TurmaId
-                              AND at2.Ate IS NULL
-                        )
-                    )
-
-                ORDER BY
-                    ev.DataHora,
-                    ev.Id;";
+    ORDER BY ev.DataHora, ev.Id;";
 
             List<object> eventosJson =
                 new List<object>();
