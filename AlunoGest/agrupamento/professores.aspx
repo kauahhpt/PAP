@@ -52,21 +52,40 @@
             background-color: #dbeafe !important;
         }
 
-        .nif-ajuda {
+        .campo-ajuda {
             display: block;
             margin-top: 5px;
             color: #64748b;
             font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .validation-message {
+            display: block;
+            margin-top: 5px;
+            color: #dc3545;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
             .campo-label {
                 text-align: left !important;
             }
+
+            .botoes-listagem .btn {
+                width: 100%;
+                margin: 0 0 9px !important;
+            }
+
+            .formulario-professor {
+                padding: 18px;
+            }
         }
     </style>
 
 </asp:Content>
+
 
 <asp:Content
     ID="Content2"
@@ -84,6 +103,8 @@
             </p>
 
         </div>
+
+        <!-- LISTA DE PROFESSORES -->
 
         <div class="table-responsive">
 
@@ -136,7 +157,9 @@
 
         </div>
 
-        <div class="mt-4">
+        <!-- BOTÕES DA LISTAGEM -->
+
+        <div class="mt-4 botoes-listagem">
 
             <asp:Button
                 ID="buttonVer"
@@ -150,7 +173,7 @@
                 ID="buttonCriar"
                 runat="server"
                 Text="Criar professor"
-                CssClass="btn btn-outline-primary ms-2"
+                CssClass="btn btn-primary ms-2"
                 CausesValidation="false"
                 OnClick="buttonCriar_Click" />
 
@@ -158,9 +181,18 @@
                 ID="buttonEditar"
                 runat="server"
                 Text="Editar professor"
-                CssClass="btn btn-outline-primary ms-2"
+                CssClass="btn btn-secondary ms-2"
                 CausesValidation="false"
                 OnClick="buttonEditar_Click" />
+
+            <asp:Button
+                ID="buttonReenviarCredenciais"
+                runat="server"
+                Text="Reenviar credenciais"
+                CssClass="btn btn-outline-success ms-2"
+                CausesValidation="false"
+                OnClick="buttonReenviarCredenciais_Click"
+                OnClientClick="return confirm('Será gerada uma nova palavra-passe e a anterior deixará de funcionar. Pretende continuar?');" />
 
             <asp:Button
                 ID="buttonDisciplinasProfessor"
@@ -188,7 +220,8 @@
             visible="false"
             class="formulario-professor">
 
-            <h2 class="titulo-formulario">Dados do professor
+            <h2 class="titulo-formulario">
+                Dados do professor
             </h2>
 
             <!-- NOME -->
@@ -199,7 +232,6 @@
                     for="<%= txtNome.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
                     Nome
-
                 </label>
 
                 <div class="col-sm-7">
@@ -215,7 +247,7 @@
                         runat="server"
                         ControlToValidate="txtNome"
                         ErrorMessage="O nome é obrigatório."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -231,7 +263,6 @@
                     for="<%= txtEmail.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
                     Email
-
                 </label>
 
                 <div class="col-sm-7">
@@ -248,7 +279,7 @@
                         runat="server"
                         ControlToValidate="txtEmail"
                         ErrorMessage="O email é obrigatório."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -258,9 +289,15 @@
                         ControlToValidate="txtEmail"
                         ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$"
                         ErrorMessage="Introduza um endereço de email válido."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
+
+                    <span class="campo-ajuda">
+                        As credenciais de acesso serão enviadas para este email.
+                        Caso o email seja corrigido, guarde primeiro a alteração
+                        e depois utilize o botão Reenviar credenciais.
+                    </span>
 
                 </div>
 
@@ -274,7 +311,6 @@
                     for="<%= txtTelefone.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
                     Telefone
-
                 </label>
 
                 <div class="col-sm-5">
@@ -292,7 +328,7 @@
                         runat="server"
                         ControlToValidate="txtTelefone"
                         ErrorMessage="O telefone é obrigatório."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -302,7 +338,7 @@
                         ControlToValidate="txtTelefone"
                         ValidationExpression="^[0-9+\s()\-]{7,20}$"
                         ErrorMessage="Introduza um número de telefone válido."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -318,7 +354,6 @@
                     for="<%= txtNIF.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
                     NIF
-
                 </label>
 
                 <div class="col-sm-5">
@@ -336,7 +371,7 @@
                         runat="server"
                         ControlToValidate="txtNIF"
                         ErrorMessage="O NIF é obrigatório."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -346,7 +381,7 @@
                         ControlToValidate="txtNIF"
                         ValidationExpression="^\d{9}$"
                         ErrorMessage="O NIF deve conter exatamente 9 algarismos."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -362,7 +397,6 @@
                     for="<%= txtNumeroProcesso.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
                     Número de processo
-
                 </label>
 
                 <div class="col-sm-5">
@@ -378,7 +412,7 @@
                         runat="server"
                         ControlToValidate="txtNumeroProcesso"
                         ErrorMessage="O número de processo é obrigatório."
-                        CssClass="text-danger small validation-message"
+                        CssClass="validation-message"
                         Display="Dynamic"
                         ValidationGroup="professor" />
 
@@ -386,7 +420,7 @@
 
             </div>
 
-            <!-- GRUPO -->
+            <!-- GRUPO DE RECRUTAMENTO -->
 
             <div class="row mb-3">
 
@@ -394,7 +428,6 @@
                     for="<%= ddlGrupoRecrutamento.ClientID %>"
                     class="col-sm-3 col-form-label text-end campo-label">
                     Grupo de recrutamento
-
                 </label>
 
                 <div class="col-sm-5">
@@ -408,7 +441,7 @@
 
             </div>
 
-            <!-- BOTÕES -->
+            <!-- BOTÕES DO FORMULÁRIO -->
 
             <div class="row">
 
@@ -446,7 +479,8 @@
             class="mt-5"
             visible="false">
 
-            <h3>Disciplinas que o professor pode lecionar
+            <h3>
+                Disciplinas que o professor pode lecionar
             </h3>
 
             <div class="table-responsive">

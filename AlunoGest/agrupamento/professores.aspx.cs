@@ -20,12 +20,38 @@ namespace AlunoGest.agrupamento
 
         #endregion
 
+
         #region Página
 
         protected void Page_Load(
             object sender,
             EventArgs e)
         {
+            if (!Request.IsAuthenticated ||
+                !Roles.IsUserInRole(
+                    User.Identity.Name,
+                    "agrupamento"))
+            {
+                FormsAuthentication.SignOut();
+                Session.Clear();
+
+                Response.Redirect("~/login.aspx");
+                return;
+            }
+
+            try
+            {
+                GetAgrupamentoIdFromSession();
+            }
+            catch
+            {
+                FormsAuthentication.SignOut();
+                Session.Clear();
+
+                Response.Redirect("~/login.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 CarregarGrupoRecrutamento();
@@ -37,6 +63,7 @@ namespace AlunoGest.agrupamento
         }
 
         #endregion
+
 
         #region Botões principais
 
@@ -55,13 +82,27 @@ namespace AlunoGest.agrupamento
                 return;
             }
 
-            CarregarProfessor(idProfessor);
+            ProfessorDados professor =
+                GetProfessorById(idProfessor);
+
+            if (professor == null)
+            {
+                MostrarAlert(
+                    "Não foi possível encontrar o professor selecionado."
+                );
+
+                GetProfessores();
+                return;
+            }
+
+            CarregarFormulario(professor);
             CarregarDisciplinasDoProfessor(idProfessor);
 
             controlos.Visible = true;
             painelDisciplinasProfessor.Visible = true;
 
             ViewState["op"] = "v";
+            ViewState["ProfessorId"] = idProfessor;
 
             ActivarControlos(false);
         }
@@ -81,6 +122,7 @@ namespace AlunoGest.agrupamento
             painelDisciplinasProfessor.Visible = false;
 
             ViewState["op"] = "i";
+            ViewState["ProfessorId"] = null;
 
             ActivarControlos(true);
         }
@@ -100,23 +142,179 @@ namespace AlunoGest.agrupamento
                 return;
             }
 
-            CarregarProfessor(idProfessor);
+            ProfessorDados professor =
+                GetProfessorById(idProfessor);
+
+            if (professor == null)
+            {
+                MostrarAlert(
+                    "Não foi possível encontrar o professor selecionado."
+                );
+
+                GetProfessores();
+                return;
+            }
+
+            CarregarFormulario(professor);
             CarregarDisciplinasDoProfessor(idProfessor);
 
             controlos.Visible = true;
             painelDisciplinasProfessor.Visible = true;
 
             ViewState["op"] = "u";
+            ViewState["ProfessorId"] = idProfessor;
 
             ActivarControlos(true);
+        }
+
+        protected void buttonReenviarCredenciais_Click(
+            object sender,
+            EventArgs e)
+        {
+            int idProfessor;
+
+            if (!ProfessorSelecionado(out idProfessor))
+            {
+                MostrarAlert(
+                    "Selecione um professor."
+                );
+
+                return;
+            }
+
+            ProfessorDados professor =
+                GetProfessorById(idProfessor);
+
+            if (professor == null)
+            {
+                MostrarAlert(
+                    "Não foi possível encontrar o professor selecionado."
+                );
+
+                GetProfessores();
+                return;
+            }
+
+            if (!professor.Ativo)
+            {
+                MostrarAlert(
+                    "O professor selecionado está inativo. " +
+                    "Ative a conta antes de reenviar as credenciais."
+                );
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(professor.Email))
+            {
+                MostrarAlert(
+                    "O professor não possui um email válido. " +
+                    "Edite o registo antes de reenviar as credenciais."
+                );
+
+                return;
+            }
+
+            bool passwordRedefinida =
+                false;
+
+            try
+            {
+                MembershipUser utilizador =
+                    Membership.GetUser(
+                        professor.UserId,
+                        false
+                    );
+
+                if (utilizador == null)
+                {
+                    throw new InvalidOperationException(
+                        "Não foi possível encontrar a conta de acesso " +
+                        "associada ao professor."
+                    );
+                }
+
+                string emailAtual =
+                    professor.Email
+                        .Trim()
+                        .ToLowerInvariant();
+
+                if (EmailJaExisteNoMembership(
+                        emailAtual,
+                        professor.UserId))
+                {
+                    throw new InvalidOperationException(
+                        "O email atual já está associado a outra conta."
+                    );
+                }
+
+                utilizador.Email =
+                    emailAtual;
+
+                utilizador.IsApproved =
+                    true;
+
+                Membership.UpdateUser(
+                    utilizador
+                );
+
+                string novaPassword =
+                    CriarConta.RedefinirPassword(
+                        utilizador.UserName
+                    );
+
+                passwordRedefinida =
+                    true;
+
+                CriarConta
+                    .EnviarEmailCredenciaisRedefinidas(
+                        emailAtual,
+                        professor.Nome,
+                        utilizador.UserName,
+                        novaPassword,
+                        ObterUrlLogin()
+                    );
+
+                MostrarAlert(
+                    "Foi gerada uma nova palavra-passe e as credenciais " +
+                    "foram enviadas para " + emailAtual + "."
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(
+                    "Erro ao reenviar credenciais do professor: " +
+                    ex
+                );
+
+                if (passwordRedefinida)
+                {
+                    MostrarAlert(
+                        "A palavra-passe foi redefinida, mas não foi possível " +
+                        "enviar o email. Confirme o endereço e a configuração " +
+                        "SMTP e volte a clicar em Reenviar credenciais. " +
+                        ex.Message
+                    );
+                }
+                else
+                {
+                    MostrarAlert(
+                        "Não foi possível reenviar as credenciais. " +
+                        ex.Message
+                    );
+                }
+            }
         }
 
         protected void buttonGuardar_Click(
             object sender,
             EventArgs e)
         {
+            Page.Validate("professor");
+
             if (!Page.IsValid)
             {
+                controlos.Visible = true;
                 return;
             }
 
@@ -130,7 +328,9 @@ namespace AlunoGest.agrupamento
                 txtNome.Text.Trim();
 
             string email =
-                txtEmail.Text.Trim();
+                txtEmail.Text
+                    .Trim()
+                    .ToLowerInvariant();
 
             string telefone =
                 txtTelefone.Text.Trim();
@@ -150,21 +350,10 @@ namespace AlunoGest.agrupamento
                     out mensagemNif))
             {
                 MostrarAlert(mensagemNif);
+
+                controlos.Visible = true;
                 return;
             }
-
-            //ResultadoValidacaoNifApi resultadoApi =
-            //    ValidadorNif.ValidarNaApi(nif);
-
-            //if (resultadoApi.Estado !=
-            //    EstadoValidacaoNifApi.Valido)
-            //{
-            //    MostrarAlert(
-            //        resultadoApi.Mensagem
-            //    );
-
-            //    return;
-            //}
 
             int agrupamentoId;
 
@@ -179,7 +368,8 @@ namespace AlunoGest.agrupamento
                 return;
             }
 
-            int? grupoRecrutamentoId = null;
+            int? grupoRecrutamentoId =
+                null;
 
             if (!string.IsNullOrWhiteSpace(
                     ddlGrupoRecrutamento.SelectedValue))
@@ -191,133 +381,37 @@ namespace AlunoGest.agrupamento
                     );
             }
 
-            try
+            if (modo == "i")
             {
-                if (modo == "i")
-                {
-                    if (NifJaExiste(
-                            nif,
-                            null,
-                            null))
-                    {
-                        MostrarAlert(
-                            "Já existe um aluno ou professor " +
-                            "com este NIF."
-                        );
-
-                        return;
-                    }
-
-                    Guid userIdProfessor =
-                        CriarContaProfessor();
-
-                    int linhas =
-                        InsertProfessor(
-                            userIdProfessor,
-                            agrupamentoId,
-                            nome,
-                            numeroProcesso,
-                            email,
-                            telefone,
-                            nif,
-                            grupoRecrutamentoId
-                        );
-
-                    if (linhas == 0)
-                    {
-                        MostrarAlert(
-                            "Não foi possível criar o professor."
-                        );
-
-                        return;
-                    }
-
-                    MostrarAlert(
-                        "Professor criado com sucesso."
-                    );
-                }
-                else if (modo == "u")
-                {
-                    int idProfessor;
-
-                    if (!ProfessorSelecionado(
-                            out idProfessor))
-                    {
-                        MostrarAlert(
-                            "Selecione um professor."
-                        );
-
-                        return;
-                    }
-
-                    if (NifJaExiste(
-                            nif,
-                            null,
-                            idProfessor))
-                    {
-                        MostrarAlert(
-                            "Já existe outro aluno ou professor " +
-                            "com este NIF."
-                        );
-
-                        return;
-                    }
-
-                    int linhas =
-                        UpdateProfessor(
-                            idProfessor,
-                            agrupamentoId,
-                            nome,
-                            numeroProcesso,
-                            email,
-                            telefone,
-                            nif,
-                            grupoRecrutamentoId
-                        );
-
-                    if (linhas == 0)
-                    {
-                        MostrarAlert(
-                            "Não foi possível atualizar o professor."
-                        );
-
-                        return;
-                    }
-
-                    MostrarAlert(
-                        "Professor atualizado com sucesso."
-                    );
-                }
-                else
-                {
-                    FecharFormulario();
-                    return;
-                }
-
-                GetProfessores();
-                FecharFormulario();
-            }
-            catch (MembershipCreateUserException ex)
-            {
-                MostrarAlert(
-                    "Não foi possível criar a conta do professor: " +
-                    ex.Message
+                CriarNovoProfessor(
+                    agrupamentoId,
+                    nome,
+                    numeroProcesso,
+                    email,
+                    telefone,
+                    nif,
+                    grupoRecrutamentoId
                 );
+
+                return;
             }
-            catch (SqlException ex)
+
+            if (modo == "u")
             {
-                MostrarAlert(
-                    "Erro na base de dados: " +
-                    ex.Message
+                AtualizarProfessorExistente(
+                    agrupamentoId,
+                    nome,
+                    numeroProcesso,
+                    email,
+                    telefone,
+                    nif,
+                    grupoRecrutamentoId
                 );
+
+                return;
             }
-            catch (Exception ex)
-            {
-                MostrarAlert(
-                    "Erro ao guardar o professor: " +
-                    ex.Message
-                );
-            }
+
+            FecharFormulario();
         }
 
         protected void buttonCancelar_Click(
@@ -333,8 +427,7 @@ namespace AlunoGest.agrupamento
         {
             int idProfessor;
 
-            if (!ProfessorSelecionado(
-                    out idProfessor))
+            if (!ProfessorSelecionado(out idProfessor))
             {
                 MostrarAlert(
                     "Selecione o professor."
@@ -353,6 +446,343 @@ namespace AlunoGest.agrupamento
 
         #endregion
 
+
+        #region Criar professor
+
+        private void CriarNovoProfessor(
+            int agrupamentoId,
+            string nome,
+            string numeroProcesso,
+            string email,
+            string telefone,
+            string nif,
+            int? grupoRecrutamentoId)
+        {
+            if (NifJaExiste(nif, null))
+            {
+                MostrarAlert(
+                    "Já existe um aluno, professor ou encarregado " +
+                    "de educação com este NIF."
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            if (EmailJaExisteNaTabela(email, null))
+            {
+                MostrarAlert(
+                    "Já existe um aluno, professor ou encarregado " +
+                    "de educação com este email."
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            if (EmailJaExisteNoMembership(email, null))
+            {
+                MostrarAlert(
+                    "Já existe uma conta de utilizador associada " +
+                    "a este email."
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            string username =
+                null;
+
+            string password =
+                null;
+
+            try
+            {
+                Guid userIdProfessor =
+                    CriarContaProfessor(
+                        nome,
+                        email,
+                        out username,
+                        out password
+                    );
+
+                int linhas =
+                    InsertProfessor(
+                        userIdProfessor,
+                        agrupamentoId,
+                        nome,
+                        numeroProcesso,
+                        email,
+                        telefone,
+                        nif,
+                        grupoRecrutamentoId
+                    );
+
+                if (linhas != 1)
+                {
+                    throw new InvalidOperationException(
+                        "O registo do professor não foi criado."
+                    );
+                }
+            }
+            catch (MembershipCreateUserException ex)
+            {
+                RemoverContaCriada(username);
+
+                MostrarAlert(
+                    "Não foi possível criar a conta do professor: " +
+                    ex.Message
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+            catch (SqlException ex)
+            {
+                RemoverContaCriada(username);
+
+                MostrarAlert(
+                    "Erro na base de dados ao criar o professor: " +
+                    ex.Message
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+            catch (Exception ex)
+            {
+                RemoverContaCriada(username);
+
+                MostrarAlert(
+                    "Não foi possível criar o professor: " +
+                    ex.Message
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            bool emailEnviado =
+                EnviarCredenciaisIniciais(
+                    email,
+                    nome,
+                    username,
+                    password
+                );
+
+            FinalizarOperacaoComSucesso();
+
+            if (emailEnviado)
+            {
+                MostrarAlert(
+                    "Professor criado com sucesso. " +
+                    "As credenciais foram enviadas por email."
+                );
+            }
+            else
+            {
+                MostrarAlert(
+                    "O professor e a respetiva conta foram criados, " +
+                    "mas não foi possível enviar o email com as credenciais."
+                );
+            }
+        }
+
+        #endregion
+
+
+        #region Atualizar professor
+
+        private void AtualizarProfessorExistente(
+            int agrupamentoId,
+            string nome,
+            string numeroProcesso,
+            string email,
+            string telefone,
+            string nif,
+            int? grupoRecrutamentoId)
+        {
+            int idProfessor;
+
+            if (!TryGetProfessorIdViewState(
+                    out idProfessor))
+            {
+                MostrarAlert(
+                    "Não foi possível identificar o professor."
+                );
+
+                return;
+            }
+
+            ProfessorDados dadosAtuais =
+                GetProfessorById(idProfessor);
+
+            if (dadosAtuais == null)
+            {
+                MostrarAlert(
+                    "O professor já não está disponível."
+                );
+
+                GetProfessores();
+                return;
+            }
+
+            if (NifJaExiste(nif, idProfessor))
+            {
+                MostrarAlert(
+                    "Já existe outro aluno, professor ou encarregado " +
+                    "de educação com este NIF."
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            if (EmailJaExisteNaTabela(email, idProfessor))
+            {
+                MostrarAlert(
+                    "Já existe outro aluno, professor ou encarregado " +
+                    "de educação com este email."
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            if (EmailJaExisteNoMembership(
+                    email,
+                    dadosAtuais.UserId))
+            {
+                MostrarAlert(
+                    "Já existe outra conta associada a este email."
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            try
+            {
+                AtualizarProfessorEMembership(
+                    dadosAtuais,
+                    agrupamentoId,
+                    nome,
+                    numeroProcesso,
+                    email,
+                    telefone,
+                    nif,
+                    grupoRecrutamentoId
+                );
+            }
+            catch (SqlException ex)
+            {
+                MostrarAlert(
+                    "Erro na base de dados ao atualizar o professor: " +
+                    ex.Message
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+            catch (Exception ex)
+            {
+                MostrarAlert(
+                    "Não foi possível atualizar o professor: " +
+                    ex.Message
+                );
+
+                controlos.Visible = true;
+                return;
+            }
+
+            FinalizarOperacaoComSucesso();
+
+            MostrarAlert(
+                "Professor atualizado com sucesso."
+            );
+        }
+
+        private void AtualizarProfessorEMembership(
+            ProfessorDados dadosAtuais,
+            int agrupamentoId,
+            string nome,
+            string numeroProcesso,
+            string email,
+            string telefone,
+            string nif,
+            int? grupoRecrutamentoId)
+        {
+            MembershipUser utilizador =
+                Membership.GetUser(
+                    dadosAtuais.UserId,
+                    false
+                );
+
+            if (utilizador == null)
+            {
+                throw new InvalidOperationException(
+                    "Não foi possível encontrar a conta do professor."
+                );
+            }
+
+            string emailAnterior =
+                utilizador.Email;
+
+            utilizador.Email =
+                email;
+
+            Membership.UpdateUser(
+                utilizador
+            );
+
+            try
+            {
+                int linhas =
+                    UpdateProfessor(
+                        dadosAtuais.Id,
+                        agrupamentoId,
+                        nome,
+                        numeroProcesso,
+                        email,
+                        telefone,
+                        nif,
+                        grupoRecrutamentoId
+                    );
+
+                if (linhas != 1)
+                {
+                    throw new InvalidOperationException(
+                        "O registo do professor não foi atualizado."
+                    );
+                }
+            }
+            catch
+            {
+                try
+                {
+                    utilizador.Email =
+                        emailAnterior;
+
+                    Membership.UpdateUser(
+                        utilizador
+                    );
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError(
+                        "Erro ao repor o email do Membership do professor: " +
+                        ex
+                    );
+                }
+
+                throw;
+            }
+        }
+
+        #endregion
+
+
         #region Paginação
 
         protected void gridProfessores_PageIndexChanging(
@@ -366,11 +796,15 @@ namespace AlunoGest.agrupamento
 
             gridProfessores.SelectedIndex = -1;
 
+            ViewState["op"] = null;
+            ViewState["ProfessorId"] = null;
+
             controlos.Visible = false;
             painelDisciplinasProfessor.Visible = false;
         }
 
         #endregion
+
 
         #region Listagem e leitura
 
@@ -418,28 +852,29 @@ namespace AlunoGest.agrupamento
                 adapter.Fill(tabela);
             }
 
-            gridProfessores.DataSource = tabela;
+            gridProfessores.DataSource =
+                tabela;
+
             gridProfessores.DataBind();
         }
 
-        private DataRow GetProfessorById(
+        private ProfessorDados GetProfessorById(
             int idProfessor)
         {
             int agrupamentoId =
                 GetAgrupamentoIdFromSession();
 
-            DataTable tabela =
-                new DataTable();
-
             const string sql = @"
-                SELECT
+                SELECT TOP 1
                     Id,
+                    UserId,
                     Nome,
                     Email,
                     Telefone,
                     NIF,
                     NumeroProcesso,
-                    GrupoRecrutamentoId
+                    GrupoRecrutamentoId,
+                    Ativo
 
                 FROM dbo.Professor
 
@@ -450,8 +885,6 @@ namespace AlunoGest.agrupamento
                 new SqlConnection(_connectionString))
             using (SqlCommand cmd =
                 new SqlCommand(sql, conn))
-            using (SqlDataAdapter adapter =
-                new SqlDataAdapter(cmd))
             {
                 cmd.Parameters
                     .Add(
@@ -467,81 +900,122 @@ namespace AlunoGest.agrupamento
                     )
                     .Value = agrupamentoId;
 
-                adapter.Fill(tabela);
-            }
+                conn.Open();
 
-            return tabela.Rows.Count > 0
-                ? tabela.Rows[0]
-                : null;
-        }
-
-        private void CarregarProfessor(
-            int idProfessor)
-        {
-            DataRow professor =
-                GetProfessorById(idProfessor);
-
-            if (professor == null)
-            {
-                MostrarAlert(
-                    "Não foi possível encontrar o professor."
-                );
-
-                return;
-            }
-
-            txtNome.Text =
-                ValorTexto(
-                    professor["Nome"]
-                );
-
-            txtEmail.Text =
-                ValorTexto(
-                    professor["Email"]
-                );
-
-            txtTelefone.Text =
-                ValorTexto(
-                    professor["Telefone"]
-                );
-
-            txtNIF.Text =
-                ValorTexto(
-                    professor["NIF"]
-                );
-
-            txtNumeroProcesso.Text =
-                ValorTexto(
-                    professor["NumeroProcesso"]
-                );
-
-            if (professor["GrupoRecrutamentoId"] ==
-                DBNull.Value)
-            {
-                ddlGrupoRecrutamento.SelectedIndex = 0;
-            }
-            else
-            {
-                string valor =
-                    professor[
-                        "GrupoRecrutamentoId"
-                    ]
-                    .ToString();
-
-                ListItem item =
-                    ddlGrupoRecrutamento
-                        .Items
-                        .FindByValue(valor);
-
-                if (item != null)
+                using (SqlDataReader reader =
+                    cmd.ExecuteReader())
                 {
-                    ddlGrupoRecrutamento.SelectedValue =
-                        valor;
+                    if (!reader.Read())
+                    {
+                        return null;
+                    }
+
+                    ProfessorDados professor =
+                        new ProfessorDados();
+
+                    professor.Id =
+                        Convert.ToInt32(
+                            reader["Id"]
+                        );
+
+                    professor.UserId =
+                        (Guid)reader["UserId"];
+
+                    professor.Nome =
+                        Convert.ToString(
+                            reader["Nome"]
+                        );
+
+                    professor.Email =
+                        ValorTexto(
+                            reader["Email"]
+                        );
+
+                    professor.Telefone =
+                        ValorTexto(
+                            reader["Telefone"]
+                        );
+
+                    professor.NIF =
+                        ValorTexto(
+                            reader["NIF"]
+                        );
+
+                    professor.NumeroProcesso =
+                        ValorTexto(
+                            reader["NumeroProcesso"]
+                        );
+
+                    professor.Ativo =
+                        Convert.ToBoolean(
+                            reader["Ativo"]
+                        );
+
+                    if (reader["GrupoRecrutamentoId"] !=
+                        DBNull.Value)
+                    {
+                        professor.GrupoRecrutamentoId =
+                            Convert.ToInt32(
+                                reader["GrupoRecrutamentoId"]
+                            );
+                    }
+
+                    return professor;
                 }
             }
         }
 
+        private void CarregarFormulario(
+            ProfessorDados professor)
+        {
+            txtNome.Text =
+                professor.Nome;
+
+            txtEmail.Text =
+                professor.Email;
+
+            txtTelefone.Text =
+                professor.Telefone;
+
+            txtNIF.Text =
+                professor.NIF;
+
+            txtNumeroProcesso.Text =
+                professor.NumeroProcesso;
+
+            if (!professor.GrupoRecrutamentoId.HasValue)
+            {
+                ddlGrupoRecrutamento.SelectedIndex =
+                    0;
+
+                return;
+            }
+
+            string valor =
+                professor
+                    .GrupoRecrutamentoId
+                    .Value
+                    .ToString();
+
+            ListItem item =
+                ddlGrupoRecrutamento
+                    .Items
+                    .FindByValue(valor);
+
+            if (item != null)
+            {
+                ddlGrupoRecrutamento.SelectedValue =
+                    valor;
+            }
+            else
+            {
+                ddlGrupoRecrutamento.SelectedIndex =
+                    0;
+            }
+        }
+
         #endregion
+
 
         #region Inserção e atualização
 
@@ -735,16 +1209,17 @@ namespace AlunoGest.agrupamento
 
         #endregion
 
-        #region Validação de duplicação do NIF
+
+        #region Validações de duplicação
 
         private bool NifJaExiste(
             string nif,
-            int? alunoIdIgnorar,
             int? professorIdIgnorar)
         {
             const string sql = @"
                 SELECT
                     CASE
+
                         WHEN EXISTS
                         (
                             SELECT 1
@@ -752,12 +1227,8 @@ namespace AlunoGest.agrupamento
                             FROM dbo.Aluno
 
                             WHERE NIF = @NIF
-                              AND
-                              (
-                                  @AlunoIdIgnorar IS NULL
-                                  OR Id <> @AlunoIdIgnorar
-                              )
                         )
+
                         OR EXISTS
                         (
                             SELECT 1
@@ -765,14 +1236,26 @@ namespace AlunoGest.agrupamento
                             FROM dbo.Professor
 
                             WHERE NIF = @NIF
+
                               AND
                               (
                                   @ProfessorIdIgnorar IS NULL
                                   OR Id <> @ProfessorIdIgnorar
                               )
                         )
+
+                        OR EXISTS
+                        (
+                            SELECT 1
+
+                            FROM dbo.EncarregadoEducacao
+
+                            WHERE NIF = @NIF
+                        )
+
                         THEN 1
                         ELSE 0
+
                     END;";
 
             using (SqlConnection conn =
@@ -787,16 +1270,6 @@ namespace AlunoGest.agrupamento
                         9
                     )
                     .Value = nif;
-
-                cmd.Parameters
-                    .Add(
-                        "@AlunoIdIgnorar",
-                        SqlDbType.Int
-                    )
-                    .Value =
-                    alunoIdIgnorar.HasValue
-                        ? (object)alunoIdIgnorar.Value
-                        : DBNull.Value;
 
                 cmd.Parameters
                     .Add(
@@ -816,7 +1289,129 @@ namespace AlunoGest.agrupamento
             }
         }
 
+        private bool EmailJaExisteNaTabela(
+            string email,
+            int? professorIdIgnorar)
+        {
+            const string sql = @"
+                SELECT
+                    CASE
+
+                        WHEN EXISTS
+                        (
+                            SELECT 1
+
+                            FROM dbo.Aluno
+
+                            WHERE Email = @Email
+                        )
+
+                        OR EXISTS
+                        (
+                            SELECT 1
+
+                            FROM dbo.Professor
+
+                            WHERE Email = @Email
+
+                              AND
+                              (
+                                  @ProfessorIdIgnorar IS NULL
+                                  OR Id <> @ProfessorIdIgnorar
+                              )
+                        )
+
+                        OR EXISTS
+                        (
+                            SELECT 1
+
+                            FROM dbo.EncarregadoEducacao
+
+                            WHERE Email = @Email
+                        )
+
+                        THEN 1
+                        ELSE 0
+
+                    END;";
+
+            using (SqlConnection conn =
+                new SqlConnection(_connectionString))
+            using (SqlCommand cmd =
+                new SqlCommand(sql, conn))
+            {
+                cmd.Parameters
+                    .Add(
+                        "@Email",
+                        SqlDbType.NVarChar,
+                        150
+                    )
+                    .Value = email;
+
+                cmd.Parameters
+                    .Add(
+                        "@ProfessorIdIgnorar",
+                        SqlDbType.Int
+                    )
+                    .Value =
+                    professorIdIgnorar.HasValue
+                        ? (object)professorIdIgnorar.Value
+                        : DBNull.Value;
+
+                conn.Open();
+
+                return Convert.ToInt32(
+                    cmd.ExecuteScalar()
+                ) == 1;
+            }
+        }
+
+        private bool EmailJaExisteNoMembership(
+            string email,
+            Guid? userIdIgnorar)
+        {
+            string username =
+                Membership.GetUserNameByEmail(
+                    email
+                );
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return false;
+            }
+
+            if (!userIdIgnorar.HasValue)
+            {
+                return true;
+            }
+
+            MembershipUser utilizador =
+                Membership.GetUser(
+                    username,
+                    false
+                );
+
+            if (utilizador == null ||
+                utilizador.ProviderUserKey == null)
+            {
+                return true;
+            }
+
+            Guid userIdEncontrado;
+
+            if (!Guid.TryParse(
+                    utilizador.ProviderUserKey.ToString(),
+                    out userIdEncontrado))
+            {
+                return true;
+            }
+
+            return userIdEncontrado !=
+                   userIdIgnorar.Value;
+        }
+
         #endregion
+
 
         #region Disciplinas e grupos
 
@@ -929,64 +1524,178 @@ namespace AlunoGest.agrupamento
 
         #endregion
 
+
         #region Membership
 
-        private Guid CriarContaProfessor()
+        private Guid CriarContaProfessor(
+            string nome,
+            string email,
+            out string username,
+            out string password)
         {
+            username =
+                null;
+
+            password =
+                null;
+
+            MembershipUser utilizadorCriado =
+                null;
+
             string usernameBase =
                 CriarConta.GerarUsername(
-                    txtNome.Text
+                    nome
                 );
 
-            string username =
+            username =
                 CriarConta.GarantirUsernameUnico(
                     usernameBase
                 );
 
-            string password =
+            password =
                 CriarConta.GerarPassword();
 
-            Membership.CreateUser(
-                username,
-                password,
-                txtEmail.Text.Trim()
-            );
-
-            Roles.AddUserToRole(
-                username,
-                "Professor"
-            );
-
-            MembershipUser utilizador =
-                Membership.GetUser(username);
-
-            if (utilizador == null)
+            try
             {
-                throw new InvalidOperationException(
-                    "A conta do professor foi criada, " +
-                    "mas não foi possível obter os seus dados."
+                utilizadorCriado =
+                    Membership.CreateUser(
+                        username,
+                        password,
+                        email
+                    );
+
+                if (utilizadorCriado == null)
+                {
+                    throw new InvalidOperationException(
+                        "O Membership não devolveu o utilizador criado."
+                    );
+                }
+
+                Roles.AddUserToRole(
+                    username,
+                    "Professor"
                 );
+
+                utilizadorCriado.IsApproved =
+                    true;
+
+                Membership.UpdateUser(
+                    utilizadorCriado
+                );
+
+                return (Guid)
+                    utilizadorCriado.ProviderUserKey;
+            }
+            catch
+            {
+                RemoverContaCriada(username);
+                throw;
+            }
+        }
+
+        private bool EnviarCredenciaisIniciais(
+            string email,
+            string nome,
+            string username,
+            string password)
+        {
+            try
+            {
+                CriarConta.EnviarEmailCredenciais(
+                    email,
+                    nome,
+                    username,
+                    password,
+                    ObterUrlLogin()
+                );
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(
+                    "Erro ao enviar credenciais do professor: " +
+                    ex
+                );
+
+                return false;
+            }
+        }
+
+        private void RemoverContaCriada(
+            string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return;
             }
 
-            CriarConta.EnviarEmailCredenciais(
-                txtEmail.Text.Trim(),
-                txtNome.Text.Trim(),
-                username,
-                password,
-                "http://localhost/login.aspx"
-            );
+            try
+            {
+                if (Roles.IsUserInRole(
+                        username,
+                        "Professor"))
+                {
+                    Roles.RemoveUserFromRole(
+                        username,
+                        "Professor"
+                    );
+                }
 
-            return (Guid)utilizador.ProviderUserKey;
+                Membership.DeleteUser(
+                    username,
+                    true
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(
+                    "Erro ao remover a conta incompleta do professor: " +
+                    ex
+                );
+            }
         }
 
         #endregion
+
 
         #region Sessão e agrupamento
 
         private int GetAgrupamentoIdFromSession()
         {
+            if (Session["AgrupamentoID"] != null)
+            {
+                int agrupamentoIdSessao;
+
+                if (int.TryParse(
+                        Session["AgrupamentoID"].ToString(),
+                        out agrupamentoIdSessao))
+                {
+                    return agrupamentoIdSessao;
+                }
+            }
+
             object sessionUserId =
                 Session["UserId"];
+
+            if (sessionUserId == null)
+            {
+                MembershipUser utilizador =
+                    Membership.GetUser(
+                        User.Identity.Name,
+                        false
+                    );
+
+                if (utilizador != null &&
+                    utilizador.ProviderUserKey != null)
+                {
+                    sessionUserId =
+                        utilizador.ProviderUserKey;
+
+                    Session["UserId"] =
+                        utilizador.ProviderUserKey;
+                }
+            }
 
             if (sessionUserId == null)
             {
@@ -1040,11 +1749,18 @@ namespace AlunoGest.agrupamento
                     );
                 }
 
-                return Convert.ToInt32(resultado);
+                int agrupamentoId =
+                    Convert.ToInt32(resultado);
+
+                Session["AgrupamentoID"] =
+                    agrupamentoId;
+
+                return agrupamentoId;
             }
         }
 
         #endregion
+
 
         #region Formulário e utilidades
 
@@ -1071,7 +1787,8 @@ namespace AlunoGest.agrupamento
 
             if (ddlGrupoRecrutamento.Items.Count > 0)
             {
-                ddlGrupoRecrutamento.SelectedIndex = 0;
+                ddlGrupoRecrutamento.SelectedIndex =
+                    0;
             }
         }
 
@@ -1079,21 +1796,38 @@ namespace AlunoGest.agrupamento
         {
             LimparFormulario();
 
-            ViewState["op"] = null;
+            ViewState["op"] =
+                null;
 
-            gridProfessores.SelectedIndex = -1;
+            ViewState["ProfessorId"] =
+                null;
 
-            controlos.Visible = false;
-            painelDisciplinasProfessor.Visible = false;
+            gridProfessores.SelectedIndex =
+                -1;
 
-            gridDisciplinasProfessor.DataSource = null;
+            controlos.Visible =
+                false;
+
+            painelDisciplinasProfessor.Visible =
+                false;
+
+            gridDisciplinasProfessor.DataSource =
+                null;
+
             gridDisciplinasProfessor.DataBind();
+        }
+
+        private void FinalizarOperacaoComSucesso()
+        {
+            GetProfessores();
+            FecharFormulario();
         }
 
         private bool ProfessorSelecionado(
             out int idProfessor)
         {
-            idProfessor = 0;
+            idProfessor =
+                0;
 
             if (gridProfessores.SelectedDataKey == null ||
                 gridProfessores.SelectedDataKey.Value == null)
@@ -1102,11 +1836,37 @@ namespace AlunoGest.agrupamento
             }
 
             return int.TryParse(
-                gridProfessores.SelectedDataKey
+                gridProfessores
+                    .SelectedDataKey
                     .Value
                     .ToString(),
                 out idProfessor
             );
+        }
+
+        private bool TryGetProfessorIdViewState(
+            out int idProfessor)
+        {
+            idProfessor =
+                0;
+
+            if (ViewState["ProfessorId"] == null)
+            {
+                return false;
+            }
+
+            return int.TryParse(
+                ViewState["ProfessorId"].ToString(),
+                out idProfessor
+            );
+        }
+
+        private string ObterUrlLogin()
+        {
+            return Request.Url.GetLeftPart(
+                       UriPartial.Authority
+                   ) +
+                   ResolveUrl("~/login.aspx");
         }
 
         private string ValorTexto(
@@ -1121,14 +1881,18 @@ namespace AlunoGest.agrupamento
         private void MostrarAlert(
             string mensagem)
         {
+            if (mensagem == null)
+            {
+                mensagem =
+                    string.Empty;
+            }
+
             string mensagemSegura =
                 mensagem
                     .Replace("\\", "\\\\")
                     .Replace("'", "\\'")
-                    .Replace(
-                        Environment.NewLine,
-                        "\\n"
-                    );
+                    .Replace("\r", "\\r")
+                    .Replace("\n", "\\n");
 
             string script =
                 string.Format(
@@ -1136,11 +1900,39 @@ namespace AlunoGest.agrupamento
                     mensagemSegura
                 );
 
-            ClientScript.RegisterStartupScript(
-                GetType(),Guid.NewGuid().ToString(),
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                Guid.NewGuid().ToString(),
                 script,
                 true
             );
+        }
+
+        #endregion
+
+
+        #region Classe auxiliar
+
+        private class ProfessorDados
+        {
+            public int Id { get; set; }
+
+            public Guid UserId { get; set; }
+
+            public string Nome { get; set; }
+
+            public string Email { get; set; }
+
+            public string Telefone { get; set; }
+
+            public string NIF { get; set; }
+
+            public string NumeroProcesso { get; set; }
+
+            public int? GrupoRecrutamentoId { get; set; }
+
+            public bool Ativo { get; set; }
         }
 
         #endregion
